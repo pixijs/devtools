@@ -10,7 +10,24 @@ export const TilingSpritePropsPlugin: PropertyPlugin<TilingSprite> = {
       return null;
     }
 
+    if (prop === 'tilePosition') {
+      return { value: [container.tilePosition.x, container.tilePosition.y], prop };
+    } else if (prop === 'tileScale') {
+      return { value: [container.tileScale.x, container.tileScale.y], prop };
+    }
+
     return { value: container[prop as keyof TilingSprite], prop };
+  },
+  setPropValue: function (container, prop, value) {
+    if (this.getPropKeys().indexOf(prop) === -1) {
+      return null;
+    }
+
+    if (prop === 'tilePosition' || prop === 'tileScale') {
+      container.tilePosition.set(value[0], value[1]);
+    } else {
+      (container as any)[prop] = value;
+    }
   },
   props: [
     { section: 'Transform', property: 'roundPixels', propertyProps: { label: 'Round Pixels' }, type: 'boolean' },

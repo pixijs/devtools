@@ -22,11 +22,6 @@ export const sceneGraphMap: Map<Container, PixiState['sceneGraph']> = new Map();
 export function updateSceneGraph(container: Container, parent: Container): void {
   const pixiWrapper = getPixiWrapper();
   const graph = pixiWrapper.state().sceneGraph;
-  const pixi = pixiWrapper.pixi();
-
-  if (!pixi) {
-    return;
-  }
 
   const type = getPixiType(container);
 

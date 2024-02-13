@@ -64,10 +64,10 @@ export function getPixiWrapper(): Pixi {
         }
         return window.__PIXI__;
       },
-      version: () => pixiWrapper!.pixi().VERSION,
+      version: () => pixiWrapper!.pixi()?.VERSION ?? '',
       properties: properties(),
       detectPixi: () => {
-        return pixiWrapper!.pixi() && (pixiWrapper!.app() || pixiWrapper!.stage() || pixiWrapper!.renderer())
+        return pixiWrapper!.app() || pixiWrapper!.stage() || pixiWrapper!.renderer()
           ? MessageType.Active
           : MessageType.Inactive;
       },

@@ -1,58 +1,51 @@
-import { Container, Matrix, ObservablePoint, Point, Rectangle } from 'pixi.js';
-import { PropertyPlugin } from './propertyTypes';
-import { SliderProps } from '@lib/components/properties/slider/Slider';
-import { getPixiWrapper } from '../devtool';
 import { Vector2Props } from '@lib/components/properties/number/Vector2';
-import { TextProps } from '@lib/components/properties/text/Text';
-import { SelectProps } from '@lib/components/properties/select/Select';
 import { VectorXProps } from '@lib/components/properties/number/VectorX';
+import { SelectProps } from '@lib/components/properties/select/Select';
+import { SliderProps } from '@lib/components/properties/slider/Slider';
+import { TextProps } from '@lib/components/properties/text/Text';
+import { Container, Matrix, Point, Rectangle } from 'pixi.js';
+import { PropertyPlugin } from './propertyTypes';
 
 export const ContainerPropsPlugin: PropertyPlugin = {
   getPropValue: function (container, prop) {
     if (this.getPropKeys().indexOf(prop) === -1) {
       return null;
     }
-    const pixi = getPixiWrapper().pixi();
     const value = container[prop as keyof Container];
 
     if (prop === 'type') {
       return { value: container.constructor.name, prop };
     }
 
-    if (!pixi) return { value: null, prop };
-
-    if (value instanceof pixi.Matrix) {
-      return { value: value.toArray(), prop };
-    } else if (value instanceof pixi.Point) {
-      return { value: [value.x, value.y], prop };
-    } else if (value instanceof pixi.ObservablePoint) {
-      return { value: [value.x, value.y], prop };
-    } else if (value instanceof pixi.Rectangle) {
-      return { value: [value.x, value.y, value.width, value.height], prop };
+    if (prop === 'position' || prop === 'scale' || prop === 'pivot' || prop === 'skew') {
+      const val = value as Point;
+      return { value: [val.x, val.y], prop };
+    } else if (prop === 'filterArea' || prop === 'boundsArea' || prop === 'cullArea' || prop === 'hitArea') {
+      const val = value as Rectangle;
+      return { value: [val.x, val.y, val.width, val.height], prop };
+    } else if (prop === 'matrix') {
+      const val = value as Matrix;
+      return { value: val.toArray(), prop };
     }
 
     return { value: container[prop as keyof Container], prop };
   },
+
   setPropValue: function (container, prop, value) {
     if (this.getPropKeys().indexOf(prop) === -1) {
       return null;
     }
-    const pixi = getPixiWrapper().pixi();
 
-    if (!pixi) return;
-
-    if (container[prop as keyof Container] instanceof pixi.Matrix) {
-      (container[prop as keyof Container] as Matrix).fromArray(value);
-    } else if (container[prop as keyof Container] instanceof pixi.Point) {
+    if (prop === 'position' || prop === 'scale' || prop === 'pivot' || prop === 'skew') {
       (container[prop as keyof Container] as Point).set(value[0], value[1]);
-    } else if (container[prop as keyof Container] instanceof pixi.ObservablePoint) {
-      (container[prop as keyof Container] as ObservablePoint).set(value[0], value[1]);
-    } else if (container[prop as keyof Container] instanceof pixi.Rectangle) {
+    } else if (prop === 'filterArea' || prop === 'boundsArea' || prop === 'cullArea' || prop === 'hitArea') {
       const rect = container[prop as keyof Container] as Rectangle;
       rect.x = value[0];
       rect.y = value[1];
       rect.width = value[2];
       rect.height = value[3];
+    } else if (prop === 'matrix') {
+      (container[prop as keyof Container] as Matrix).fromArray(value);
     } else {
       (container as any)[prop] = value;
     }
@@ -64,6 +57,11 @@ export const ContainerPropsPlugin: PropertyPlugin = {
       return container[prop.property as keyof Container] != undefined;
     });
   },
+
+  getPropKeys: function () {
+    return this.props.map((prop) => prop.property);
+  },
+
   props: [
     { property: 'type', section: 'Info', propertyProps: { label: 'Type', disabled: true } as TextProps, type: 'text' }, // not editable
     { property: 'label', section: 'Info', propertyProps: { label: 'Label' }, type: 'text' },
@@ -239,7 +237,4 @@ export const ContainerPropsPlugin: PropertyPlugin = {
       type: 'select',
     },
   ],
-  getPropKeys: function () {
-    return this.props.map((prop) => prop.property);
-  },
 };
