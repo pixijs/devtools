@@ -10,9 +10,9 @@ import devManifest from './src/chrome/manifest.dev.json';
 import manifest from './src/chrome/manifest.json';
 
 export default defineConfig((config) => {
-  const publicDir = resolve(__dirname, 'src/chrome/assets');
-  const outDir = resolve(__dirname, 'dist/chrome');
   const isDev = config.mode === 'development';
+  const publicDir = resolve(__dirname, 'src/chrome/assets');
+  const outDir = resolve(__dirname, isDev ? 'dist/chrome-dev' : 'dist/chrome');
   const extensionManifest = {
     ...manifest,
     ...(isDev ? devManifest : ({} as ManifestV3Export)),

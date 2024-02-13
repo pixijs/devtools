@@ -1,4 +1,5 @@
 {
+  "name": "DEV: PixiJS DevTools",
   "action": {
     "default_icon": {
       "16": "icon-inactive-16.png",
