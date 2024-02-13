@@ -70,7 +70,7 @@ export class PropertyPluginsClass {
   }
 
   private _getUserPlugins() {
-    return window.__PIXI__DEVTOOLS__?.scenePanel?.propertyPlugins || [];
+    return window.__PIXI_DEVTOOLS__?.scenePanel?.propertyPlugins || [];
   }
 }
 

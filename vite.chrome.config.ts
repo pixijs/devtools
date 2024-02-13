@@ -1,6 +1,8 @@
 import { crx, ManifestV3Export } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
+import fs from 'fs';
+import path from 'path';
 
 import { resolve } from 'path';
 import pkg from './package.json';
@@ -34,6 +36,19 @@ export default defineConfig((config) => {
           injectCss: true,
         },
       }),
+      {
+        name: 'manifest-plugin',
+        enforce: 'post',
+        writeBundle() {
+          const manifestPath = path.resolve(__dirname, 'dist/chrome', 'manifest.json');
+          if (fs.existsSync(manifestPath)) {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+            const resource = manifest.web_accessible_resources[0];
+            resource.resources.push('src/inject/index.js');
+            fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+          }
+        },
+      },
     ],
     publicDir,
     build: {

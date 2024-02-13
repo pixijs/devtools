@@ -23,14 +23,14 @@ export function getPixiWrapper(): Pixi {
   if (!pixiWrapper) {
     pixiWrapper = {
       app: () => {
-        if (window.__PIXI__DEVTOOLS__?.app) {
-          return window.__PIXI__DEVTOOLS__.app;
+        if (window.__PIXI_DEVTOOLS__?.app) {
+          return window.__PIXI_DEVTOOLS__.app;
         }
         return window.__PIXI_APP__;
       },
       stage: () => {
-        if (window.__PIXI__DEVTOOLS__?.stage) {
-          return window.__PIXI__DEVTOOLS__.stage;
+        if (window.__PIXI_DEVTOOLS__?.stage) {
+          return window.__PIXI_DEVTOOLS__.stage;
         } else if (window.__PIXI_STAGE__) {
           return window.__PIXI_STAGE__;
         }
@@ -38,8 +38,8 @@ export function getPixiWrapper(): Pixi {
         return pixiWrapper!.app()?.stage;
       },
       renderer: () => {
-        if (window.__PIXI__DEVTOOLS__?.renderer) {
-          return window.__PIXI__DEVTOOLS__.renderer;
+        if (window.__PIXI_DEVTOOLS__?.renderer) {
+          return window.__PIXI_DEVTOOLS__.renderer;
         } else if (window.__PIXI_RENDERER__) {
           return window.__PIXI_RENDERER__;
         }
@@ -59,8 +59,8 @@ export function getPixiWrapper(): Pixi {
         return getPixiState();
       },
       pixi: () => {
-        if (window.__PIXI__DEVTOOLS__?.pixi) {
-          return window.__PIXI__DEVTOOLS__.pixi;
+        if (window.__PIXI_DEVTOOLS__?.pixi) {
+          return window.__PIXI_DEVTOOLS__.pixi;
         }
         return window.__PIXI__;
       },

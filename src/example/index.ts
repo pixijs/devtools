@@ -8,7 +8,7 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   // Initialize the application
   await app.init({ background: '#1099bb', resizeTo: window });
 
-  window.__PIXI__DEVTOOLS__ = {
+  window.__PIXI_DEVTOOLS__ = {
     app: app,
     pixi: PIXI,
   };

@@ -5,7 +5,7 @@ declare global {
     __PIXI_RENDERER__: import('pixi.js').Renderer | undefined;
     __PIXI__: import('pixi.js');
     __PIXI_DEVTOOLS_WRAPPER__: any;
-    __PIXI__DEVTOOLS__: {
+    __PIXI_DEVTOOLS__: {
       pixi: typeof import('pixi.js');
       app: import('pixi.js').Application | undefined;
       stage?: import('pixi.js').Container | undefined;
