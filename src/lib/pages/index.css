@@ -1,0 +1,35 @@
+@import url('https://fonts.cdnfonts.com/css/cascadia-code');
+
+:root {
+  --background-color: #1e1e1e;
+  --active-bg-color: #bf2257;
+  --inactive-disabled-bg-color: #292929;
+  --active-color: #fff;
+  --inactive-disabled-color: #6b6b6b;
+  --panel-background-color: #2d2d30;
+  --primary-color: #bf2257;
+  --dark-color: #3e3e3e;
+  --darker-color: #2d2d30;
+  --darkest-color: #1e1e1e;
+  --secondary-color: #1099bb;
+
+  --header: #292a2e;
+  --bg: #1f2023;
+  --line: #3d3d3d;
+  --text: #c5c5c5;
+  --line-light: #8f8f8f;
+}
+
+body {
+  font-family: Menlo, Monaco, 'Courier New', monospace;
+  background-color: var(--bg);
+  margin: 0;
+}
+
+button {
+  all: unset;
+}
+
+input {
+  all: unset;
+}

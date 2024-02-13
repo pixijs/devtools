@@ -399,3 +399,4 @@ dist
 deploy
 .DS_Store
 /out
+.upload

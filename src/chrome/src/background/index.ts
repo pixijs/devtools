@@ -1,9 +1,4 @@
-enum MessageType {
-  Inactive = 'inactive',
-  Active = 'active',
-  PopupOpened = 'popup-opened',
-  PixiDetected = 'pixi-detected',
-}
+import { MessageType, convertPostMessage, convertPostMessageData } from '../messageUtils';
 
 interface Message {
   method: MessageType;
@@ -28,41 +23,42 @@ function setIconAndPopup(type: MessageType, tabId: number) {
   chrome.action.setTitle({ tabId, title });
 }
 
-function sendRuntimeMessage(method: MessageType, data: unknown) {
-  const message: Message = { method, data: JSON.stringify(data) };
-  chrome.runtime.sendMessage(message);
-}
-
 let devToolsConnection: chrome.runtime.Port | null = null;
-let popupTabId: string | null = null;
 
 chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.MessageSender) => {
-  console.log('Message received in background script', request, sender);
-  if (request.method === MessageType.PopupOpened) {
-    sendRuntimeMessage(MessageType.PixiDetected, { data: MessageType.PopupOpened });
-    popupTabId = sender.id ?? null;
-  } else if (request.method === MessageType.PixiDetected) {
+  const converted = convertPostMessageData(request);
+  if (converted.method === MessageType.PixiDetected) {
     setIconAndPopup(MessageType.Active, sender.tab?.id ?? 0);
-    if (popupTabId) {
-      sendRuntimeMessage(MessageType.PixiDetected, request.data);
-    }
   }
 
-  // Forward the message to the devtools
-  devToolsConnection?.postMessage(request);
+  if (devToolsConnection) {
+    const message = convertPostMessage(converted.method, converted.data);
+    devToolsConnection?.postMessage({
+      id: 'pixi-devtools',
+      ...message,
+    });
+  }
 });
 
-chrome.runtime.onConnect.addListener(function (dtc) {
-  // assign the listener function to a variable so we can remove it later
-  const devToolsListener = function () {
-    // Handle message from devtools here
-  };
-  // add the listener
-  dtc.onMessage.addListener(devToolsListener);
+chrome.runtime.onConnect.addListener(function (port) {
+  if (port.name !== 'devtools-connection') return;
 
-  dtc.onDisconnect.addListener(function () {
-    dtc.onMessage.removeListener(devToolsListener);
+  devToolsConnection = port;
+  devToolsConnection.onDisconnect.addListener(function () {
+    devToolsConnection = null;
   });
 
-  devToolsConnection = dtc;
+  console.log('Connected to devtools', port);
+});
+
+// update icon and popup when the active tab changes
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.active && changeInfo.status === 'loading') {
+    setIconAndPopup(MessageType.Inactive, tabId);
+    const message = convertPostMessage(MessageType.Inactive, {});
+    devToolsConnection?.postMessage({
+      id: 'pixi-devtools',
+      ...message,
+    });
+  }
 });

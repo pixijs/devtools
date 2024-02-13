@@ -1,6 +1,10 @@
-import Panel from '@lib/index';
+import Panel from '@lib/pages/index';
 import { createRoot } from 'react-dom/client';
 
+/**
+ * Thanks pixi-inspector for this snippet
+ * https://github.com/bfanger/pixi-inspector
+ */
 type BridgeFn = <T>(code: string) => Promise<T>;
 const bridge: BridgeFn = (code: string) =>
   new Promise((resolve, reject) => {

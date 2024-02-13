@@ -3,7 +3,6 @@
   "name": "PixiJS DevTools",
   "description": "DevTools for PixiJS",
   "action": {
-    "default_popup": "src/popup/index.html",
     "default_icon": {
       "16": "icon-inactive-16.png",
       "32": "icon-inactive-32.png",
