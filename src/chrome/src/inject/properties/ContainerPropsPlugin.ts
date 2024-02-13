@@ -107,7 +107,7 @@ export const ContainerPropsPlugin: PropertyPlugin = {
       } as SliderProps,
       type: 'range',
     },
-    // { property: 'tint', section: 'Appearance', propertyProps: { label: 'Tint' }, type: 'color' },
+    { property: 'tint', section: 'Appearance', propertyProps: { label: 'Tint' }, type: 'color' },
     // { property: 'blendMode', section: 'Appearance', propertyProps: { label: 'Blend Mode' }, type: 'select' },
     {
       section: 'Rendering',

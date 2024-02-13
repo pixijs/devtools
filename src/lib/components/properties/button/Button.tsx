@@ -7,7 +7,7 @@ export interface ButtonProps extends BasePropertyProps {
   onChange: () => void;
 }
 
-const StyledButtonRoot = styled.button`
+export const StyledButtonRoot = styled.button`
   width: 100%;
   display: inline-flex;
   align-items: center;

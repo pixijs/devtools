@@ -10,8 +10,9 @@ import { Vector2, Vector2Props } from './number/Vector2';
 import { ButtonInput, ButtonProps } from './button/Button';
 import { SelectInput, SelectProps } from './select/Select';
 import { VectorX, VectorXProps } from './number/VectorX';
+import { ColorInput, ColorProps } from './color/Color';
 
-type PropertyTypes = 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX';
+type PropertyTypes = 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX' | 'color';
 
 type PropertyPropsMap = {
   boolean: SwitchProps;
@@ -22,6 +23,7 @@ type PropertyPropsMap = {
   button: ButtonProps;
   vector2: Vector2Props;
   vectorX: VectorXProps;
+  color: ColorProps;
 };
 
 export type PropertyProps = {
@@ -43,12 +45,13 @@ const Property: React.FC<PropertyProps> = ({ type, propertyProps }) => {
     case 'text':
       return <TextInput {...(propertyProps as TextProps)} />;
     // case 'textarea':
-    // case 'color':
     // case 'radio':
     case 'button':
       return <ButtonInput {...(propertyProps as ButtonProps)} />;
     case 'vectorX':
       return <VectorX {...(propertyProps as VectorXProps)} />;
+    case 'color':
+      return <ColorInput {...(propertyProps as ColorProps)} />;
     default:
       return <TextInput {...(propertyProps as TextProps)} />;
   }
@@ -67,7 +70,6 @@ const PropertiesComponent: React.FC<PropertiesProps> = () => {
   }
 
   const handlePropertyChange = (property: string, newValue: any) => {
-    console.log('handlePropertyChange', property, newValue);
     bridge(`
       window.__PIXI_DEVTOOLS_WRAPPER__.properties.setValue('${property}', ${newValue})
     `);
