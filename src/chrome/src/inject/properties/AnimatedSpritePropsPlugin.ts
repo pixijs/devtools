@@ -33,9 +33,19 @@ export const AnimatedSpritePropsPlugin: PropertyPlugin<AnimatedSprite> = {
   props: [
     { section: 'Transform', property: 'roundPixels', propertyProps: { label: 'Round Pixels' }, type: 'boolean' },
     // { section: 'Animated Sprite', property: 'textures', propertyProps: { label: 'Textures' }, type: 'text' },
-    { section: 'Animated Sprite', property: 'animationSpeed', propertyProps: { label: 'Animation Speed' }, type: 'number' },
+    {
+      section: 'Animated Sprite',
+      property: 'animationSpeed',
+      propertyProps: { label: 'Animation Speed' },
+      type: 'number',
+    },
     { section: 'Animated Sprite', property: 'loop', propertyProps: { label: 'Loop' }, type: 'boolean' },
-    { section: 'Animated Sprite', property: 'updateAnchor', propertyProps: { label: 'Update Anchor' }, type: 'boolean' },
+    {
+      section: 'Animated Sprite',
+      property: 'updateAnchor',
+      propertyProps: { label: 'Update Anchor' },
+      type: 'boolean',
+    },
     { section: 'Animated Sprite', property: 'totalFrames', propertyProps: { label: 'Total Frames' }, type: 'number' },
     { section: 'Animated Sprite', property: 'currentFrame', propertyProps: { label: 'Current Frame' }, type: 'number' },
     { section: 'Animated Sprite', property: 'autoUpdate', propertyProps: { label: 'Auto Update' }, type: 'boolean' },

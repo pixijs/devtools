@@ -19,7 +19,7 @@ export const ContainerPropsPlugin: PropertyPlugin = {
       return { value: container.constructor.name, prop };
     }
 
-    if(!pixi) return { value: null, prop };
+    if (!pixi) return { value: null, prop };
 
     if (value instanceof pixi.Matrix) {
       return { value: value.toArray(), prop };
@@ -39,7 +39,7 @@ export const ContainerPropsPlugin: PropertyPlugin = {
     }
     const pixi = getPixiWrapper().pixi();
 
-    if(!pixi) return;
+    if (!pixi) return;
 
     if (container[prop as keyof Container] instanceof pixi.Matrix) {
       (container[prop as keyof Container] as Matrix).fromArray(value);
