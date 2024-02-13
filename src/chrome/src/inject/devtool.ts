@@ -67,7 +67,7 @@ export function getPixiWrapper(): Pixi {
       version: () => pixiWrapper!.pixi().VERSION,
       properties: properties(),
       detectPixi: () => {
-        return pixiWrapper!.app() || pixiWrapper!.stage() || pixiWrapper!.renderer()
+        return pixiWrapper!.pixi() && (pixiWrapper!.app() || pixiWrapper!.stage() || pixiWrapper!.renderer())
           ? MessageType.Active
           : MessageType.Inactive;
       },

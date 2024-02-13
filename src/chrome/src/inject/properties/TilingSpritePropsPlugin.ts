@@ -27,5 +27,6 @@ export const TilingSpritePropsPlugin: PropertyPlugin<TilingSprite> = {
       type: 'vector2',
     },
     { section: 'Tiling Sprite', property: 'tileRotation', propertyProps: { label: 'Tile Rotation' }, type: 'number' },
+    { section: 'Tiling Sprite', property: 'clampMargin', propertyProps: { label: 'Clamp Margin' }, type: 'number' },
   ],
 };

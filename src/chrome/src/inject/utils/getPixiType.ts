@@ -17,6 +17,8 @@ export function getPixiType(container: Container): PixiSceneObjectType {
   const pixiWrapper = getPixiWrapper();
   const pixi = pixiWrapper.pixi();
 
+  if (!pixi) return 'Unknown';
+
   if (container instanceof pixi.BitmapText) {
     return 'BitmapText';
   } else if (container instanceof pixi.HTMLText) {
