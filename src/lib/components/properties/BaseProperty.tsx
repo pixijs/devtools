@@ -19,6 +19,7 @@ const StyledLabelRoot = styled(Label.Root)`
   font-weight: 500;
   line-height: 35px;
   color: var(--text);
+  min-width: fit-content;
 `;
 
 export const BaseProperty: React.FC<BasePropertyProps> = ({ label, children }) => {
