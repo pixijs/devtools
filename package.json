@@ -17,7 +17,7 @@
     "watch": "run-p watch:*",
     "watch:example": "vite dev --config vite.example.config.ts",
     "watch:chrome": "vite dev --config vite.chrome.config.ts",
-    "watch:lib": "vite build --config vite.inject.config.ts --watch",
+    "watch:lib": "vite build --config vite.inject.config.ts --mode development",
     "dist": "run-s build",
     "deploy": "run-s clean build",
     "release": "xs bump,test && run-s deploy && xs git-push",

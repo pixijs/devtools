@@ -4,6 +4,7 @@ import * as Collapsible from '@radix-ui/react-collapsible';
 export const CollapsibleRoot = styled(Collapsible.Root)`
   background-color: var(--header);
   width: calc(100%);
+  height: 100%;
 `;
 
 export const CollapsibleTrigger = styled(Collapsible.Trigger)``;
@@ -44,8 +45,8 @@ export const CollapsibleHeaderIcon = styled.button`
 
 export const CollapsibleContent = styled(Collapsible.Content)<{ wrap?: 'wrap' | 'nowrap' }>`
   background-color: var(--bg);
-  padding-top: 8px;
   display: flex;
   flex-wrap: ${({ wrap = 'wrap' }) => wrap};
   flex-direction: ${({ wrap = 'wrap' }) => (wrap === 'wrap' ? 'row' : 'column')};
+  height: 100%;
 `;

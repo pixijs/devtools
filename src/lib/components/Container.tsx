@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   background-color: #292929;
   width: calc(100%);
-  height: 100vh;
+  height: 100%;
 `;
 
 export const SectionContainer = styled.div`

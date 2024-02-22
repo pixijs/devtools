@@ -76,7 +76,7 @@ const tabs = [
     component: <SceneComponent />,
     disabled: false,
   },
-  { value: 'tab2', label: 'Assets', component: <SceneComponent />, disabled: false },
+  { value: 'tab2', label: 'Assets', component: <SceneComponent />, disabled: true },
   { value: 'tab3', label: 'Rendering', component: <SceneComponent />, disabled: true },
 ];
 

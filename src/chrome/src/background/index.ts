@@ -12,7 +12,6 @@ interface IconPath {
 function setIconAndPopup(type: MessageType, tabId: number) {
   const iconPath: IconPath = {
     16: `./icon-${type}-16.png`,
-    32: `./icon-${type}-32.png`,
     48: `./icon-${type}-48.png`,
     128: `./icon-${type}-128.png`,
   };

@@ -60,14 +60,9 @@ const Property: React.FC<PropertyProps> = ({ type, propertyProps }) => {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface PropertiesProps {}
 const PropertiesComponent: React.FC<PropertiesProps> = () => {
-  const selectedNodeId = usePixiStore((state) => state.selectedNodeId);
   const currentValues = usePixiStore((state) => state.selectedNodeValues);
   const propertyPanel = usePixiStore((state) => state.selectedNodeProps);
   const bridge = usePixiStore((state) => state.bridge);
-
-  if (selectedNodeId === null) {
-    return null;
-  }
 
   const handlePropertyChange = (property: string, newValue: any) => {
     bridge(`

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TreeView, { flattenTree } from 'react-accessible-treeview';
 import {
   FaLayerGroup as ContainerIcon,
@@ -35,6 +35,7 @@ const TreeViewComponent: React.FC<TreeViewComponentProps> = () => {
   const sceneGraph = usePixiStore((state) => state.sceneGraph);
   const flattenTreeData = flattenTree(sceneGraph as any);
   const selectedNodeId = usePixiStore((state) => state.selectedNodeId);
+  const setSelectedNodeId = usePixiStore((state) => state.setSelectedNodeId);
 
   // find the node in the flattenTreeData that matches the selectedNodeId
   const selectedNode = flattenTreeData.find((node) => node.metadata!.uid === selectedNodeId);
@@ -42,6 +43,13 @@ const TreeViewComponent: React.FC<TreeViewComponentProps> = () => {
   const [treeId, setTreeId] = useState<number[] | null>(
     selectedNode ? [selectedNode.id as number, ...parents.map((node) => node.id as number)] : null,
   );
+
+  useEffect(() => {
+    return () => {
+      setSelectedNodeId(null);
+      setTreeId(null);
+    };
+  }, []);
 
   console.log('rendering tree', selectedNodeId);
   return (
