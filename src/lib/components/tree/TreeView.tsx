@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import TreeView, { flattenTree } from 'react-accessible-treeview';
 import {
-  FaLayerGroup as ContainerIcon,
+  // FaLayerGroup as ContainerIcon,
   FaRegObjectGroup as SceneNodeIcon,
+  FaPlus as LayerIconClosed,
+  FaMinus as LayerIconOpen,
   FaFileImage as SpriteIcon,
 } from 'react-icons/fa6';
 import { SectionHeader, Title, TitleGroup } from '../Container';
@@ -97,7 +99,8 @@ const TreeViewComponent: React.FC<TreeViewComponentProps> = () => {
 };
 
 const FolderIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) =>
-  isOpen ? <ContainerIcon className="icon container open" /> : <ContainerIcon className="icon container closed" />;
+  isOpen ? <LayerIconOpen className="icon container open" /> : <LayerIconClosed className="icon container closed" />;
+
 const FileIcon: React.FC<{ filename: string }> = ({ filename }) => {
   if (filename.endsWith('.png') || filename.endsWith('.jpg') || filename.endsWith('.jpeg')) {
     return <SpriteIcon color="white" className="icon" />;

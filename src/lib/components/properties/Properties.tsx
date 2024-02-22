@@ -90,7 +90,7 @@ const PropertiesComponent: React.FC<PropertiesProps> = () => {
   });
 
   return (
-    <div style={{ minWidth: 350, borderLeft: '1px solid var(--line)' }}>
+    <>
       <SectionContainer className="tree">
         <SectionHeader style={{ padding: '15px 12px' }}>
           <TitleGroup>
@@ -116,7 +116,7 @@ const PropertiesComponent: React.FC<PropertiesProps> = () => {
           </React.Fragment>
         ))}
       </SectionContainer>
-    </div>
+    </>
   );
 };
 

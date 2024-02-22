@@ -9,13 +9,13 @@ interface SceneComponentProps {}
 export const SceneComponent: React.FC<SceneComponentProps> = () => {
   console.log('rendering scene');
   return (
-    <>
+    <div className="SCENE">
       <CollapsibleComponent title={'Stats'}>
         <Stats />
       </CollapsibleComponent>
       <CollapsibleComponent title={'Inspector'}>
         <Inspector />
       </CollapsibleComponent>
-    </>
+    </div>
   );
 };
