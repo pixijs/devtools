@@ -4,6 +4,7 @@ import { PixiSceneObjectType } from './utils/getPixiType';
 import { properties } from './properties/properties';
 import { Prop } from './properties/propertyTypes';
 import { MessageType } from '../messageUtils';
+import { getOverlayWrapper } from './overlay/overlay';
 
 export interface Pixi {
   pixi: () => typeof import('pixi.js');
@@ -15,6 +16,7 @@ export interface Pixi {
   state: () => PixiState;
   version: () => string;
   properties: ReturnType<typeof properties>;
+  overlay: () => ReturnType<typeof getOverlayWrapper>;
 }
 
 let pixiWrapper: Pixi | null = null;
@@ -48,7 +50,7 @@ export function getPixiWrapper(): Pixi {
       },
       canvas: () => {
         const renderer = pixiWrapper!.renderer()!;
-        const validKeys = ['view', 'canvas'] as const;
+        const validKeys = ['canvas', 'view'] as const;
 
         // find the first valid key
         const key = validKeys.find((key) => renderer && key in renderer) as 'view' | 'canvas' | undefined;
@@ -70,6 +72,9 @@ export function getPixiWrapper(): Pixi {
         return pixiWrapper!.app() || pixiWrapper!.stage() || pixiWrapper!.renderer()
           ? MessageType.Active
           : MessageType.Inactive;
+      },
+      overlay: () => {
+        return getOverlayWrapper();
       },
     };
 

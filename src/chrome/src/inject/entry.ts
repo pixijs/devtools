@@ -4,8 +4,9 @@ import { sceneGraphMap, updateSceneGraph } from './updateSceneGraph';
 import { updateSceneStats } from './updateSceneStats';
 import { loop } from './utils/loop';
 import { pollPixi } from './utils/poll';
+import { Throttle } from './utils/throttle';
 
-let lastUpdateTime = Date.now();
+const throttle = new Throttle();
 
 // listen to the postMessage event
 window.addEventListener('message', (event) => {
@@ -28,10 +29,10 @@ window.addEventListener('message', (event) => {
       apply(target, thisArg, args) {
         const res = target.apply(thisArg, args as any);
 
-        const currentTime = Date.now();
-        if (currentTime - lastUpdateTime >= 100) {
-          lastUpdateTime = currentTime;
+        // update the overlay
+        pixiWrapper.overlay().update();
 
+        if (throttle.shouldExecute(100)) {
           resetPixiState();
           pixiWrapper.state().version = pixiWrapper.version();
           if (renderer.lastObjectRendered === pixiWrapper.stage()) {

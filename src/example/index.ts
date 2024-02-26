@@ -30,9 +30,10 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
 
     bunny.x = (i % 5) * 40;
     bunny.y = Math.floor(i / 5) * 40;
+    bunny.anchor.x = 0.5;
     bunny.label = `Bunny ${i}`;
-    bunny.filterArea = new PIXI.Rectangle(0, 0, 40, 40);
-    bunny.boundsArea = new PIXI.Rectangle(0, 0, 40, 40);
+    // bunny.filterArea = new PIXI.Rectangle(0, 0, 40, 40);
+    // bunny.boundsArea = new PIXI.Rectangle(0, 0, 40, 40);
     container.addChild(bunny);
   }
 
@@ -48,7 +49,7 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   app.ticker.add((time) => {
     // Continuously rotate the container!
     // * use delta to create frame-independent transform *
-    container.rotation -= 0.01 * time.deltaTime;
+    // container.rotation -= 0.01 * time.deltaTime;
   });
 
   // add two buttons to add and remove bunnies

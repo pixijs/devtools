@@ -52,7 +52,7 @@ export const TreeDirectory = styled.div`
   }
 
   .container.open {
-    color: var(--active-bg-color);
+    color: var(--primary-color);
     font-weight: bold;
 
     /* or use text-shadow for a bolder effect */

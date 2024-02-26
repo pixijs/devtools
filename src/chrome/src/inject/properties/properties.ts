@@ -1,9 +1,11 @@
+import { Container } from 'pixi.js';
 import { getPixiWrapper } from '../devtool';
 import { sceneGraphMap } from '../updateSceneGraph';
 import { PropertyPlugins } from './PropertyPlugins';
 
 export const properties = () => {
   let selectedNodeId: string | null = null;
+  let selectNode: Container;
   const propertyPanel = {
     keys: [] as string[],
     values: [] as any[],
@@ -14,14 +16,15 @@ export const properties = () => {
       if (!selectedNodeId) return;
       for (const [container, node] of sceneGraphMap.entries()) {
         if (node.metadata.uid === selectedNodeId) {
+          selectNode = container;
           return { c: container, u: node.metadata.uid };
         }
       }
     },
     setSelectedNodeIds: function (nodes: string | null) {
       selectedNodeId = nodes;
-      if (nodes) {
-        console.log('Selected node:', nodes);
+      if (!nodes) {
+        selectNode = null as any;
       }
     },
     updateSelectedNodes: function () {
@@ -74,6 +77,9 @@ export const properties = () => {
 
       // now need to update the state
       this.updateSelectedNodes();
+    },
+    getSelectedNode: function () {
+      return selectNode;
     },
   };
 };
