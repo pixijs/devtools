@@ -1,14 +1,11 @@
-import { rotate, scale, styler, translate } from 'free-transform';
+import { rotate, scale, styler } from 'free-transform';
+import { Container } from 'pixi.js';
+import { getPixiWrapper } from '../devtool';
+import { getPixiObject } from './transform/utils/getPixiObject';
 
 interface TransformOptions {
   classPrefix: string;
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  scaleX: number;
-  scaleY: number;
-  angle: number;
+  node: Container;
   scaleLimit?: number;
   disableScale?: boolean;
   offsetX?: number;
@@ -18,6 +15,7 @@ interface TransformOptions {
 
 export class Transform {
   classPrefix: string;
+  node!: Container;
   width!: number;
   height!: number;
   x!: number;
@@ -29,13 +27,15 @@ export class Transform {
   disableScale!: boolean;
   offsetX!: number;
   offsetY!: number;
-  onUpdate!: () => void;
+  onUpdate!: (...args: any[]) => void;
 
   transform!: HTMLElement;
   controls!: HTMLElement;
   content!: HTMLElement;
   scalePoints!: HTMLElement[];
   rotator!: HTMLDivElement;
+
+  private _tempSize = { width: 0, height: 0 };
 
   constructor(options: Partial<TransformOptions>) {
     this.classPrefix = options.classPrefix || 'tr';
@@ -132,7 +132,10 @@ export class Transform {
 
     const dom = document.createElement('div');
     dom.className = `${this.classPrefix}-transform`;
-    dom.addEventListener('mousedown', this.handleTranslation);
+    Object.assign(dom.style, {
+      width: '100%',
+      height: '100%',
+    });
 
     const style = styler({
       x: this.x,
@@ -157,13 +160,12 @@ export class Transform {
     Object.assign(box.style, {
       width: `100%`,
       height: `100%`,
-      // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid var(--primary-color)',
     });
 
     const controls = document.createElement('div');
     controls.className = `${this.classPrefix}-transform__controls`;
-    Object.assign(controls.style, style.controls);
+    controls.addEventListener('mousedown', this.handleTranslation);
+    Object.assign(controls.style, { ...style.controls, border: '1px solid var(--primary-color)' });
 
     const scalePoints = ['tl', 'ml', 'tr', 'tm', 'mr', 'bl', 'bm', 'br'];
     const scalePointElements = [] as HTMLElement[];
@@ -193,14 +195,27 @@ export class Transform {
 
   update(options: TransformOptions) {
     this.node = options.node;
-    this.width = options.width;
-    this.height = options.height;
-    this.x = options.x;
-    this.y = options.y;
-    this.scaleX = options.scaleX;
-    this.scaleY = options.scaleY;
+    
+    const size = this.node.getBounds(false);
+    // const Matrix = getPixiObject('Matrix');
+    // const tempMatrix = new Matrix();
+    // const gizmoMatrix = new Matrix();
+
+    // const wt = this.node.parent?.worldTransform || this.node.worldTransform;
+    // tempMatrix.append(wt.clone().invert());
+    // tempMatrix.append(gizmoMatrix);
+
+    this.x = this.node.worldTransform.tx;
+    this.y = this.node.worldTransform.ty
+    this.width = size.width;
+    this.height = size.height;
+    this._tempSize.width = this.width * this.node.worldTransform.a;
+    this._tempSize.height = this.height * this.node.worldTransform.d;
+    this.scaleX = this.node.worldTransform.a;
+    this.scaleY = this.node.worldTransform.d;
+    this.angle = this.node.angle;
+
     this.scaleLimit = options.scaleLimit || 0.1;
-    this.angle = options.angle;
     this.disableScale = options.disableScale || false;
     this.offsetX = options.offsetX || 0;
     this.offsetY = options.offsetY || 0;
@@ -211,6 +226,10 @@ export class Transform {
         /** */
       };
 
+    this.updateStyle();
+  }
+
+  updateStyle() {
     const { element: elementStyle, controls: controlsStyles } = styler({
       x: this.x,
       y: this.y,
@@ -235,40 +254,98 @@ export class Transform {
     Object.assign(this.controls.style, convertNumbersToPx(controlsStyles));
   }
 
+  updateNode() {
+    const Matrix = getPixiObject('Matrix');
+    const tempMatrix = new Matrix();
+    const gizmoMatrix = new Matrix();
+
+    // set gizmo transform from the transform matrix of the contents div
+    const style = window.getComputedStyle(this.content, null);
+    const trans = style.transform;
+    const numberPattern = /-?\d+\.?\d*/g;
+    const transform = trans!.match(numberPattern);
+    const parsedTransform = transform!.map((n) => parseFloat(n));
+    gizmoMatrix.set(...parsedTransform as [number, number, number, number, number, number]);
+
+
+
+    const size = this.node.getLocalBounds();
+    // undo the difference between the node's position and the gizmo's position
+    // gizmoMatrix.translate(-size.x, -size.y)
+
+    // tempMatrix.append(this.node.parent.worldTransform.clone().invert());
+    // tempMatrix.append(gizmoMatrix);
+    // this.node.setFromMatrix(tempMatrix);
+
+    this.node.x = this.x;
+    this.node.y = this.y;
+    this.node.angle = this.angle;
+    this.node.scale.set(this.scaleX, this.scaleY);
+
+
+    // const pixiWrapper = getPixiWrapper();
+    // const renderer = pixiWrapper.renderer()!;
+
+    // // get the size of the node
+    // const size = this.node.getBounds(false);
+
+    // // convert the div's position to the canvas position
+    // const point = { x: 0, y: 0 };
+    // renderer.events.mapPositionToPoint(point, this.x, this.y);
+
+    // // get the div's bounding rect which is the same as the canvas
+    // const rect = this.transform.getBoundingClientRect();
+
+    // // set the node's position
+    // this.node.position.set(point.x + (this.node.x - size.x) + rect.left, point.y + (this.node.y - size.y) + rect.top);
+
+    // set the container size
+    // this.node.width = this._tempSize.width;
+    // this.node.height = this._tempSize.height;
+
+    // set rotation
+    // this.node.angle = this.angle;
+  }
+
   handleTranslation(event: MouseEvent) {
     event.stopPropagation();
 
-    const startX = event.pageX;
-    const startY = event.pageY;
-    const drag = translate(
+    const startX = event.clientX;
+    const startY = event.clientY;
+
+    const drag = this.translate(
       {
         x: this.x,
         y: this.y,
         startX,
         startY,
       },
-      this.onUpdate,
+      (s) => {
+        this.x = s.x;
+        this.y = s.y;
+        this.updateStyle();
+        this.updateNode();
+      },
     );
 
     const up = () => {
-      this.transform.parentElement!.removeEventListener('mousemove', drag);
-      this.transform.parentElement!.removeEventListener('mouseup', up);
+      this.transform!.removeEventListener('mousemove', drag);
+      this.transform!.removeEventListener('mouseup', up);
     };
 
-    this.transform.parentElement!.addEventListener('mousemove', drag);
-    this.transform.parentElement!.addEventListener('mouseup', up);
+    this.transform!.addEventListener('mousemove', drag);
+    this.transform!.addEventListener('mouseup', up);
   }
 
   handleScale(scaleType: string, event: MouseEvent) {
     event.stopPropagation();
-
     event.preventDefault();
 
     const drag = scale(
       scaleType,
       {
-        startX: event.pageX,
-        startY: event.pageY,
+        startX: event.clientX,
+        startY: event.clientY,
         x: this.x,
         y: this.y,
         scaleX: this.scaleX,
@@ -280,7 +357,16 @@ export class Transform {
         scaleFromCenter: event.altKey,
         aspectRatio: event.shiftKey,
       },
-      this.onUpdate,
+      (s) => {
+        this.x = s.x;
+        this.y = s.y;
+        this.scaleX = s.scaleX;
+        this.scaleY = s.scaleY;
+        this._tempSize.width = this.width * s.scaleX;
+        this._tempSize.height = this.height * s.scaleY;
+        this.updateStyle();
+        this.updateNode();
+      },
     );
 
     const up = () => {
@@ -309,7 +395,11 @@ export class Transform {
         offsetX: this.offsetX,
         offsetY: this.offsetY,
       },
-      this.onUpdate,
+      (s) => {
+        this.angle = s.angle;
+        this.updateStyle();
+        this.updateNode();
+      },
     );
 
     const up = () => {
@@ -319,5 +409,24 @@ export class Transform {
 
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', up);
+  }
+
+  translate(ref: { x: number; y: number; startX: number; startY: number }, onUpdate: (opts: any) => void) {
+    let x = ref.x,
+      y = ref.y,
+      startX = ref.startX,
+      startY = ref.startY;
+    return (dragEvent: MouseEvent) => {
+      const localX = dragEvent.clientX; //+ rect.left;
+      const localY = dragEvent.clientY; //+ rect.top;
+
+      x += localX - startX;
+      y += localY - startY;
+
+      onUpdate({ x: x, y: y });
+
+      startX = localX;
+      startY = localY;
+    };
   }
 }

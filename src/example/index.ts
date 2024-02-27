@@ -6,7 +6,7 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   const app = new Application();
 
   // Initialize the application
-  await app.init({ background: '#1099bb', resizeTo: window });
+  await app.init({ background: '#1099bb' });
 
   window.__PIXI_DEVTOOLS__ = {
     app: app,
@@ -25,16 +25,17 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
 
   // Create a 5x5 grid of bunnies in the container
-  for (let i = 0; i < 25; i++) {
+  for (let i = 0; i < 1; i++) {
     const bunny = new Sprite(texture);
 
-    bunny.x = (i % 5) * 40;
+    bunny.x = 300
     bunny.y = Math.floor(i / 5) * 40;
-    bunny.anchor.x = 0.5;
+    // bunny.anchor.x = 0.5;
+    bunny.anchor.set(0.5)
     bunny.label = `Bunny ${i}`;
     // bunny.filterArea = new PIXI.Rectangle(0, 0, 40, 40);
     // bunny.boundsArea = new PIXI.Rectangle(0, 0, 40, 40);
-    container.addChild(bunny);
+    app.stage.addChild(bunny);
   }
 
   // Move the container to the center
@@ -44,6 +45,7 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   // Center the bunny sprites in local container coordinates
   container.pivot.x = container.width / 2;
   container.pivot.y = container.height / 2;
+  container.label = 'scaler';
 
   // Listen for animate update
   app.ticker.add((time) => {

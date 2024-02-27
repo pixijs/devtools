@@ -1,7 +1,7 @@
 import { Sprite } from 'pixi.js';
 import { getPixiWrapper } from '../devtool';
 import { Throttle } from '../utils/throttle';
-import { Transform } from './transform/Transform';
+import { Transform } from './Transform';
 
 interface Overlay {
   transform: Transform;
@@ -76,39 +76,11 @@ export function getOverlayWrapper(): Overlay {
 
         if (!selectedNode) return;
 
-        const worldTransform = selectedNode.worldTransform;
-        const size = selectedNode.getBounds(false);
+        if (selectedNode === this.transform.node) return;
 
         this.transform.update({
-          x: worldTransform.tx - (worldTransform.tx - size.x),
-          y: worldTransform.ty - (worldTransform.ty - size.y),
-          width: size.width,
-          height: size.height,
-          angle: selectedNode.angle,
-          scaleX: worldTransform.a,
-          scaleY: worldTransform.d,
+          node: selectedNode,
           classPrefix: 'tr',
-          onUpdate: (s: {
-            width: number;
-            height: number;
-            x: number;
-            y: number;
-            scaleX: number;
-            scaleY: number;
-            angle: number;
-          }) => {
-            if (selectedNode.parent) {
-              selectedNode.parent.worldTransform.applyInverse(s, s);
-            } else {
-              selectedNode.worldTransform.applyInverse(s, s);
-            }
-            selectedNode.x = s.x + selectedNode.pivot.x;
-            selectedNode.y = s.y + selectedNode.pivot.y;
-            if ((selectedNode as Sprite).anchor) {
-              selectedNode.x += (selectedNode as Sprite).anchor.x * selectedNode.width;
-              selectedNode.y += (selectedNode as Sprite).anchor.y * selectedNode.height;
-            }
-          },
         });
       },
     };
