@@ -1,0 +1,42 @@
+{
+  "name": "pixi-devtools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "author": "Zyie",
+  "scripts": {
+    "postinstall": "patch-package",
+    "lint": "eslint --ext .ts,.tsx . && prettier --check .",
+    "lint:fix": "eslint --ext .ts,.tsx . --fix && prettier --write .",
+    "start": "npm run --ws start --if-present",
+    "start:local": "npm run start --workspace @devtool/local --if-present",
+    "start:chrome": "npm run start --workspace @devtool/chrome & npm run start --workspace @devtool/example",
+    "build": "npm run --ws build --if-present",
+    "watch": "npm run --ws watch --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.20",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "npm-run-all": "^4.1.5",
+    "patch-package": "^8.0.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "rimraf": "^4.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
+  },
+  "workspaces": [
+    "./packages/*"
+  ]
+}

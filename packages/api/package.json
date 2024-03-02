@@ -1,0 +1,31 @@
+{
+  "name": "@pixi/devtools",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "start": "npm run watch"
+  },
+  "devDependencies": {
+    "pixi.js": "8.0.0-rc.10"
+  },
+  "peerDependencies": {
+    "pixi.js": "^7 || ^8"
+  }
+}
