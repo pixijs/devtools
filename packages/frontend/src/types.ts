@@ -1,3 +1,4 @@
+import { flattenTree } from 'react-accessible-treeview';
 import type { BridgeFn } from './lib/utils';
 import type { SceneState } from './pages/scene/state';
 
@@ -7,6 +8,29 @@ export enum DevtoolMessage {
   stateUpdate = 'pixi-state-update',
 }
 
+export type PixiNodeType =
+  | 'BitmapText'
+  | 'HTMLText'
+  | 'Text'
+  | 'Mesh'
+  | 'Graphics'
+  | 'Sprite'
+  | 'Container'
+  | 'AnimatedSprite'
+  | 'NineSliceSprite'
+  | 'TilingSprite'
+  | 'Unknown';
+export interface PixiMetadata {
+  type: PixiNodeType;
+  uid: string;
+  isStage?: boolean;
+}
+
+export type SceneGraphEntry = Omit<Parameters<typeof flattenTree>[0], 'metadata' | 'children'> & {
+  metadata: PixiMetadata;
+  children: SceneGraphEntry[];
+};
+
 export interface DevtoolState extends SceneState {
   active: boolean;
   setActive: (active: DevtoolState['active']) => void;
@@ -14,7 +38,7 @@ export interface DevtoolState extends SceneState {
   version: string | null;
   setVersion: (version: DevtoolState['version']) => void;
 
-  sceneGraph: Record<string, unknown> | null;
+  sceneGraph: SceneGraphEntry | null;
   setSceneGraph: (sceneGraph: DevtoolState['sceneGraph']) => void;
 
   bridge: BridgeFn | null;

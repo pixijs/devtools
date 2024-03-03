@@ -40,6 +40,10 @@ export function isDifferent(a: unknown | string, b: unknown | string) {
   const convertedA = a instanceof String ? a : JSON.stringify(a);
   const convertedB = b instanceof String ? b : JSON.stringify(b);
 
+  if (convertedA !== convertedB) {
+    console.log('isDifferent', a, b);
+  }
+
   return convertedA !== convertedB;
 }
 

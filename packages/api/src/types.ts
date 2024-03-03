@@ -7,11 +7,12 @@ export interface NodeTrackerPlugin {
 }
 
 type NoOnChange = Omit<PropertyPanelData['entry'], 'onChange'>;
-export type Props = Omit<PropertyPanelData, 'value' | 'entry'> & { entry: NoOnChange };
+export type Props = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
 export type PropsData = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
 
 export interface PropertyPlugin {
-  getEntries(container: Container): PropsData[];
+  updateProps(container: Container): PropsData[];
+  setValue(container: Container, prop: string, value: any): void;
   props: Props[];
 }
 

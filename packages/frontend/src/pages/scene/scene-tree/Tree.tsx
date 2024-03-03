@@ -86,6 +86,7 @@ export const Tree: React.FC = () => {
   const bridge = useDevtoolStore.use.bridge()!;
   const sceneGraph = useDevtoolStore.use.sceneGraph();
   const selectedNode = useDevtoolStore.use.selectedNode();
+  const setSelectedNode = useDevtoolStore.use.setSelectedNode();
 
   const treeData = flattenTree(sceneGraph as unknown as typeof flattenTree);
 
@@ -128,8 +129,10 @@ export const Tree: React.FC = () => {
     return () => {
       setHighlightedNodes(null);
       setHighlightedTreeIds(null);
+      setSelectedTreeId(null);
+      setSelectedNode(null);
     };
-  }, [sceneGraph]);
+  }, [sceneGraph, bridge, setSelectedNode]);
 
   console.log('expandedIds', selectedTreeId);
 
@@ -163,7 +166,7 @@ export const Tree: React.FC = () => {
           const selectedNodeIds = node.treeState.selectedIds;
           const selectedNodes = treeData.filter((node) => selectedNodeIds.has(node.id));
           bridge(
-            `window.__PIXI_DEVTOOLS_WRAPPER__.properties.setSelectedNodeIds(${JSON.stringify(
+            `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(
               selectedNodes.map((node) => node.metadata!.uid)[0],
             )})`,
           );

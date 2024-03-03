@@ -1,18 +1,7 @@
 import { Container } from 'pixi.js';
 import { PixiDevtools } from '../pixi';
+import { PixiNodeType } from '@devtool/frontend/types';
 
-export type PixiNodeType =
-  | 'BitmapText'
-  | 'HTMLText'
-  | 'Text'
-  | 'Mesh'
-  | 'Graphics'
-  | 'Sprite'
-  | 'Container'
-  | 'AnimatedSprite'
-  | 'NineSliceSprite'
-  | 'TilingSprite'
-  | 'Unknown';
 export function getPixiType(container: Container): PixiNodeType {
   const pixi = PixiDevtools.pixi;
 

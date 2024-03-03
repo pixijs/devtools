@@ -18,7 +18,7 @@ import { Switch } from '../../../components/ui/switch';
 import { formatCamelCase } from '../../../lib/utils';
 import { SliderProps } from '@radix-ui/react-slider';
 import { SwitchProps } from '@radix-ui/react-switch';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 
 interface PanelProps {
@@ -181,17 +181,40 @@ const properties: Record<PropertyTypes, React.FC<PropertyPanelData>> = {
   color: ColorProperty,
 };
 
-export const Properties: React.FC = () => {
-  const activeProps = useDevtoolStore((state) => state.activeProps);
-  const bridge = useDevtoolStore.use.bridge()!;
-  const [filteredProps, setFilteredProps] = useState(activeProps ?? []);
-  const sections: Record<string, PropertyPanelData[]> = {};
-  const fuse = new Fuse(activeProps, {
+function clone(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function filterProps(activeProps: PropertyPanelData[], searchTerm: string, fuse: Fuse<PropertyPanelData>) {
+  if (searchTerm === '') return clone(activeProps);
+  return fuse.search(searchTerm).map((item) => item.item);
+}
+
+function createFuse(activeProps: PropertyPanelData[]) {
+  return new Fuse(clone(activeProps), {
     keys: ['entry.label', 'prop'],
     includeScore: true,
     findAllMatches: true,
     getFn: (prop: PropertyPanelData) => prop.entry.label ?? formatCamelCase(prop.prop),
   });
+}
+
+export const Properties: React.FC = () => {
+  const activeProps = useDevtoolStore((state) => state.activeProps);
+  const bridge = useDevtoolStore.use.bridge()!;
+  const [currentSearch, setCurrentSearch] = useState('');
+  const [fuse, setFuse] = useState(createFuse(activeProps));
+  const [filteredPropIds, setFilteredPropIds] = useState(
+    filterProps(activeProps, currentSearch, fuse) as PropertyPanelData[],
+  );
+  const sections: Record<string, PropertyPanelData[]> = {};
+
+  useEffect(() => {
+    const fuse = createFuse(activeProps);
+    setFuse(fuse);
+    const props = filterProps(activeProps, currentSearch, fuse);
+    setFilteredPropIds(props);
+  }, [activeProps, currentSearch]);
 
   const handlePropertyChange = useCallback(
     (property: string, newValue: any) => {
@@ -203,7 +226,8 @@ export const Properties: React.FC = () => {
     [bridge],
   );
 
-  filteredProps.forEach((prop) => {
+  filteredPropIds.forEach((prop) => {
+    if (prop.value == null) return;
     if (!sections[prop.entry.section]) {
       sections[prop.entry.section] = [];
     }
@@ -216,10 +240,11 @@ export const Properties: React.FC = () => {
     });
   });
 
+  console.log('rendering props');
+
   const onSearch = (searchTerm: string) => {
-    if (searchTerm === '') return setFilteredProps(activeProps);
-    const result = fuse.search(searchTerm);
-    setFilteredProps(result.map((item) => item.item));
+    setFuse(createFuse(activeProps));
+    setCurrentSearch(searchTerm);
   };
 
   return (
