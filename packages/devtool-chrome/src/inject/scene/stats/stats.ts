@@ -1,6 +1,6 @@
 import { DevtoolState } from '@devtool/frontend/types';
 import type { Container } from 'pixi.js';
-import { PixiDevtools } from '../../pixi';
+import type { PixiDevtools } from '../../pixi';
 import { getPixiType } from '../../utils/getPixiType';
 import type { NodeTrackerPlugin } from '@pixi/devtools';
 
@@ -42,12 +42,17 @@ const defaultPlugin: NodeTrackerPlugin = {
 };
 
 export class NodeTracker {
+  private _devtool: typeof PixiDevtools;
+  constructor(devtool: typeof PixiDevtools) {
+    this._devtool = devtool;
+  }
+
   private get plugins() {
-    return [totalNodesPlugin, ...(PixiDevtools.devtools.plugins?.stats ?? []), defaultPlugin];
+    return [totalNodesPlugin, ...(this._devtool.devtools.plugins?.stats ?? []), defaultPlugin];
   }
   public init() {
     // loop through all plugins and get the keys and set to 0
-    const state = PixiDevtools.state.stats!;
+    const state = this._devtool.state.stats!;
     for (const plugin of this.plugins) {
       for (const key of plugin.getKeys()) {
         if (state[key] != undefined) {
@@ -58,7 +63,7 @@ export class NodeTracker {
     }
   }
   public trackNode(container: Container) {
-    const state = PixiDevtools.state.stats!;
+    const state = this._devtool.state.stats!;
     for (const plugin of this.plugins) {
       if (plugin.trackNode(container, state)) {
         break;
@@ -67,7 +72,7 @@ export class NodeTracker {
   }
   public complete() {
     // remove any nodes that are at 0
-    const state = PixiDevtools.state.stats!;
+    const state = this._devtool.state.stats!;
 
     for (const key in state) {
       if (state[key] === 0) {

@@ -5,30 +5,34 @@ export const ContainerPropertiesPlugin: PropertyPlugin = {
   updateProps(container: Container) {
     this.props.forEach((property) => {
       const prop = property.prop as keyof Container | string;
-      let value = container[prop as keyof Container] as any;
+      const value = container[prop as keyof Container] as any;
 
       if (prop === 'type') {
-        value = container.constructor.name;
+        property.value = container.constructor.name;
       } else if (value != null && (prop === 'position' || prop === 'scale' || prop === 'pivot' || prop === 'skew')) {
-        value = [value.x, value.y];
+        property.value = [value.x, value.y];
       } else if (
         value != null &&
         (prop === 'filterArea' || prop === 'boundsArea' || prop === 'cullArea' || prop === 'hitArea')
       ) {
-        value = [value.x, value.y, value.width, value.height];
+        property.value = [value.x, value.y, value.width, value.height];
       } else if (value != null && prop === 'worldTransform') {
-        value = value.toArray();
+        property.value = value.toArray();
+      } else {
+        property.value = value;
       }
-
-      property.value = value;
     });
 
     return this.props;
   },
+  containsProperty(prop: string) {
+    return this.props.some((property) => property.prop === prop || property.prop === 'type');
+  },
   setValue(container: Container, prop: string, value: any) {
     prop = prop as keyof Container;
     if (prop === 'position' || prop === 'scale' || prop === 'pivot' || prop === 'skew') {
-      container[prop].set(value[0], value[1]);
+      container.x = value[0];
+      container.y = value[1];
     } else if (prop === 'filterArea' || prop === 'boundsArea' || prop === 'cullArea' || prop === 'hitArea') {
       (container[prop] as Rectangle)!.x = value[0];
       (container[prop] as Rectangle)!.y = value[1];

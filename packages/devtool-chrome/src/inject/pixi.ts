@@ -50,9 +50,9 @@ class PixiWrapper {
     },
   };
 
-  public statTracker = new NodeTracker();
-  public tree = new Tree();
-  public properties = new Properties();
+  public statTracker = new NodeTracker(this);
+  public tree = new Tree(this);
+  public properties = new Properties(this);
   // Private properties
   private _devtools: Devtools | undefined;
   private _app: Application | undefined;

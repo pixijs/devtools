@@ -1,5 +1,5 @@
 import type { Container } from 'pixi.js';
-import { PixiDevtools } from '../../pixi';
+import type { PixiDevtools } from '../../pixi';
 import { SceneGraphEntry, PixiNodeType } from '@devtool/frontend/types';
 import { getPixiType } from '../../utils/getPixiType';
 
@@ -10,6 +10,12 @@ export class Tree {
   private _idMap: Map<string, Container> = new Map();
   public selectedNode: Container | null = null;
 
+  private _devtool: typeof PixiDevtools;
+
+  constructor(devtool: typeof PixiDevtools) {
+    this._devtool = devtool;
+  }
+
   public setSelected(nodeId: string | null) {
     if (nodeId == null) {
       this.selectedNode = null;
@@ -17,7 +23,6 @@ export class Tree {
     }
 
     this.selectedNode = this._idMap.get(nodeId) ?? null;
-    console.log('selectedNode', nodeId, this.selectedNode);
   }
 
   public init() {
@@ -26,13 +31,13 @@ export class Tree {
   }
 
   public complete() {
-    PixiDevtools.state.selectedNode = this.selectedNode
+    this._devtool.state.selectedNode = this.selectedNode
       ? (this._sceneGraph.get(this.selectedNode)!.id as string)
       : null;
   }
 
   public update(container: Container) {
-    const stage = PixiDevtools.stage;
+    const stage = this._devtool.stage;
     const type = getPixiType(container);
 
     const node = {
@@ -48,7 +53,7 @@ export class Tree {
     this._idMap.set(node.id, container);
 
     if (container === stage) {
-      const graph = PixiDevtools.state.sceneGraph;
+      const graph = this._devtool.state.sceneGraph;
       graph?.children.push(node);
       this._sceneGraph.set(container, node);
       return;
@@ -60,7 +65,7 @@ export class Tree {
   }
 
   private _getName(container: Container, type: PixiNodeType) {
-    const stage = PixiDevtools.stage;
+    const stage = this._devtool.stage;
     const name = container.label ?? container.name;
     const nameIsType = name === type;
     let finalName: string;

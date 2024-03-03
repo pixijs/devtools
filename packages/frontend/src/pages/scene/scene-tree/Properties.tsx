@@ -81,12 +81,19 @@ export type PropertyPanelData = {
     label?: string;
     type: PropertyTypes;
     options?: InputProps | SwitchProps | Vector2Props | SliderProps | SelectionProps | any;
-    onChange: (value: string | number) => void;
+    onChange: (value: string | number | boolean) => void;
   };
 };
 
 const BooleanProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return <Switch className="bg-border h-6" {...(entry.options as SwitchProps)} value={value} />;
+  return (
+    <Switch
+      className="bg-border h-6"
+      {...(entry.options as SwitchProps)}
+      checked={value}
+      onCheckedChange={entry.onChange}
+    />
+  );
 };
 
 const NumberProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
@@ -141,7 +148,7 @@ const ButtonProperty: React.FC<PropertyPanelData> = ({ entry }) => {
       variant="outline"
       size="sm"
       className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
-      onClick={() => entry.onChange('clicked')}
+      onClick={() => entry.onChange(true)}
       {...(entry.options as ButtonFnProps)}
     >
       {(entry.options as ButtonFnProps).label}
@@ -221,7 +228,6 @@ export const Properties: React.FC = () => {
       bridge(`
         window.__PIXI_DEVTOOLS_WRAPPER__.properties.setValue('${property}', ${newValue})
       `);
-      console.log('property change', property, newValue);
     },
     [bridge],
   );
@@ -239,8 +245,6 @@ export const Properties: React.FC = () => {
       },
     });
   });
-
-  console.log('rendering props');
 
   const onSearch = (searchTerm: string) => {
     setFuse(createFuse(activeProps));

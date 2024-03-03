@@ -1,21 +1,23 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { Sprite } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const SpritePropertiesPlugin: PropertyPlugin = {
   updateProps(sprite: Sprite) {
     this.props.forEach((property) => {
       const prop = property.prop as keyof Sprite | string;
-      let value = sprite[prop as keyof Sprite] as any;
+      const value = sprite[prop as keyof Sprite] as any;
 
       if (value != null && prop === 'anchor') {
-        value = [value.x, value.y];
+        property.value = [value.x, value.y];
+      } else {
+        property.value = value;
       }
-
-      property.value = value;
     });
 
     return this.props;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   setValue(sprite: Sprite, prop: string, value: any) {
     prop = prop as keyof Sprite;
     if (prop === 'anchor') {

@@ -1,18 +1,16 @@
-import { useDevtoolStore } from '../../../App';
-import { Button } from '../../../components/ui/button';
-import { Separator } from '../../../components/ui/separator';
-import { Toggle } from '../../../components/ui/toggle';
-import { cn } from '../../../lib/utils';
 import Fuse from 'fuse.js';
 import { useEffect, useMemo, useState } from 'react';
 import TreeView, { flattenTree } from 'react-accessible-treeview';
 import {
-  FaGear,
   FaPlus as LayerIconClosed,
   FaMinus as LayerIconOpen,
+  FaArrowPointer as PickIcon,
   FaRegObjectGroup as SceneNodeIcon,
 } from 'react-icons/fa6';
-import { FaArrowPointer as PickIcon } from 'react-icons/fa6';
+import { useDevtoolStore } from '../../../App';
+import { Separator } from '../../../components/ui/separator';
+import { Toggle } from '../../../components/ui/toggle';
+import { cn } from '../../../lib/utils';
 
 interface PanelProps {
   children: React.ReactNode;
@@ -33,6 +31,10 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
         <div className="flex h-full flex-col">
           {/* search bar */}
           <div className="border-border flex h-8 max-h-8 items-center border-b">
+            <Toggle variant="ghost" size="icon" className="hover:border-primary h-8 rounded-none hover:border-b-2">
+              <PickIcon className="dark:fill-white" />
+            </Toggle>
+            <Separator orientation="vertical" className="h-4" />
             {/* search wrapper */}
             <div className="hover:border-b-primary inline-block h-8 w-auto min-w-0 flex-1 cursor-text align-middle hover:border-b-2">
               <input
@@ -43,14 +45,6 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
                 onChange={handleSearch}
               />
             </div>
-            <Separator orientation="vertical" className="h-4" />
-            <Toggle variant="ghost" size="icon" className="hover:border-primary h-8 rounded-none hover:border-b-2">
-              <PickIcon className="dark:fill-white" />
-            </Toggle>
-            <Separator orientation="vertical" className="h-4" />
-            <Button variant="ghost" size="icon" className="hover:border-primary h-8 rounded-none hover:border-b-2">
-              <FaGear className="dark:fill-white" />
-            </Button>
           </div>
           {/* content */}
           <div className="flex-1 overflow-auto p-2">
@@ -133,8 +127,6 @@ export const Tree: React.FC = () => {
       setSelectedNode(null);
     };
   }, [sceneGraph, bridge, setSelectedNode]);
-
-  console.log('expandedIds', selectedTreeId);
 
   return (
     <Panel onSearch={onSearch}>

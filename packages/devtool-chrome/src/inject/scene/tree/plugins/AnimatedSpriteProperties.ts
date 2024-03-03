@@ -1,23 +1,25 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { AnimatedSprite } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const AnimatedSpritePropertiesPlugin: PropertyPlugin = {
   updateProps(sprite: AnimatedSprite) {
     this.props.forEach((property) => {
       const prop = property.prop as keyof AnimatedSprite | string;
-      let value = sprite[prop as keyof AnimatedSprite] as any;
+      const value = sprite[prop as keyof AnimatedSprite] as any;
 
       if (value != null && (prop === 'start' || prop === 'stop' || prop === 'play')) {
-        value = true;
+        property.value = true;
       } else if (value != null && prop === 'anchor') {
-        value = [value.x, value.y];
+        property.value = [value.x, value.y];
+      } else {
+        property.value = value;
       }
-
-      property.value = value;
     });
 
     return this.props;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   setValue(sprite: AnimatedSprite, prop: string, value: any) {
     prop = prop as keyof AnimatedSprite;
     if (prop === 'start') {

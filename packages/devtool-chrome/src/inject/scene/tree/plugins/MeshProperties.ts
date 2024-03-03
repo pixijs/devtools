@@ -1,5 +1,6 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { Mesh } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const MeshPropertiesPlugin: PropertyPlugin = {
   updateProps(mesh: Mesh) {
@@ -15,6 +16,7 @@ export const MeshPropertiesPlugin: PropertyPlugin = {
   setValue(mesh: Mesh, prop: string, value: any) {
     (mesh as any)[prop] = value;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   props: [
     { value: null, prop: 'roundPixels', entry: { section: 'Transform', type: 'boolean' } },
     {

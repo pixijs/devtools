@@ -1,5 +1,6 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { NineSliceSprite } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const NineSliceSpritePropertiesPlugin: PropertyPlugin = {
   updateProps(nineSlice: NineSliceSprite) {
@@ -15,6 +16,7 @@ export const NineSliceSpritePropertiesPlugin: PropertyPlugin = {
   setValue(nineSlice: NineSliceSprite, prop: string, value: any) {
     (nineSlice as any)[prop] = value;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   props: [
     { value: null, prop: 'roundPixels', entry: { section: 'Transform', type: 'boolean' } },
     { value: null, prop: 'leftWidth', entry: { section: 'NineSlice Sprite', type: 'number' } },

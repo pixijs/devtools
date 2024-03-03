@@ -13,6 +13,7 @@ export type PropsData = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange }
 export interface PropertyPlugin {
   updateProps(container: Container): PropsData[];
   setValue(container: Container, prop: string, value: any): void;
+  containsProperty(prop: string): boolean;
   props: Props[];
 }
 

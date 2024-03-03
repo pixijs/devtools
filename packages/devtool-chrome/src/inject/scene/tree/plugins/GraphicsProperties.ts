@@ -1,5 +1,6 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { Graphics } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const GraphicsPropertiesPlugin: PropertyPlugin = {
   updateProps(graphic: Graphics) {
@@ -12,6 +13,7 @@ export const GraphicsPropertiesPlugin: PropertyPlugin = {
 
     return this.props;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   setValue(graphic: Graphics, prop: string, value: any) {
     (graphic as any)[prop] = value;
   },

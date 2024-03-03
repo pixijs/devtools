@@ -1,21 +1,23 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { TilingSprite } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const TilingSpritePropertiesPlugin: PropertyPlugin = {
   updateProps(sprite: TilingSprite) {
     this.props.forEach((property) => {
       const prop = property.prop as keyof TilingSprite | string;
-      let value = sprite[prop as keyof TilingSprite] as any;
+      const value = sprite[prop as keyof TilingSprite] as any;
 
       if (value != null && (prop === 'anchor' || prop === 'tilePosition' || prop === 'tileScale')) {
-        value = [value.x, value.y];
+        property.value = [value.x, value.y];
+      } else {
+        property.value = value;
       }
-
-      property.value = value;
     });
 
     return this.props;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   setValue(sprite: TilingSprite, prop: string, value: any) {
     prop = prop as keyof TilingSprite;
     if (prop === 'anchor' || prop === 'tilePosition' || prop === 'tileScale') {

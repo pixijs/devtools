@@ -1,21 +1,23 @@
 import { PropertyPlugin } from '@pixi/devtools';
 import type { Text } from 'pixi.js';
+import { ContainerPropertiesPlugin } from './ContainerProperties';
 
 export const TextPropertiesPlugin: PropertyPlugin = {
   updateProps(text: Text) {
     this.props.forEach((property) => {
       const prop = property.prop as keyof Text | string;
-      let value = text[prop as keyof Text] as any;
+      const value = text[prop as keyof Text] as any;
 
       if (value != null && prop === 'anchor') {
-        value = [value.x, value.y];
+        property.value = [value.x, value.y];
+      } else {
+        property.value = value;
       }
-
-      property.value = value;
     });
 
     return this.props;
   },
+  containsProperty: ContainerPropertiesPlugin.containsProperty,
   setValue(text: Text, prop: string, value: any) {
     prop = prop as keyof Text;
 
