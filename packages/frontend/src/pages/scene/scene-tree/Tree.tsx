@@ -87,7 +87,7 @@ export const Tree: React.FC = () => {
   const sceneGraph = useDevtoolStore.use.sceneGraph();
   const selectedNode = useDevtoolStore.use.selectedNode();
 
-  const treeData = flattenTree((sceneGraph) as unknown as typeof flattenTree);
+  const treeData = flattenTree(sceneGraph as unknown as typeof flattenTree);
 
   // find the node in the tree data that matches the selected node
   const node = treeData.find((node) => node.metadata!.uid === selectedNode);

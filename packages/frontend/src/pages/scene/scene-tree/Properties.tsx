@@ -80,7 +80,7 @@ export type PropertyPanelData = {
     section: string;
     label?: string;
     type: PropertyTypes;
-    options: InputProps | SwitchProps | Vector2Props | SliderProps | SelectionProps | any;
+    options?: InputProps | SwitchProps | Vector2Props | SliderProps | SelectionProps | any;
     onChange: (value: string | number) => void;
   };
 };
