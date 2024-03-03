@@ -11,9 +11,10 @@ declare global {
       app: import('pixi.js').Application | undefined;
       stage?: import('pixi.js').Container | undefined;
       renderer?: import('pixi.js').Renderer | undefined;
-      scenePanel?: {
-        propertyPlugins?: any[];
-      };
+      plugins? : {
+        stats?: import('./types').NodeTrackerPlugin[];
+        properties?: import('./types').PropertyPlugin[];
+      }
     };
   }
 }

@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../global.d.ts" />
 import { Devtools } from './types';
 
 export * from './types';
@@ -20,5 +22,6 @@ export async function initDevtools(opts: Devtools) {
     app: opts.app,
     stage: opts.stage,
     renderer: opts.renderer,
+    plugins: opts.plugins,
   };
 }

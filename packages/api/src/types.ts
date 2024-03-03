@@ -1,5 +1,16 @@
-import type { PropertyPanelData } from '@devtool/frontend/pages/scene/scene-tree/Properties';
 import type { Container, Renderer, Application } from 'pixi.js';
+
+type PropertyPanelData = {
+  value: any;
+  prop: string;
+  entry: {
+    section: string;
+    label?: string;
+    type: 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX' | 'color';
+    options?: any;
+    onChange: (value: string | number | boolean) => void;
+  };
+};
 
 export interface NodeTrackerPlugin {
   trackNode: (container: Container, state: Record<string, number>) => boolean;

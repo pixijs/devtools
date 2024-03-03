@@ -195,7 +195,7 @@ class SmoothieComponent extends React.Component<SmoothieComponentProps, Smoothie
           updateTooltip({ display: v == 'block' });
         },
         // Get smoothie's mouse events
-        set top(v: any) {
+        set top(_v: any) {
           updateTooltip({
             top: smoothie.mouseY,
             left: smoothie.mouseX,

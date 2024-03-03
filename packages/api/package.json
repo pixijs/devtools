@@ -15,10 +15,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "global.d.ts"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc",
     "watch": "vite build --watch",
     "start": "npm run watch"
   },
