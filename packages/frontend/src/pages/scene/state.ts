@@ -10,6 +10,12 @@ export interface SceneState {
 
   activeProps: PropertyPanelData[];
   setActiveProps: (props: SceneState['activeProps']) => void;
+
+  overlayPickerEnabled: boolean;
+  setOverlayPickerEnabled: (enabled: SceneState['overlayPickerEnabled']) => void;
+
+  overlayHighlightEnabled: boolean;
+  setOverlayHighlightEnabled: (enabled: SceneState['overlayHighlightEnabled']) => void;
 }
 
 export const sceneStateSlice = (set: ZustSet<SceneState>) => ({
@@ -21,4 +27,11 @@ export const sceneStateSlice = (set: ZustSet<SceneState>) => ({
 
   activeProps: [],
   setActiveProps: (props: SceneState['activeProps']) => set({ activeProps: props }),
+
+  overlayPickerEnabled: false,
+  setOverlayPickerEnabled: (enabled: SceneState['overlayPickerEnabled']) => set({ overlayPickerEnabled: enabled }),
+
+  overlayHighlightEnabled: false,
+  setOverlayHighlightEnabled: (enabled: SceneState['overlayHighlightEnabled']) =>
+    set({ overlayHighlightEnabled: enabled }),
 });

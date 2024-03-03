@@ -5,6 +5,8 @@ import { loop } from './utils/loop';
 import { NodeTracker } from './scene/stats/stats';
 import { Tree } from './scene/tree/tree';
 import { Properties } from './scene/tree/properties';
+import { Throttle } from './utils/throttle';
+import { Overlay } from './scene/overlay/overlay';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -48,11 +50,22 @@ class PixiWrapper {
     setActiveProps: function (activeProps: DevtoolState['activeProps']) {
       this.activeProps = activeProps;
     },
+
+    overlayPickerEnabled: false,
+    setOverlayPickerEnabled: function (enabled: DevtoolState['overlayPickerEnabled']) {
+      this.overlayPickerEnabled = enabled;
+    },
+
+    overlayHighlightEnabled: false,
+    setOverlayHighlightEnabled: function (enabled: DevtoolState['overlayHighlightEnabled']) {
+      this.overlayHighlightEnabled = enabled;
+    },
   };
 
   public statTracker = new NodeTracker(this);
   public tree = new Tree(this);
   public properties = new Properties(this);
+  public overlay = new Overlay(this);
   // Private properties
   private _devtools: Devtools | undefined;
   private _app: Application | undefined;
@@ -62,7 +75,7 @@ class PixiWrapper {
   private _pixi: typeof import('pixi.js') | undefined;
   private _version: string | undefined;
 
-  private _currentTime = 0;
+  private _updateThrottle = new Throttle();
 
   /**
    * Searches for a property in the window and its frames.
@@ -193,10 +206,10 @@ class PixiWrapper {
   }
 
   public update() {
-    const currentTime = Date.now();
-    if (currentTime - this._currentTime >= this.settings.throttle) {
-      this._currentTime = currentTime;
+    this.overlay.init();
+    this.overlay.update();
 
+    if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
       // reset the state before updating
       this.state.setSceneGraph(null);
       this.state.setStats({});
@@ -225,6 +238,7 @@ class PixiWrapper {
       this.tree.complete();
       this.properties.update();
       this.properties.complete();
+      this.overlay.complete();
 
       // post the state to the devtools
       window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');

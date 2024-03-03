@@ -4,9 +4,11 @@ import TreeView, { flattenTree } from 'react-accessible-treeview';
 import {
   FaPlus as LayerIconClosed,
   FaMinus as LayerIconOpen,
-  FaArrowPointer as PickIcon,
+  // FaArrowPointer as PickIcon,
   FaRegObjectGroup as SceneNodeIcon,
+  FaWandMagicSparkles as PickIcon,
 } from 'react-icons/fa6';
+import { LuBoxSelect as OutlineToggleIcon } from 'react-icons/lu';
 import { useDevtoolStore } from '../../../App';
 import { Separator } from '../../../components/ui/separator';
 import { Toggle } from '../../../components/ui/toggle';
@@ -18,7 +20,16 @@ interface PanelProps {
 }
 const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const overlayPickerEnabled = useDevtoolStore.use.overlayPickerEnabled();
+  const overlayHighlightEnabled = useDevtoolStore.use.overlayHighlightEnabled();
+  const bridge = useDevtoolStore.use.bridge()!;
 
+  const onPickerToggle = (enabled: boolean) => {
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enablePicker(${enabled})`);
+  };
+  const onHighlightToggle = (enabled: boolean) => {
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(${enabled})`);
+  };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     onSearch?.(e.target.value);
@@ -31,8 +42,24 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
         <div className="flex h-full flex-col">
           {/* search bar */}
           <div className="border-border flex h-8 max-h-8 items-center border-b">
-            <Toggle variant="ghost" size="icon" className="hover:border-primary h-8 rounded-none hover:border-b-2">
+            <Toggle
+              variant="ghost"
+              size="icon"
+              className="hover:border-primary h-8 rounded-none hover:border-b-2"
+              defaultPressed={overlayPickerEnabled}
+              onPressedChange={onPickerToggle}
+            >
               <PickIcon className="dark:fill-white" />
+            </Toggle>
+            <Separator orientation="vertical" className="h-4" />
+            <Toggle
+              variant="ghost"
+              size="icon"
+              className="hover:border-primary h-8 rounded-none hover:border-b-2"
+              defaultPressed={overlayHighlightEnabled}
+              onPressedChange={onHighlightToggle}
+            >
+              <OutlineToggleIcon className="stroke-[3] dark:fill-white" />
             </Toggle>
             <Separator orientation="vertical" className="h-4" />
             {/* search wrapper */}
@@ -76,57 +103,62 @@ function findParents(flattenTreeData: FlattenTreeData, selectedNode: FlattenTree
   return parents;
 }
 
+function clone(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function createFuse(treeData: FlattenTreeData) {
+  return new Fuse<FlattenTreeData[0]>(clone(treeData), {
+    keys: ['name'],
+    includeScore: true,
+    findAllMatches: false,
+    threshold: 0.2,
+  });
+}
+
 export const Tree: React.FC = () => {
   const bridge = useDevtoolStore.use.bridge()!;
   const sceneGraph = useDevtoolStore.use.sceneGraph();
   const selectedNode = useDevtoolStore.use.selectedNode();
   const setSelectedNode = useDevtoolStore.use.setSelectedNode();
 
-  const treeData = flattenTree(sceneGraph as unknown as typeof flattenTree);
+  const treeData = useMemo(() => flattenTree(clone(sceneGraph)), [sceneGraph]);
+  const fuse = useMemo(() => createFuse(treeData), [treeData]);
+  const [currentSearch, setCurrentSearch] = useState('');
 
-  // find the node in the tree data that matches the selected node
-  const node = treeData.find((node) => node.metadata!.uid === selectedNode);
-  const parents = findParents(treeData, node!);
-  const [selectedTreeId, setSelectedTreeId] = useState<number[] | null>(
-    node ? [node.id as number, ...parents.map((node) => node.id as number)] : null,
-  );
+  const highlightedNodes = useMemo(() => {
+    if (currentSearch !== '') {
+      const result = fuse.search(currentSearch);
+      return result.map((item) => item.item.id) as string[];
+    }
+    return [];
+  }, [currentSearch, fuse]);
+  const highlightedTreeIds = useMemo(() => {
+    if (currentSearch !== '') {
+      const allNodes = treeData.map((node) => node.id as string);
+      allNodes.shift();
+      return allNodes;
+    }
+    return null;
+  }, [currentSearch, treeData]);
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(treeData, {
-        keys: ['name'],
-        includeScore: true,
-        findAllMatches: false,
-        threshold: 0.1,
-      }),
-    [treeData],
-  );
-  const [highlightedNodes, setHighlightedNodes] = useState<string[] | null>([]);
-  const [highlightedTreeIds, setHighlightedTreeIds] = useState<string[] | null>(null);
+  const selectedTreeId = useMemo(() => {
+    const node = treeData.find((node) => node.metadata!.uid === selectedNode);
+    const parents = findParents(treeData, node!);
+    return node ? [node.id as number, ...parents.map((node) => node.id as number)] : null;
+  }, [selectedNode, treeData]);
 
   const onSearch = (searchTerm: string) => {
-    if (searchTerm === '') {
-      setHighlightedNodes(null);
-      setHighlightedTreeIds(null);
-      return;
-    }
-    const result = fuse.search(searchTerm);
-    const highlightedNodes = result.map((item) => item.item.id) as string[];
-    setHighlightedNodes(highlightedNodes);
-    // TODO: expanding the entire tree for now, should only expand the nodes that are highlighted
-    const allNodes = treeData.map((node) => node.id as string);
-    allNodes.shift();
-    setHighlightedTreeIds(allNodes);
+    setCurrentSearch(searchTerm);
   };
 
   useEffect(() => {
     return () => {
-      setHighlightedNodes(null);
-      setHighlightedTreeIds(null);
-      setSelectedTreeId(null);
       setSelectedNode(null);
     };
   }, [sceneGraph, bridge, setSelectedNode]);
+
+  console.log('selectedTreeId', selectedTreeId, highlightedTreeIds);
 
   return (
     <Panel onSearch={onSearch}>
@@ -148,25 +180,27 @@ export const Tree: React.FC = () => {
               {...nodeProps}
               className={nodeClasses}
               style={{ paddingLeft: 20 * (level - 1), paddingTop: 1, paddingBottom: 1 }}
+              onMouseEnter={() => {
+                bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight(${JSON.stringify(element.metadata!.uid)})`);
+              }}
+              onMouseLeave={() => {
+                bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight()`);
+              }}
             >
               {isBranch ? <FolderIcon isOpen={isExpanded} /> : <SceneNodeIcon className="icon" />}
               {element.name}
             </div>
           );
         }}
-        onSelect={(node) => {
-          const selectedNodeIds = node.treeState.selectedIds;
+        onNodeSelect={(node) => {
+          const selectedNodeIds = node.treeState!.selectedIds;
+          console.log(node.treeState);
           const selectedNodes = treeData.filter((node) => selectedNodeIds.has(node.id));
           bridge(
             `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(
               selectedNodes.map((node) => node.metadata!.uid)[0],
             )})`,
           );
-
-          const id = [...selectedNodeIds][0];
-          if (!selectedTreeId || selectedTreeId[0] !== id) {
-            setSelectedTreeId([id as number]);
-          }
         }}
       />
     </Panel>

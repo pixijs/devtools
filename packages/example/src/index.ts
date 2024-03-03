@@ -32,7 +32,7 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
     bunny.y = Math.floor(i / 5) * 40;
     bunny.label = `Bunny ${i}`;
     bunny.filterArea = new PIXI.Rectangle(0, 0, 40, 40);
-    bunny.boundsArea = new PIXI.Rectangle(0, 0, 40, 40);
+    // bunny.boundsArea = new PIXI.Rectangle(0, 0, 40, 40);
     container.addChild(bunny);
   }
 

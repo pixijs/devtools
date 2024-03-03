@@ -31,8 +31,7 @@ export const ContainerPropertiesPlugin: PropertyPlugin = {
   setValue(container: Container, prop: string, value: any) {
     prop = prop as keyof Container;
     if (prop === 'position' || prop === 'scale' || prop === 'pivot' || prop === 'skew') {
-      container.x = value[0];
-      container.y = value[1];
+      container[prop].set(value[0], value[1]);
     } else if (prop === 'filterArea' || prop === 'boundsArea' || prop === 'cullArea' || prop === 'hitArea') {
       (container[prop] as Rectangle)!.x = value[0];
       (container[prop] as Rectangle)!.y = value[1];
