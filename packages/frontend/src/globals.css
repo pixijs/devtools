@@ -90,6 +90,9 @@ h6 {
     --ring: 240 10% 3.9%;
 
     --radius: 0.5rem;
+
+    --scroll: 0, 0%, 81%;
+    --scrollHover: 0, 0%, 45%;
   }
 
   .dark {
@@ -120,6 +123,9 @@ h6 {
     --border: 0 0% 24%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    --scroll: 0, 0%, 45%;
+    --scrollHover: 0, 0%, 81%;
   }
 }
 
@@ -139,10 +145,10 @@ h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #b6c6ce;
+  background-color: hsl(var(--scroll));
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #4f6f7f;
+  background-color: hsl(var(--scrollHover));
 }
 ::-webkit-scrollbar {
   width: 10px;
