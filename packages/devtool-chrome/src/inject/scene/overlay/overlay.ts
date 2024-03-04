@@ -111,6 +111,13 @@ export class Overlay {
 
   public highlight(id: string) {
     const node = this._devtool.tree['_idMap'].get(id);
+
+    if(node === this._devtool.tree.selectedNode) {
+      this._hoveredNode = null;
+      this.disableHighlight('_hoverHighlight');
+      return;
+    }
+
     this._hoveredNode = node || null;
     if (!node) {
       this.disableHighlight('_hoverHighlight');
