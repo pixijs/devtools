@@ -1,4 +1,3 @@
-import { flattenTree } from 'react-accessible-treeview';
 import type { BridgeFn } from './lib/utils';
 import type { SceneState } from './pages/scene/state';
 
@@ -26,7 +25,9 @@ export interface PixiMetadata {
   isStage?: boolean;
 }
 
-export type SceneGraphEntry = Omit<Parameters<typeof flattenTree>[0], 'metadata' | 'children'> & {
+export type SceneGraphEntry = {
+  id: string;
+  name: string;
   metadata: PixiMetadata;
   children: SceneGraphEntry[];
 };

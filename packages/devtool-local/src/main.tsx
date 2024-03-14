@@ -3,6 +3,55 @@ import ReactDOM from 'react-dom/client';
 import App from '@devtool/frontend/App';
 import type { BridgeFn } from '@devtool/frontend/lib/utils';
 
+// {
+//   id: 'root',
+//   name: 'root',
+//   children: [
+//     {
+//       id: 'child1',
+//       name: 'child1',
+//       children: [
+//         {
+//           id: 'child1-1',
+//           name: 'child1-1',
+//           children: [],
+//           metadata: {
+//             type: 'Sprite',
+//             uid: 'child1-1',
+//           },
+//         },
+//       ],
+//       metadata: {
+//         type: 'Container',
+//         uid: 'child1',
+//       },
+//     },
+//     {
+//       id: 'child2',
+//       name: 'child2',
+//       children: [
+//         {
+//           id: 'child2-1',
+//           name: 'child2-1',
+//           children: [],
+//           metadata: {
+//             type: 'Sprite',
+//             uid: 'child2-1',
+//           },
+//         },
+//       ],
+//       metadata: {
+//         type: 'Container',
+//         uid: 'child2',
+//       },
+//     },
+//   ],
+//   metadata: {
+//     type: 'Container',
+//     uid: 'root',
+//   },
+// },
+
 const messageListeners: ((message: unknown) => void)[] = [];
 const mockChrome = {
   runtime: {
@@ -40,6 +89,31 @@ const dataB = {
   other: 30,
 };
 let currentData = dataA;
+const scene = {
+  id: 'root',
+  name: 'root',
+  children: [],
+  metadata: {
+    type: 'Container',
+    uid: 'root',
+  },
+};
+// create 100 nodes
+let prevNode = scene;
+for (let i = 0; i < 10; i++) {
+  const node = {
+    id: `node-${i}`,
+    name: `node-${i}`,
+    metadata: {
+      type: 'Container',
+      uid: 'root',
+    },
+    readOnly: false,
+    children: [],
+  };
+  prevNode.children.push(node);
+  prevNode = node;
+}
 // every 1 second, send a message to the devtools
 setInterval(() => {
   // every 3 seconds change the stats
@@ -56,7 +130,7 @@ setInterval(() => {
       data: JSON.stringify({
         version: '8.0.0',
         stats,
-        selectedNode: 'child1-1',
+        selectedNode: 'node-1',
         activeProps: [
           {
             value: [0, 100],
@@ -139,54 +213,7 @@ setInterval(() => {
             },
           },
         ],
-        sceneGraph: {
-          id: 'root',
-          name: 'root',
-          children: [
-            {
-              id: 'child1',
-              name: 'child1',
-              children: [
-                {
-                  id: 'child1-1',
-                  name: 'child1-1',
-                  children: [],
-                  metadata: {
-                    type: 'Sprite',
-                    uid: 'child1-1',
-                  },
-                },
-              ],
-              metadata: {
-                type: 'Container',
-                uid: 'child1',
-              },
-            },
-            {
-              id: 'child2',
-              name: 'child2',
-              children: [
-                {
-                  id: 'child2-1',
-                  name: 'child2-1',
-                  children: [],
-                  metadata: {
-                    type: 'Sprite',
-                    uid: 'child2-1',
-                  },
-                },
-              ],
-              metadata: {
-                type: 'Container',
-                uid: 'child2',
-              },
-            },
-          ],
-          metadata: {
-            type: 'Container',
-            uid: 'root',
-          },
-        },
+        sceneGraph: scene,
       }),
     });
   });

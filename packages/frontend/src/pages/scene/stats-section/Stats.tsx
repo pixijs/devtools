@@ -1,7 +1,7 @@
-import { useDevtoolStore } from '../../App';
-import { CollapsibleSection } from '../../components/collapsible/collapsible-section';
-import SmoothieComponent, { TimeSeries } from '../../components/smooth-charts/Smoothie';
-import { useTheme } from '../../components/theme-provider';
+import { useDevtoolStore } from '../../../App';
+import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
+import SmoothieComponent, { TimeSeries } from '../../../components/smooth-charts/Smoothie';
+import { useTheme } from '../../../components/theme-provider';
 import { useEffect, useRef } from 'react';
 
 interface StatData {

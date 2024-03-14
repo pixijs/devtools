@@ -1,5 +1,5 @@
 import { ZustSet } from '../../lib/utils';
-import { PropertyPanelData } from './scene-tree/Properties';
+import { PropertyPanelData } from './scene-section/Properties';
 
 export interface SceneState {
   stats: Record<string, number> | null;

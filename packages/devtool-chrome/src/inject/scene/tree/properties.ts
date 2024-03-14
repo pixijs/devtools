@@ -1,4 +1,4 @@
-import type { PropertyPanelData } from '@devtool/frontend/pages/scene/scene-tree/Properties';
+import type { PropertyPanelData } from '@devtool/frontend/pages/scene/scene-section/Properties';
 import type { PropertyPlugin } from '@pixi/devtools';
 import type { PixiDevtools } from '../../pixi';
 import { AnimatedSpritePropertiesPlugin } from './plugins/AnimatedSpriteProperties';

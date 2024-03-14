@@ -195,3 +195,41 @@ h6 {
 .tree .tree-node--selected {
   background: rgb(231 34 100 / 20%);
 }
+
+[role='treeitem'] {
+  color: white;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 65%);
+  font-weight: 400;
+  font-size: 14px;
+  user-select: none;
+  border: 1px dashed transparent;
+}
+
+[role='treeitem']:focus-visible {
+  background-color: rgb(255 255 255 / 20%);
+  outline: none;
+}
+
+[role='treeitem'][aria-selected='true']:focus-visible {
+  background-color: rgba(255, 255, 255, 0.4);
+  outline: none;
+}
+
+[role='treeitem']:hover {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+[role='treeitem'][aria-selected='true'] {
+  background-color: rgb(231 34 100 / 20%);
+  font-weight: 700;
+}
+
+[role='treeitem'] .willReceiveDrop {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px dashed white;
+}
+
+[role='treeitem'][aria-selected='true'] {
+  color: white;
+}
