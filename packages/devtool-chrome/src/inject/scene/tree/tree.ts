@@ -21,14 +21,27 @@ export class Tree {
       this.selectedNode = null;
       return;
     }
-
+    console.log('setSelected', nodeId);
     this.selectedNode = this._idMap.get(nodeId) ?? null;
-
-    console.log('selectedNode', this.selectedNode);
   }
 
   public setSelectedFromNode(node: Container) {
     this.selectedNode = node;
+  }
+
+  public renameNode(nodeId: string, name: string) {
+    const sceneNode = this._idMap.get(nodeId);
+
+    if (!sceneNode) return;
+
+    if (sceneNode.name !== name) sceneNode.name = name;
+  }
+
+  public deleteNode(nodeId: string) {
+    const sceneNode = this._idMap.get(nodeId);
+
+    if (!sceneNode) return;
+    sceneNode.parent?.removeChild(sceneNode);
   }
 
   public init() {
@@ -49,22 +62,23 @@ export class Tree {
   public update(container: Container) {
     const stage = this._devtool.stage;
     const type = getPixiType(container);
-
+    const { suffix, nameStart } = this._getName(container, type);
     const node = {
       id: this._getId(container),
-      name: this._getName(container, type),
+      name: nameStart,
       children: [],
       metadata: {
         type,
         uid: this._getId(container),
+        suffix,
+        nameStart,
       },
     };
 
     this._idMap.set(node.id, container);
 
     if (container === stage) {
-      const graph = this._devtool.state.sceneGraph;
-      graph?.children.push(node);
+      this._devtool.state.setSceneGraph(node);
       this._sceneGraph.set(container, node);
       return;
     }
@@ -78,19 +92,27 @@ export class Tree {
     const stage = this._devtool.stage;
     const name = container.label ?? container.name;
     const nameIsType = name === type;
-    let finalName: string;
+    let fullName: string;
+    let suffix: string;
+    let nameStart: string;
 
     if (nameIsType) {
-      finalName = `${name}${stage === container ? ' (Stage)' : ''}`;
+      fullName = `${name}${stage === container ? ' (Stage)' : ''}`;
+      nameStart = name;
+      suffix = stage === container ? ' (Stage)' : '';
     } else {
       if (name) {
-        finalName = `${name} (${stage === container ? 'Stage' : type})`;
+        fullName = `${name} (${stage === container ? 'Stage' : type})`;
+        nameStart = name;
+        suffix = `(${stage === container ? 'Stage' : type})`;
       } else {
-        finalName = `${type}${stage === container ? ' (Stage)' : ''}`;
+        fullName = `${type}${stage === container ? ' (Stage)' : ''}`;
+        nameStart = type;
+        suffix = stage === container ? ' (Stage)' : '';
       }
     }
 
-    return finalName;
+    return { fullName, suffix, nameStart };
   }
 
   private _getId(container: Container) {

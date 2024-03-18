@@ -1,6 +1,6 @@
 import { BridgeFn } from '@devtool/frontend/lib/utils';
 import { SceneGraphEntry } from '@devtool/frontend/types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DeleteHandler, MoveHandler, NodeApi, RenameHandler, SimpleTree } from 'react-arborist';
 
 function removeEmptyChildren(node: Partial<SceneGraphEntry>) {
@@ -16,6 +16,12 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
   const [data, setData] = useState([initialData]);
   const tree = useMemo(() => new SimpleTree<T>(data as T[]), [data]);
 
+  useEffect(() => {
+    if (JSON.stringify(data[0]) !== JSON.stringify(initialData)) {
+      setData([initialData]);
+    }
+  }, [initialData, data]);
+
   const onMove: MoveHandler<T> = (args: { dragIds: string[]; parentId: null | string; index: number }) => {
     if (!args.parentId) return;
     const node = tree.find(args.dragIds[0]);
@@ -24,7 +30,6 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
     if (!node || !parent) return;
 
     tree.move({ id: args.dragIds[0], parentId: args.parentId, index: args.index });
-    console.log(tree.data);
     bridge(
       `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.moveNode(${JSON.stringify(node.data.metadata.uid)}, ${JSON.stringify(parent.data.metadata.uid)}, ${JSON.stringify(args.index)})`,
     );
@@ -34,8 +39,10 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
   const onRename: RenameHandler<T> = ({ name, id }) => {
     tree.update({ id, changes: { name } as any });
     setData(tree.data);
-    console.log(tree.data);
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.renameNode(${JSON.stringify(id)}, ${JSON.stringify(name)})`);
+    const node = tree.find(id);
+    bridge(
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.renameNode(${JSON.stringify(node?.data.metadata.uid)}, ${JSON.stringify(name)})`,
+    );
   };
 
   // TODO: allow for creating new nodes
@@ -48,15 +55,19 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
   // };
 
   const onDelete: DeleteHandler<T> = (args: { ids: string[] }) => {
+    const node = tree.find(args.ids[0]);
     args.ids.forEach((id) => tree.drop({ id }));
     setData(tree.data);
-    console.log(tree.data);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.data.metadata.uid)})`);
   };
 
-  const onSelect = (node: NodeApi[]) => {
-    console.log('selected', node);
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(node[0]?.data.metadata.uid)})`);
-  }
+  const onSelect = (nodes: NodeApi[]) => {
+    const node = nodes[0];
+    console.log('onSelect', node);
+    bridge(
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${node ? JSON.stringify(node.data.metadata.uid) : null})`,
+    );
+  };
 
   const controller = { onMove, onRename, onDelete, onSelect };
 

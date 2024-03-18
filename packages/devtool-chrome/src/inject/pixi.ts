@@ -105,6 +105,9 @@ class PixiWrapper {
   public get devtools() {
     if (this._devtools) return this._devtools;
     this._devtools = this.searchIFrames(['__PIXI_DEVTOOLS__']) as Devtools;
+    this._devtools.plugins ||= { properties: [], stats: [] };
+    this._devtools.plugins.properties ||= [];
+    this._devtools.plugins.stats ||= [];
     return this._devtools;
   }
 

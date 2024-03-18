@@ -158,8 +158,6 @@ export const Tree: React.FC = () => {
     };
   }, [sceneGraph, bridge, setSelectedNode]);
 
-  console.log('selectedTreeId', selectedTreeId, highlightedTreeIds);
-
   return (
     <Panel onSearch={onSearch}>
       <TreeView
@@ -194,7 +192,6 @@ export const Tree: React.FC = () => {
         }}
         onNodeSelect={(node) => {
           const selectedNodeIds = node.treeState!.selectedIds;
-          console.log(node.treeState);
           const selectedNodes = treeData.filter((node) => selectedNodeIds.has(node.id));
           bridge(
             `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(

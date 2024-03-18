@@ -85,6 +85,7 @@ export function Node({ node, style, dragHandle }: NodeRendererProps<SceneGraphEn
             <FolderArrow node={node} />
           </span>
           <span onClick={onToggle}>{node.isEditing ? <NodeInput node={node} /> : node.data.name}</span>
+          <span>{node.data.metadata.suffix}</span>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>

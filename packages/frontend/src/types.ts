@@ -22,6 +22,7 @@ export type PixiNodeType =
 export interface PixiMetadata {
   type: PixiNodeType;
   uid: string;
+  suffix?: string;
   isStage?: boolean;
 }
 
