@@ -1,0 +1,235 @@
+@import url('https://fonts.cdnfonts.com/css/cascadia-code');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Josh's Custom CSS Reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-family:
+    cascadia code,
+    Menlo,
+    Monaco,
+    'Courier New',
+    monospace;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 340 70% 44%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 192 84% 40%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+
+    --radius: 0.5rem;
+
+    --scroll: 0, 0%, 81%;
+    --scrollHover: 0, 0%, 45%;
+  }
+
+  .dark {
+    --background: 225 6% 13%;
+    --foreground: 0 0% 98%;
+
+    --card: 225 6% 13%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 225 6% 13%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 340 70% 44%;
+    --primary-foreground: 0, 0%, 98%;
+
+    --secondary: 192 84% 40%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 24%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    --scroll: 0, 0%, 45%;
+    --scrollHover: 0, 0%, 81%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--scroll));
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--scrollHover));
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: 0 0;
+  background: rgba(79, 111, 127, 0.05);
+}
+
+::-webkit-scrollbar-track:hover {
+  background: rgba(79, 111, 127, 0.05);
+}
+
+.tree,
+.tree-node,
+.tree-node-group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-branch-wrapper,
+.tree-node__leaf {
+  outline: none;
+}
+
+.tree-node {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 1rem;
+}
+
+.tree-node:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
+.tree .tree-node--focused {
+  background: rgb(255 255 255 / 20%);
+}
+
+.tree .tree-node--selected {
+  background: rgb(231 34 100 / 20%);
+}
+
+[role='treeitem'] {
+  color: white;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 65%);
+  font-weight: 400;
+  font-size: 14px;
+  user-select: none;
+  border: 1px dashed transparent;
+}
+
+[role='treeitem']:focus-visible {
+  background-color: rgb(255 255 255 / 20%);
+  outline: none;
+}
+
+[role='treeitem'][aria-selected='true']:focus-visible {
+  background-color: rgba(255, 255, 255, 0.4);
+  outline: none;
+}
+
+[role='treeitem']:hover {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+[role='treeitem'][aria-selected='true'] {
+  background-color: rgb(231 34 100 / 20%);
+  font-weight: 700;
+}
+
+[role='treeitem'] .willReceiveDrop {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px dashed white;
+}
+
+[role='treeitem'][aria-selected='true'] {
+  color: white;
+}
