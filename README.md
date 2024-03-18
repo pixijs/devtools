@@ -24,7 +24,7 @@ Installation is available from the chrome web store.
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/todo.svg)](https://chrome.google.com/webstore/detail/pixijs-devtools/todo)
 
-You can also download the latest release from the [releases page](https://github.com/pixijs/dev-tools/releases).
+You can also download the latest release from the [releases page](https://github.com/pixijs/devtools/releases).
 
 ## Setup
 
@@ -57,7 +57,8 @@ window.__PIXI_DEVTOOLS__ = {
     app
     stage: app.stage
     renderer: app.renderer
-    scenePanel: {
+    plugins: {
+        stats: [],
         properties: []
     }
 };
@@ -65,50 +66,34 @@ window.__PIXI_DEVTOOLS__ = {
 
 ### Property Plugins
 
-Property plugins are used to display custom properties in the scene panel. Below is an example of a property plugin that displays the `x` and `y` properties of a `Sprite` object.
+Property plugins are used to display custom properties in the scene panel. Below is an example of a property plugin that displays the `x` and `y` properties of a `Container` object.
 
 ```js
-const XYPlugin: PropertyPlugin = {
-  getPropValue: function (container: Container, prop: string) {
-    if (this.getPropKeys().indexOf(prop) === -1) {
-      return null;
-    }
-    const pixi = window.__PIXI_DEVTOOLS_WRAPPER__.pixi();
-    const value = container[prop as keyof Container];
+export const XYPlugin: PropertyPlugin = {
+  updateProps(container: Container) {
+    this.props.forEach((property) => {
+      const prop = property.prop as keyof Container | string;
+      const value = container[prop as keyof Container] as any;
 
-    if (value instanceof pixi.ObservablePoint) {
-      return { value: [value.x, value.y], prop };
-    }
-
-    return { value: container[prop as keyof Container], prop };
-  },
-  setPropValue: function (container: Container, prop: string, value: any) {
-    if (this.getPropKeys().indexOf(prop) === -1) {
-      return null;
-    }
-    const pixi = window.__PIXI_DEVTOOLS_WRAPPER__.pixi();
-    if (container[prop as keyof Container] instanceof pixi.ObservablePoint) {
-      (container[prop as keyof Container] as ObservablePoint).set(value[0], value[1]);
-    } else {
-      (container as any)[prop] = value;
-    }
-  },
-  getValidProps: function (container: Container) {
-    return this.props.filter((prop) => {
-      return container[prop.property as keyof Container] !== undefined;
+      property.value = [value.x, value.y];
     });
+
+    return this.props;
+  },
+  containsProperty(prop: string) {
+    return this.props.some((property) => property.prop === prop);
+  },
+  setValue(container: Container, prop: string, value: any) {
+    prop = prop as keyof Container;
+    container[prop].set(value[0], value[1]);
   },
   props: [
     {
-      section: 'Transform',
-      property: 'position',
-      propertyProps: { label: 'Position', x: { label: 'x' }, y: { label: 'y' } } as Vector2Props,
-      type: 'vector2',
+      value: null,
+      prop: 'position',
+      entry: { section: 'Transform', options: { x: { label: 'x' }, y: { label: 'y' } }, type: 'vector2' },
     },
   ],
-  getPropKeys: function () {
-    return this.props.map((prop) => prop.property);
-  },
 };
 ```
 
