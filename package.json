@@ -17,7 +17,7 @@
     "start:local": "npm run start --workspace @devtool/local --if-present",
     "start:chrome": "npm run start --workspace @devtool/chrome & npm run start --workspace @devtool/example",
     "build": "npm run --ws build --if-present",
-    "postbuild": "mkdir -p .upload && zip -r chrome.zip ./packages/devtool-chrome/dist/chrome/* && mv chrome.zip .upload/",
+    "postbuild": "mkdir -p .upload && cd ./packages/devtool-chrome && zip -r chrome.zip ./dist/chrome/* && mv chrome.zip ../../.upload/",
     "watch": "npm run --ws watch --if-present"
   },
   "devDependencies": {
