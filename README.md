@@ -40,6 +40,17 @@ window.__PIXI_DEVTOOLS__ = {
 };
 ```
 
+Alternatively you can install the `@pixi/devtools` package and use the `initDevtools` function to setup the devtool.
+
+```js
+import { initDevtools } from '@pixi/devtools';
+
+initDevtools({
+  app,
+});
+```
+This package will automatically import `pixi.js` dynamically if you do not provide `pixi` in the configuration.
+
 ### Optional Configuration
 
 You can also pass a configuration object to the `__PIXI_DEVTOOLS__` object. This object can contain the following properties:
