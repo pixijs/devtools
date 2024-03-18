@@ -1,18 +1,14 @@
-import Fuse from 'fuse.js';
-import { useEffect, useMemo, useState } from 'react';
-import TreeView, { flattenTree } from 'react-accessible-treeview';
-import {
-  FaPlus as LayerIconClosed,
-  FaMinus as LayerIconOpen,
-  // FaArrowPointer as PickIcon,
-  FaRegObjectGroup as SceneNodeIcon,
-  FaWandMagicSparkles as PickIcon,
-} from 'react-icons/fa6';
+import { useState } from 'react';
+import { Tree } from 'react-arborist';
+import { FaWandMagicSparkles as PickIcon } from 'react-icons/fa6';
 import { LuBoxSelect as OutlineToggleIcon } from 'react-icons/lu';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { useDevtoolStore } from '../../../App';
 import { Separator } from '../../../components/ui/separator';
 import { Toggle } from '../../../components/ui/toggle';
-import { cn } from '../../../lib/utils';
+import { Cursor } from './tree/cursor';
+import { Node } from './tree/node';
+import { useSimpleTree } from './tree/simple-tree';
 
 interface PanelProps {
   children: React.ReactNode;
@@ -75,7 +71,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
           </div>
           {/* content */}
           <div className="flex-1 overflow-auto p-2">
-            <div className="min-w-max text-sm">{children}</div>
+            <div className="h-full min-w-max text-sm">{children}</div>
           </div>
         </div>
       </div>
@@ -83,123 +79,36 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
   );
 };
 
-const FolderIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) =>
-  isOpen ? <LayerIconOpen className="ml-2" /> : <LayerIconClosed className="ml-2" />;
-
-type FlattenTreeData = ReturnType<typeof flattenTree>;
-function findParents(flattenTreeData: FlattenTreeData, selectedNode: FlattenTreeData[0]) {
-  if (!selectedNode) return [];
-  const parents = [] as FlattenTreeData;
-  let currentParentId = selectedNode.parent;
-
-  while (currentParentId) {
-    const parent = flattenTreeData.find((node) => node.id === currentParentId);
-    if (!parent) break;
-    if (parent.id === 'root') break;
-    parents.push(parent);
-    currentParentId = parent.parent;
-  }
-
-  return parents;
-}
-
-function clone(obj: any) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-function createFuse(treeData: FlattenTreeData) {
-  return new Fuse<FlattenTreeData[0]>(clone(treeData), {
-    keys: ['name'],
-    includeScore: true,
-    findAllMatches: false,
-    threshold: 0.2,
-  });
-}
-
-export const Tree: React.FC = () => {
+export const SceneTree: React.FC = () => {
   const bridge = useDevtoolStore.use.bridge()!;
-  const sceneGraph = useDevtoolStore.use.sceneGraph();
+  const sceneGraph = useDevtoolStore.use.sceneGraph()!;
   const selectedNode = useDevtoolStore.use.selectedNode();
-  const setSelectedNode = useDevtoolStore.use.setSelectedNode();
-
-  const treeData = useMemo(() => flattenTree(clone(sceneGraph)), [sceneGraph]);
-  const fuse = useMemo(() => createFuse(treeData), [treeData]);
+  const sceneGraphClone = JSON.parse(JSON.stringify(sceneGraph));
+  const [data, controller] = useSimpleTree(bridge, sceneGraphClone);
   const [currentSearch, setCurrentSearch] = useState('');
-
-  const highlightedNodes = useMemo(() => {
-    if (currentSearch !== '') {
-      const result = fuse.search(currentSearch);
-      return result.map((item) => item.item.id) as string[];
-    }
-    return [];
-  }, [currentSearch, fuse]);
-  const highlightedTreeIds = useMemo(() => {
-    if (currentSearch !== '') {
-      const allNodes = treeData.map((node) => node.id as string);
-      allNodes.shift();
-      return allNodes;
-    }
-    return null;
-  }, [currentSearch, treeData]);
-
-  const selectedTreeId = useMemo(() => {
-    const node = treeData.find((node) => node.metadata!.uid === selectedNode);
-    const parents = findParents(treeData, node!);
-    return node ? [node.id as number, ...parents.map((node) => node.id as number)] : null;
-  }, [selectedNode, treeData]);
 
   const onSearch = (searchTerm: string) => {
     setCurrentSearch(searchTerm);
   };
 
-  useEffect(() => {
-    return () => {
-      setSelectedNode(null);
-    };
-  }, [sceneGraph, bridge, setSelectedNode]);
-
   return (
     <Panel onSearch={onSearch}>
-      <TreeView
-        data={treeData}
-        aria-label="directory tree"
-        clickAction="EXCLUSIVE_SELECT"
-        multiSelect={false}
-        // TODO: setting expandedIds to undefined after already defining it does not reapply the defaultExpandedIds, causing the tree to collapse
-        expandedIds={highlightedTreeIds ?? undefined}
-        defaultExpandedIds={selectedTreeId!}
-        defaultSelectedIds={selectedTreeId ? [selectedTreeId[0]] : []}
-        nodeRenderer={({ element, isBranch, isExpanded, getNodeProps, level }) => {
-          const isHighlighted = highlightedNodes?.includes(element.id as string) ?? false;
-          const nodeProps = getNodeProps();
-          const nodeClasses = cn(nodeProps.className, isHighlighted && 'bg-secondary/20 text-white');
-          return (
-            <div
-              {...nodeProps}
-              className={nodeClasses}
-              style={{ paddingLeft: 20 * (level - 1), paddingTop: 1, paddingBottom: 1 }}
-              onMouseEnter={() => {
-                bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight(${JSON.stringify(element.metadata!.uid)})`);
-              }}
-              onMouseLeave={() => {
-                bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight()`);
-              }}
-            >
-              {isBranch ? <FolderIcon isOpen={isExpanded} /> : <SceneNodeIcon className="icon" />}
-              {element.name}
-            </div>
-          );
-        }}
-        onNodeSelect={(node) => {
-          const selectedNodeIds = node.treeState!.selectedIds;
-          const selectedNodes = treeData.filter((node) => selectedNodeIds.has(node.id));
-          bridge(
-            `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(
-              selectedNodes.map((node) => node.metadata!.uid)[0],
-            )})`,
-          );
-        }}
-      />
+      <AutoSizer style={{ width: '100%', height: '100%' }}>
+        {({ height }) => (
+          <Tree
+            data={data}
+            {...controller}
+            width={'100%'}
+            height={height}
+            renderCursor={Cursor}
+            searchTerm={currentSearch}
+            selection={selectedNode ? selectedNode : undefined}
+            openByDefault={false}
+          >
+            {Node}
+          </Tree>
+        )}
+      </AutoSizer>
     </Panel>
   );
 };

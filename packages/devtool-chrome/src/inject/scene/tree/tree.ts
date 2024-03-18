@@ -21,7 +21,6 @@ export class Tree {
       this.selectedNode = null;
       return;
     }
-    console.log('setSelected', nodeId);
     this.selectedNode = this._idMap.get(nodeId) ?? null;
   }
 
