@@ -22,7 +22,7 @@ For now the extension has the following features:
 
 Installation is available from the chrome web store.
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/todo.svg)](https://chrome.google.com/webstore/detail/pixijs-devtools/todo)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/dlkffcaaoccbofklocbjcmppahjjboce.svg)](https://chrome.google.com/webstore/detail/pixijs-devtools/dlkffcaaoccbofklocbjcmppahjjboce)
 
 You can also download the latest release from the [releases page](https://github.com/pixijs/devtools/releases).
 
