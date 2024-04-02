@@ -47,8 +47,8 @@ export const AnimatedSpritePropertiesPlugin: PropertyPlugin = {
     { value: null, prop: 'currentFrame', entry: { section: 'Animated Sprite', type: 'number' } },
     { value: null, prop: 'autoUpdate', entry: { section: 'Animated Sprite', type: 'boolean' } },
     { value: null, prop: 'playing', entry: { section: 'Animated Sprite', type: 'boolean' } },
-    { value: null, prop: 'start', entry: { section: 'Animated Sprite', type: 'button' } },
-    { value: null, prop: 'stop', entry: { section: 'Animated Sprite', type: 'button' } },
-    { value: null, prop: 'play', entry: { section: 'Animated Sprite', type: 'button' } },
+    { value: null, prop: 'start', entry: { section: 'Animated Sprite', type: 'button', label: 'start' } },
+    { value: null, prop: 'stop', entry: { section: 'Animated Sprite', type: 'button', label: 'stop' } },
+    { value: null, prop: 'play', entry: { section: 'Animated Sprite', type: 'button', label: 'play' } },
   ],
 };
