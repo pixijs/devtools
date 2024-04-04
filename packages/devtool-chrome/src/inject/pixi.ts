@@ -236,7 +236,6 @@ class PixiWrapper {
           },
           test: (container) => {
             if(container.__devtoolIgnore) return false;
-            if(container instanceof this.pixi.ParticleContainer) return false;
             return true;
           },
         });
