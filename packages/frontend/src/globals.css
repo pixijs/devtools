@@ -163,38 +163,6 @@ h6 {
   background: rgba(79, 111, 127, 0.05);
 }
 
-.tree,
-.tree-node,
-.tree-node-group {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.tree-branch-wrapper,
-.tree-node__leaf {
-  outline: none;
-}
-
-.tree-node {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-left: 1rem;
-}
-
-.tree-node:hover {
-  background: rgb(255 255 255 / 10%);
-}
-
-.tree .tree-node--focused {
-  background: rgb(255 255 255 / 20%);
-}
-
-.tree .tree-node--selected {
-  background: rgb(231 34 100 / 20%);
-}
 
 [role='treeitem'] {
   color: white;
@@ -204,6 +172,11 @@ h6 {
   font-size: 14px;
   user-select: none;
   border: 1px dashed transparent;
+}
+
+.light [role='treeitem'] {
+  color: black;
+  text-shadow: none;
 }
 
 [role='treeitem']:focus-visible {
@@ -220,14 +193,27 @@ h6 {
   background-color: rgb(255 255 255 / 10%);
 }
 
+.light [role='treeitem']:hover {
+  background-color: rgb(0 0 0 / 10%);
+}
+
 [role='treeitem'][aria-selected='true'] {
-  background-color: rgb(231 34 100 / 20%);
+  background-color: hsl(var(--primary) / 20%);
   font-weight: 700;
+}
+
+.light [role='treeitem'][aria-selected='true'] {
+  background-color: hsl(var(--primary) / 80%);
 }
 
 [role='treeitem'] .willReceiveDrop {
   background-color: rgba(255, 255, 255, 0.4);
   border: 1px dashed white;
+}
+
+.light [role='treeitem'] .willReceiveDrop {
+  border: 1px dashed black;
+  border-color: rgba(0, 0, 0, 0.4);
 }
 
 [role='treeitem'][aria-selected='true'] {
