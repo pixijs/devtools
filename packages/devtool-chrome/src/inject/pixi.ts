@@ -237,6 +237,10 @@ class PixiWrapper {
             this.statTracker.trackNode(container);
             this.tree.update(container);
           },
+          test: (container) => {
+            if(container.__devtoolIgnore) return false;
+            return true;
+          },
         });
       }
 
