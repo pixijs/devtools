@@ -151,7 +151,7 @@ const ButtonProperty: React.FC<PropertyPanelData> = ({ entry }) => {
       onClick={() => entry.onChange(true)}
       {...(entry.options as ButtonFnProps)}
     >
-      {(entry.options as ButtonFnProps).label}
+      {(entry.options as ButtonFnProps)?.label ?? entry.label ?? 'Click'}
     </Button>
   );
 };

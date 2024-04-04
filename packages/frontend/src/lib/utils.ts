@@ -48,3 +48,16 @@ export function formatCamelCase(string: string) {
   result = result.charAt(0).toUpperCase() + result.slice(1);
   return result;
 }
+
+export function copyToClipboard(text: string) {
+  // @TODO navigator.clipboard is buggy in extensions
+  if (typeof document === 'undefined') {
+    return
+  }
+  const dummyTextArea = document.createElement('textarea')
+  dummyTextArea.textContent = text
+  document.body.appendChild(dummyTextArea)
+  dummyTextArea.select()
+  document.execCommand('copy')
+  document.body.removeChild(dummyTextArea)
+}
