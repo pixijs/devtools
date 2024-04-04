@@ -35,6 +35,7 @@ export const Stats: React.FC = () => {
   const animationRef = useRef<number>();
 
   defaultSmoothieOptions.labels.fillStyle = theme === 'dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)';
+  const seriesFillStyle = theme === 'dark' ? 'rgba(231, 34, 100, 0.2)' : 'rgba(231, 34, 100, 0.8)';
 
   // make sure every stat has a time series, and delete any that are no longer in the stats
   currentStats = Object.keys(stats ?? {}).map((stat) => {
@@ -94,7 +95,7 @@ export const Stats: React.FC = () => {
                     {
                       data: item.timeSeries,
                       strokeStyle: item.color,
-                      fillStyle: 'rgba(231, 34, 100, 0.2)',
+                      fillStyle: seriesFillStyle,
                       lineWidth: 1,
                     },
                   ]}
