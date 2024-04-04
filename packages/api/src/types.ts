@@ -28,13 +28,22 @@ export interface PropertyPlugin {
   props: Props[];
 }
 
-export interface Devtools {
+interface DevtoolApp {
   app: Application;
+}
+
+interface DevtoolRenderer {
+  renderer: Renderer;
+  stage: Container;
+}
+
+interface DevtoolPixi {
   pixi?: typeof import('pixi.js');
-  stage?: Container;
-  renderer?: Renderer;
   plugins?: {
     stats?: NodeTrackerPlugin[];
     properties?: PropertyPlugin[];
   };
 }
+
+export type DevtoolsAPI = (DevtoolApp | DevtoolRenderer) & DevtoolPixi;
+export type Devtools = Partial<DevtoolApp & DevtoolRenderer & DevtoolPixi>;
