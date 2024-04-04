@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import ts from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
+import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import { create } from 'zustand';
 import { Navbar } from './components/navbar/navbar';
 import { ThemeProvider } from './components/theme-provider';
+import { CopyToClipboardButton } from './components/ui/clipboard';
 import './globals.css';
 import { BridgeFn, NonNullableFields, createSelectors, isDifferent } from './lib/utils';
 import { AssetsPanel } from './pages/assets/AssetsPanel';
@@ -9,6 +14,8 @@ import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
 import { sceneStateSlice } from './pages/scene/state';
 import { DevtoolState } from './types';
+
+SyntaxHighlighter.registerLanguage('typescript', ts);
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -95,16 +102,66 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     });
   }, [bridge, chromeProxy, setActive, setActiveProps, setBridge, setSceneGraph, setSelectedNode, setStats, setVersion]);
 
+  const windowString = `import * as PIXI from 'pixi.js';
+
+window.__PIXI_DEVTOOLS__ = {
+  pixi: PIXI,
+  app: app,
+  // If you are not using a pixi app, you can pass the renderer and stage directly
+  // renderer: myRenderer,
+  // stage: myStage,
+};`;
+
+  const npmInstallString = `npm install @pixi/devtools`;
+  const npmString = `import { initDevtools } from '@pixi/devtools';
+
+initDevtools({
+  app,
+  // If you are not using a pixi app, you can pass the renderer and stage directly
+  // renderer: myRenderer,
+  // stage: myStage,
+});`;
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="pixi-ui-theme">
       <div className="app size-screen bg-background h-screen">
-        <div className="app relative flex size-full flex-col outline-none">
+        <div className="app relative flex size-full flex-col text-sm outline-none">
           {active ? (
             <Navbar defaultTab="Scene" tabs={tabComponents} />
           ) : (
-            <div className="p-4 text-white">
+            <div className="p-4 dark:text-white">
               <h1 className="pb-4 text-2xl">PixiJS not detected</h1>
-              <p>This page doesn’t appear to be using PixiJS. If this seems wrong, follow the project setup guide</p>
+              <p>
+                This page doesn’t appear to be using PixiJS. If this seems wrong, follow the project setup guide below
+              </p>
+              <br />
+              <p>There are two ways to set up the devtool:</p>
+              <div className="p-4">
+                <p>1. Using the window.__PIXI_DEVTOOLS__ global variable</p>
+                <div className="relative p-4">
+                  <SyntaxHighlighter language="typescript" style={dracula}>
+                    {windowString}
+                  </SyntaxHighlighter>
+                  <CopyToClipboardButton data={windowString} />
+                </div>
+              </div>
+              <div className="p-4 pt-0">
+                <p>
+                  2. Using the <code>@pixi/devtools</code> package, which will handle the pixi import for you
+                </p>
+                <div className="relative p-4 pb-0">
+                  <SyntaxHighlighter language="" style={dracula}>
+                    {npmInstallString}
+                  </SyntaxHighlighter>
+                  <CopyToClipboardButton data={npmInstallString} />
+                </div>
+                <div className="relative p-4 pt-0">
+                  <SyntaxHighlighter language="typescript" style={dracula}>
+                    {npmString}
+                  </SyntaxHighlighter>
+                  <CopyToClipboardButton data={npmString} />
+                </div>
+              </div>
             </div>
           )}
         </div>
