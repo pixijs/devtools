@@ -17,6 +17,7 @@ For now the extension has the following features:
 - Display what type of objects your scene is made up of, and how it changes over time.
 - Display the display tree of the application.
 - Ability to inspect and change the properties of objects in the scene.
+- Active node is available in the console as `$pixi`.
 
 ## Installation
 
