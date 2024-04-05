@@ -29,7 +29,6 @@ async function main(): Promise<void> {
 
     // Commit the changes
     await spawn('git', ['commit', '-am', 'chore: bump package versions']);
-    await spawn('git', ['push']);
 
     const { version } = await readJSON<{ version: string }>(path.join(process.cwd(), 'package.json'));
     const nextVersion = await bump(version, 'root');
