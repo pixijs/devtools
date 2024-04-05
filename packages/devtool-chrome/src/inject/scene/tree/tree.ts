@@ -22,10 +22,12 @@ export class Tree {
       return;
     }
     this.selectedNode = this._idMap.get(nodeId) ?? null;
+    window.$pixi = this.selectedNode;
   }
 
   public setSelectedFromNode(node: Container) {
     this.selectedNode = node;
+    window.$pixi = node;
   }
 
   public renameNode(nodeId: string, name: string) {
@@ -52,6 +54,7 @@ export class Tree {
     // check if node has been removed, if so, clear selectedNode
     if (this.selectedNode && !this._sceneGraph.has(this.selectedNode)) {
       this.selectedNode = null;
+      window.$pixi = null;
     }
     this._devtool.state.selectedNode = this.selectedNode
       ? (this._sceneGraph.get(this.selectedNode)!.id as string)
