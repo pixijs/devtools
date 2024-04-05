@@ -92,7 +92,7 @@ let currentData = dataA;
 const scene = {
   id: 'root',
   name: 'root',
-  children: [],
+  children: [] as any[],
   metadata: {
     type: 'Container',
     uid: 'root',

@@ -77,14 +77,17 @@ window.__PIXI_DEVTOOLS__ = {
 
 ### Ignore Objects
 
-You can ignore objects from being displayed in the scene panel by setting the `__devtoolIgnore` property to any pixi object. This can be useful for ignoring objects such as particle containers that can have thousands of children and slow down the devtool considerably.
+You can ignore objects from being displayed in the scene panel by setting the `__devtoolIgnore`/`__devtoolIgnoreChildren` properties to any pixi object. This can be useful for ignoring objects such as particle containers that can have thousands of children and slow down the devtool considerably.
 
 ```js
 const container = new Container();
 container.__devtoolIgnore = true;
+
+const particles = new ParticleContainer();
+particles.__devtoolIgnoreChildren = true;
 ```
 
-If you install the `@pixi/devtools` package the typings for `__devtoolIgnore` will be included in your project for you.
+If you install the `@pixi/devtools` package the typings for `__devtoolIgnore`/ `__devtoolIgnoreChildren` will be available.
 
 ### Property Plugins
 

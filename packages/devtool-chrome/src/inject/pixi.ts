@@ -239,6 +239,7 @@ class PixiWrapper {
           },
           test: (container) => {
             if(container.__devtoolIgnore) return false;
+            if(container.__devtoolIgnoreChildren) return 'children';
             return true;
           },
         });
