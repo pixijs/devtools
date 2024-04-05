@@ -16,6 +16,7 @@ declare global {
         properties?: import('./types').PropertyPlugin[];
       };
     };
+    $pixi: import('pixi.js').Container | null;
   }
 
   namespace PixiMixins {
