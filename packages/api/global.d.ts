@@ -21,12 +21,14 @@ declare global {
   namespace PixiMixins {
     interface Container {
       __devtoolIgnore?: boolean;
+      __devtoolIgnoreChildren?: string;
     }
   }
 
   namespace GlobalMixins {
     interface Container {
       __devtoolIgnore?: boolean;
+      __devtoolIgnoreChildren?: string;
     }
   }
 }

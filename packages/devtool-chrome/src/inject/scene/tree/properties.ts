@@ -30,7 +30,7 @@ export class Properties {
   }
 
   public init() {
-    this._plugins = [...(this._devtool.devtools.plugins?.properties ?? []), ...this.defaultPlugins];
+    this._plugins = [...(this._devtool.devtools!.plugins?.properties ?? []), ...this.defaultPlugins];
   }
 
   public setValue(prop: string, value: any) {
