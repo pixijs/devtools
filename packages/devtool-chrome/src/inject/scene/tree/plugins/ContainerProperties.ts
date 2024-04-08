@@ -26,7 +26,7 @@ export const ContainerPropertiesPlugin: PropertyPlugin = {
     return this.props;
   },
   containsProperty(prop: string) {
-    return this.props.some((property) => property.prop === prop || property.prop === 'type');
+    return this.props.some((property) => property.prop === prop);
   },
   setValue(container: Container, prop: string, value: any) {
     prop = prop as keyof Container;
