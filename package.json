@@ -20,7 +20,7 @@
     "postbuild": "mkdir -p .upload && cd ./packages/devtool-chrome && zip -r chrome.zip ./dist/chrome/* && mv chrome.zip ../../.upload/",
     "watch": "npm run --ws watch --if-present",
     "types": "tsc --noEmit",
-    "release": "ts-node --esm ./scripts/release.mts"
+    "release": "tsx ./scripts/release.mts"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.23",
@@ -53,7 +53,7 @@
     "react-syntax-highlighter": "npm:@fengkx/react-syntax-highlighter@15.6.1",
     "rimraf": "^4.4.1",
     "tailwindcss": "^3.4.1",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.2",
     "vite": "^5.2.8"
   }
