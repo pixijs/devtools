@@ -15,13 +15,11 @@ function injectScript(file_path: string, tag: string) {
 }
 
 if (document.readyState === 'loading') {
-  console.log('loading');
   // Loading hasn't finished yet
   document.addEventListener('DOMContentLoaded', function () {
     injectScript(chrome.runtime.getURL('inject/index.js'), 'body');
   });
 } else {
-  console.log('loaded');
   // `DOMContentLoaded` has already fired
   injectScript(chrome.runtime.getURL('inject/index.js'), 'body');
 }
