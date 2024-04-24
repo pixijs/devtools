@@ -26,15 +26,20 @@ export const ColorInput: React.FC<ColorProps> = ({ value, onChange, ...rest }) =
   return (
     <div className="w-full">
       {displayColorPicker ? (
-        <div className="inline-flex h-6 w-full items-center justify-center rounded">
-          <div style={{ position: 'absolute', zIndex: '2' }}>
-            <div
-              style={{ position: 'fixed', top: '0px', right: '0px', bottom: '0px', left: '0px' }}
-              onClick={handleClose}
-            />
+        <div className="flex flex-col items-center">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
+            onClick={handleClose}
+          >
+            {hex}
+          </Button>
+          <div style={{ zIndex: '2' }}>
             <ChromePicker
               color={hex}
               onChange={(updatedColor) => onChange(JSON.stringify(updatedColor.hex))}
+              className="relative top-2"
               {...rest}
             />
           </div>
