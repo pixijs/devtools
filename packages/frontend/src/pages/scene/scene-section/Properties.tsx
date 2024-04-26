@@ -1,3 +1,8 @@
+import { SliderProps } from '@radix-ui/react-slider';
+import { SwitchProps } from '@radix-ui/react-switch';
+import Fuse from 'fuse.js';
+import { useCallback, useEffect, useState } from 'react';
+import { FaCopy as CopyIcon } from 'react-icons/fa6';
 import { useDevtoolStore } from '../../../App';
 import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
 import { ColorInput, ColorProps } from '../../../components/properties/color';
@@ -13,19 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../../components/ui/select';
+import { Separator } from '../../../components/ui/separator';
 import { Slider } from '../../../components/ui/slider';
 import { Switch } from '../../../components/ui/switch';
-import { formatCamelCase } from '../../../lib/utils';
-import { SliderProps } from '@radix-ui/react-slider';
-import { SwitchProps } from '@radix-ui/react-switch';
-import { useCallback, useEffect, useState } from 'react';
-import Fuse from 'fuse.js';
+import { copyToClipboard, formatCamelCase } from '../../../lib/utils';
 
 interface PanelProps {
   children: React.ReactNode;
   onSearch?: (searchTerm: string) => void;
+  onCopy?: () => void;
 }
-const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
+const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,10 +53,19 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
                 onChange={handleSearch}
               />
             </div>
+            <Separator orientation="vertical" className="h-4" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:border-primary h-8 rounded-none hover:border-b-2"
+              onClick={()=> onCopy?.()}
+            >
+              <CopyIcon className="dark:fill-white" />
+            </Button>
           </div>
           {/* content */}
           <div className="flex-1 overflow-auto p-2">
-            <div className="">{children}</div>
+            <div className="h-full min-w-max text-sm">{children}</div>
           </div>
         </div>
       </div>
@@ -251,10 +263,27 @@ export const Properties: React.FC = () => {
     setCurrentSearch(searchTerm);
   };
 
+  const onCopy = (section?: string) => {
+    let props = activeProps;
+    if (section) props = sections[section as string];
+    // create a json object with the current properties
+    const properties = props.reduce(
+      (acc, prop) => {
+        if (prop.entry.type === 'button') return acc;
+        acc[prop.prop] = prop.value;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    copyToClipboard(JSON.stringify(properties, null, 2));
+  };
+
+  // need to pass in the section name to copy to allow for copying of individual sections
   return (
-    <Panel onSearch={onSearch}>
+    <Panel onSearch={onSearch} onCopy={onCopy}>
       {(Object.keys(sections) as (keyof typeof sections)[]).map((section) => (
-        <CollapsibleSection key={section} title={section} className="border-x">
+        <CollapsibleSection key={section} title={section} className="border-x" onCopy={() => onCopy(section)}>
           <div className="p-2 [&>*:first-child]:pt-0">
             {sections[section].map((prop, i) => {
               const Component = properties[prop.entry.type];
