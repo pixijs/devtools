@@ -92,7 +92,7 @@ export class Tree {
 
   private _getName(container: Container, type: PixiNodeType) {
     const stage = this._devtool.stage;
-    const name = container.label ?? container.name;
+    const name = this._devtool.majorVersion === '8' ? container.label : container.name;
     const nameIsType = name === type;
     let fullName: string;
     let suffix: string;

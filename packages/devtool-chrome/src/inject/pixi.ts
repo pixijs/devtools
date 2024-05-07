@@ -203,12 +203,16 @@ class PixiWrapper {
     return this._version;
   }
 
+  public get majorVersion() {
+    return this.version.split('.')[0];
+  }
+
   /**
    * Checks if PixiJS is active.
    * @returns A message indicating if PixiJS is active or not.
    */
   public get isPixiActive() {
-    return this.app || this.stage || this.renderer ? DevtoolMessage.active : DevtoolMessage.inactive;
+    return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
   }
 
   public update() {
@@ -238,8 +242,8 @@ class PixiWrapper {
             this.tree.update(container);
           },
           test: (container) => {
-            if(container.__devtoolIgnore) return false;
-            if(container.__devtoolIgnoreChildren) return 'children';
+            if (container.__devtoolIgnore) return false;
+            if (container.__devtoolIgnoreChildren) return 'children';
             return true;
           },
         });
@@ -251,8 +255,12 @@ class PixiWrapper {
       this.properties.complete();
       this.overlay.complete();
 
-      // post the state to the devtools
-      window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
+      try {
+        // post the state to the devtools
+        window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
+      } catch (error) {
+        throw new Error(`[PixiJS Devtools] Error posting state update: ${(error as Error).message}`);
+      }
     }
   }
 }

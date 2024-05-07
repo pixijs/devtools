@@ -2,7 +2,7 @@ import type { Container } from 'pixi.js';
 
 interface LoopOptions {
   loop: (container: Container, parent: Container) => void;
-  test?: (container: Container, parent: Container) => boolean | 'children'
+  test?: (container: Container, parent: Container) => boolean | 'children';
   container: Container;
 }
 
@@ -20,7 +20,6 @@ function loopRecursive(container: Container, opts: Omit<LoopOptions, 'container'
   if (testResult === false) {
     return;
   }
-
 
   loop(container, container.parent);
 

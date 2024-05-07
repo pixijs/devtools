@@ -50,6 +50,7 @@ initDevtools({
   app,
 });
 ```
+
 This package will automatically import `pixi.js` dynamically if you do not provide `pixi` in the configuration.
 
 ### Optional Configuration

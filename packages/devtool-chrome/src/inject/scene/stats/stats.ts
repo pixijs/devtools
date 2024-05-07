@@ -48,7 +48,7 @@ export class NodeTracker {
   }
 
   private get plugins() {
-    return [totalNodesPlugin, ...(this._devtool.devtools!.plugins?.stats ?? []), defaultPlugin];
+    return [totalNodesPlugin, ...(this._devtool.devtools?.plugins?.stats ?? []), defaultPlugin];
   }
   public init() {
     // loop through all plugins and get the keys and set to 0

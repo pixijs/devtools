@@ -58,7 +58,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
               variant="ghost"
               size="icon"
               className="hover:border-primary h-8 rounded-none hover:border-b-2"
-              onClick={()=> onCopy?.()}
+              onClick={() => onCopy?.()}
             >
               <CopyIcon className="dark:fill-white" />
             </Button>

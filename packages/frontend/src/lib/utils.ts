@@ -52,12 +52,12 @@ export function formatCamelCase(string: string) {
 export function copyToClipboard(text: string) {
   // @TODO navigator.clipboard is buggy in extensions
   if (typeof document === 'undefined') {
-    return
+    return;
   }
-  const dummyTextArea = document.createElement('textarea')
-  dummyTextArea.textContent = text
-  document.body.appendChild(dummyTextArea)
-  dummyTextArea.select()
-  document.execCommand('copy')
-  document.body.removeChild(dummyTextArea)
+  const dummyTextArea = document.createElement('textarea');
+  dummyTextArea.textContent = text;
+  document.body.appendChild(dummyTextArea);
+  dummyTextArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummyTextArea);
 }

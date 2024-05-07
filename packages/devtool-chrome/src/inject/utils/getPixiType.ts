@@ -7,29 +7,29 @@ export function getPixiType(container: Container): PixiNodeType {
 
   if (!pixi) return 'Unknown';
 
-  if (container instanceof pixi.BitmapText) {
+  if (pixi.BitmapText && container instanceof pixi.BitmapText) {
     return 'BitmapText';
-  } else if (container instanceof pixi.HTMLText) {
+  } else if (pixi.HTMLText && container instanceof pixi.HTMLText) {
     return 'HTMLText';
-  } else if (container instanceof pixi.Text) {
+  } else if (pixi.Text && container instanceof pixi.Text) {
     return 'Text';
-  } else if (container instanceof pixi.Mesh) {
+  } else if (pixi.Mesh && container instanceof pixi.Mesh) {
     return 'Mesh';
-  } else if (container instanceof pixi.Graphics) {
+  } else if (pixi.Graphics && container instanceof pixi.Graphics) {
     return 'Graphics';
-  } else if (container instanceof pixi.AnimatedSprite) {
+  } else if (pixi.AnimatedSprite && container instanceof pixi.AnimatedSprite) {
     return 'AnimatedSprite';
   } else if (
     // in v7 NineSliceSprite does not exist
     (pixi.NineSliceSprite && container instanceof pixi.NineSliceSprite) ||
-    container instanceof pixi.NineSlicePlane
+    (pixi.NineSlicePlane && container instanceof pixi.NineSlicePlane)
   ) {
     return 'NineSliceSprite';
-  } else if (container instanceof pixi.TilingSprite) {
+  } else if (pixi.TilingSprite && container instanceof pixi.TilingSprite) {
     return 'TilingSprite';
-  } else if (container instanceof pixi.Sprite) {
+  } else if (pixi.Sprite && container instanceof pixi.Sprite) {
     return 'Sprite';
-  } else if (container instanceof pixi.Container) {
+  } else if (pixi.Container && container instanceof pixi.Container) {
     return 'Container';
   }
 
