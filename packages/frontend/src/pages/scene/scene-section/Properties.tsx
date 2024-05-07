@@ -26,7 +26,7 @@ import { copyToClipboard, formatCamelCase } from '../../../lib/utils';
 interface PanelProps {
   children: React.ReactNode;
   onSearch?: (searchTerm: string) => void;
-  onCopy?: () => void
+  onCopy?: () => void;
 }
 const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
   const [searchTerm, setSearchTerm] = useState('');
