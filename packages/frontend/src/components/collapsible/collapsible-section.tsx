@@ -1,12 +1,14 @@
 import { cn } from '../../lib/utils';
 import { useState } from 'react';
 import { FaAngleDown } from 'react-icons/fa6';
+import { FaCopy as CopyIcon } from 'react-icons/fa6';
 
 interface CollapsibleSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   title: string;
+  onCopy?: () => void;
 }
-export const CollapsibleSection = ({ className, children, title }: CollapsibleSectionProps) => {
+export const CollapsibleSection = ({ className, children, title, onCopy }: CollapsibleSectionProps) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -18,7 +20,18 @@ export const CollapsibleSection = ({ className, children, title }: CollapsibleSe
         )}
         onClick={() => setCollapsed(!collapsed)}
       >
-        <div>{title}</div>
+        <div className="flex items-center gap-2">
+          {onCopy && (
+            <CopyIcon
+              onClick={(e) => {
+                onCopy();
+                e.stopPropagation();
+              }}
+              className="hover:fill-primary cursor-pointer opacity-45 hover:opacity-100"
+            />
+          )}
+          <div>{title}</div>
+        </div>
         <FaAngleDown className={cn('transform', collapsed ? 'rotate-180' : 'rotate-0')} />
       </div>
       {!collapsed && children}
