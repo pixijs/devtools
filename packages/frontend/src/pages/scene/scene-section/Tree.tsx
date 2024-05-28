@@ -6,6 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { useDevtoolStore } from '../../../App';
 import { Separator } from '../../../components/ui/separator';
 import { Toggle } from '../../../components/ui/toggle';
+import { TooltipWrapper } from '../../../components/ui/tooltip';
 import { Cursor } from './tree/cursor';
 import { Node } from './tree/node';
 import { useSimpleTree } from './tree/simple-tree';
@@ -38,25 +39,35 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
         <div className="flex h-full flex-col">
           {/* search bar */}
           <div className="border-border flex h-8 max-h-8 items-center border-b">
-            <Toggle
-              variant="ghost"
-              size="icon"
-              className="hover:border-primary h-8 rounded-none hover:border-b-2"
-              defaultPressed={overlayPickerEnabled}
-              onPressedChange={onPickerToggle}
-            >
-              <PickIcon className="dark:fill-white" />
-            </Toggle>
+            <TooltipWrapper
+              trigger={
+                <Toggle
+                  variant="ghost"
+                  size="icon"
+                  className="hover:border-primary h-8 rounded-none hover:border-b-2"
+                  defaultPressed={overlayPickerEnabled}
+                  onPressedChange={onPickerToggle}
+                >
+                  <PickIcon className="dark:fill-white" />
+                </Toggle>
+              }
+              tip="Allows you to select a node in the scene by clicking on it."
+            />
             <Separator orientation="vertical" className="h-4" />
-            <Toggle
-              variant="ghost"
-              size="icon"
-              className="hover:border-primary h-8 rounded-none hover:border-b-2"
-              defaultPressed={overlayHighlightEnabled}
-              onPressedChange={onHighlightToggle}
-            >
-              <OutlineToggleIcon className="stroke-[3] dark:fill-white" />
-            </Toggle>
+            <TooltipWrapper
+              trigger={
+                <Toggle
+                  variant="ghost"
+                  size="icon"
+                  className="hover:border-primary h-8 rounded-none hover:border-b-2"
+                  defaultPressed={overlayHighlightEnabled}
+                  onPressedChange={onHighlightToggle}
+                >
+                  <OutlineToggleIcon className="stroke-[3] dark:fill-white" />
+                </Toggle>
+              }
+              tip="Highlight selected node in the scene, and the currently hovered node."
+            />
             <Separator orientation="vertical" className="h-4" />
             {/* search wrapper */}
             <div className="hover:border-b-primary inline-block h-8 w-auto min-w-0 flex-1 cursor-text align-middle hover:border-b-2">

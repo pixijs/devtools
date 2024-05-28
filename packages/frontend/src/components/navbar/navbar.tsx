@@ -9,6 +9,7 @@ import { cva } from 'class-variance-authority';
 import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useDevtoolStore } from '../../App';
+import pkg from '../../../../../package.json';
 
 const tabVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm h-full w-full rounded-none border-r-2 border-border hover:border-b-2 hover:border-b-primary bg-muted cursor-pointer',
@@ -71,7 +72,8 @@ export const Navbar = ({ tabs, defaultTab }: NavbarProps) => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{version}</p>
+              <p>PixiJS:{version}</p>
+              <p>Devtool:{pkg.version}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

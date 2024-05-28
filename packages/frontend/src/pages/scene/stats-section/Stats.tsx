@@ -79,7 +79,7 @@ export const Stats: React.FC = () => {
 
   return (
     <CollapsibleSection title="Stats">
-      <div className="flex h-full max-h-[20%] flex-1 overflow-hidden">
+      <div className="flex h-full max-h-[15%] flex-1 overflow-hidden">
         <div className="flex h-full w-full flex-wrap justify-start overflow-auto">
           {currentStats.map((item) => {
             return (

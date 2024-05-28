@@ -21,6 +21,7 @@ import {
 import { Separator } from '../../../components/ui/separator';
 import { Slider } from '../../../components/ui/slider';
 import { Switch } from '../../../components/ui/switch';
+import { TooltipWrapper } from '../../../components/ui/tooltip';
 import { copyToClipboard, formatCamelCase } from '../../../lib/utils';
 
 interface PanelProps {
@@ -54,14 +55,19 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
               />
             </div>
             <Separator orientation="vertical" className="h-4" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:border-primary h-8 rounded-none hover:border-b-2"
-              onClick={() => onCopy?.()}
-            >
-              <CopyIcon className="dark:fill-white" />
-            </Button>
+            <TooltipWrapper
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:border-primary h-8 rounded-none hover:border-b-2"
+                  onClick={() => onCopy?.()}
+                >
+                  <CopyIcon className="dark:fill-white" />
+                </Button>
+              }
+              tip="Copy the current properties to the clipboard"
+            />
           </div>
           {/* content */}
           <div className="flex-1 overflow-auto p-2">
