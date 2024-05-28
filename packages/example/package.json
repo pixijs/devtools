@@ -9,7 +9,7 @@
     "start": "npm run watch"
   },
   "dependencies": {
-    "pixi.js": "^8.0.0-rc.10",
+    "pixi.js": "^8.1.4",
     "@pixi/devtools": "*"
   }
 }
