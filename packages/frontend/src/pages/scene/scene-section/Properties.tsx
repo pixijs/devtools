@@ -65,7 +65,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
           </div>
           {/* content */}
           <div className="flex-1 overflow-auto p-2">
-            <div className="h-full min-w-max text-sm">{children}</div>
+            <div className="">{children}</div>
           </div>
         </div>
       </div>
