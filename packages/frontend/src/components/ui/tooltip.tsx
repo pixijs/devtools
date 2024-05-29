@@ -25,4 +25,17 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+const TooltipWrapper: React.FC<{ trigger: React.ReactNode; tip: string }> = ({ trigger, tip }) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger> {trigger} </TooltipTrigger>
+        <TooltipContent className="max-w-72">
+          <p>{tip}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, TooltipWrapper };
