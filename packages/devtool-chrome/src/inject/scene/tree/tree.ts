@@ -91,6 +91,10 @@ export class Tree {
   }
 
   private _getName(container: Container, type: PixiNodeType) {
+    if (type === 'Unknown') {
+      type = container.constructor.name as PixiNodeType;
+    }
+
     const stage = this._devtool.stage;
     const name = this._devtool.majorVersion === '8' ? container.label : container.name;
     const nameIsType = name === type;
