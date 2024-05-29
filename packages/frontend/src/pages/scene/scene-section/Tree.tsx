@@ -47,6 +47,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
                   size="icon"
                   className="hover:border-primary h-8 rounded-none hover:border-b-2"
                   defaultPressed={overlayPickerEnabled}
+                  pressed={overlayPickerEnabled}
                   onPressedChange={onPickerToggle}
                 >
                   <div className="h-3 w-3">

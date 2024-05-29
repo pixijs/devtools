@@ -19,6 +19,21 @@ export class Overlay {
     this._devtool = devtool;
     this._selectHighlightEnabled = devtool.state.overlayHighlightEnabled;
     this._pickerEnabled = devtool.state.overlayPickerEnabled;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) {
+        this.enablePicker(true);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.altKey) {
+        this.enablePicker(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
   }
 
   public init() {
