@@ -56,7 +56,7 @@ class PixiWrapper {
       this.overlayPickerEnabled = enabled;
     },
 
-    overlayHighlightEnabled: false,
+    overlayHighlightEnabled: true,
     setOverlayHighlightEnabled: function (enabled: DevtoolState['overlayHighlightEnabled']) {
       this.overlayHighlightEnabled = enabled;
     },
