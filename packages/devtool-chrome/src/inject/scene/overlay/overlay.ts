@@ -17,6 +17,8 @@ export class Overlay {
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
+    this._selectHighlightEnabled = devtool.state.overlayHighlightEnabled;
+    this._pickerEnabled = devtool.state.overlayPickerEnabled;
   }
 
   public init() {

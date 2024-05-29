@@ -31,7 +31,7 @@ export const sceneStateSlice = (set: ZustSet<SceneState>) => ({
   overlayPickerEnabled: false,
   setOverlayPickerEnabled: (enabled: SceneState['overlayPickerEnabled']) => set({ overlayPickerEnabled: enabled }),
 
-  overlayHighlightEnabled: false,
+  overlayHighlightEnabled: true,
   setOverlayHighlightEnabled: (enabled: SceneState['overlayHighlightEnabled']) =>
     set({ overlayHighlightEnabled: enabled }),
 });
