@@ -42,13 +42,16 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
             <TooltipWrapper
               trigger={
                 <Toggle
+                  asChild
                   variant="ghost"
                   size="icon"
                   className="hover:border-primary h-8 rounded-none hover:border-b-2"
                   defaultPressed={overlayPickerEnabled}
                   onPressedChange={onPickerToggle}
                 >
-                  <PickIcon className="dark:fill-white" />
+                  <div className="h-3 w-3">
+                    <PickIcon className="h-3 dark:fill-white" />
+                  </div>
                 </Toggle>
               }
               tip="Allows you to select a node in the scene by clicking on it."
@@ -57,13 +60,16 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
             <TooltipWrapper
               trigger={
                 <Toggle
+                  asChild
                   variant="ghost"
                   size="icon"
                   className="hover:border-primary h-8 rounded-none hover:border-b-2"
                   defaultPressed={overlayHighlightEnabled}
                   onPressedChange={onHighlightToggle}
                 >
-                  <OutlineToggleIcon className="stroke-[3] dark:fill-white" />
+                  <div className="h-3 w-3">
+                    <OutlineToggleIcon className="stroke-[3] dark:fill-white" />
+                  </div>
                 </Toggle>
               }
               tip="Highlight selected node in the scene, and the currently hovered node."

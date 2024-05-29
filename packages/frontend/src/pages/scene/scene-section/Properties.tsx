@@ -58,12 +58,15 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
             <TooltipWrapper
               trigger={
                 <Button
+                  asChild
                   variant="ghost"
                   size="icon"
                   className="hover:border-primary h-8 rounded-none hover:border-b-2"
                   onClick={() => onCopy?.()}
                 >
-                  <CopyIcon className="dark:fill-white" />
+                  <div className="h-3 w-3">
+                    <CopyIcon className="dark:fill-white" />
+                  </div>
                 </Button>
               }
               tip="Copy the current properties to the clipboard"
