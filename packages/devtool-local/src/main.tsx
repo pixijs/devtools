@@ -68,10 +68,7 @@ const mockBridge: BridgeFn = (code): Promise<any> => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <div
-      id="root"
-      style={{ display: 'flex', flexDirection: 'column', maxHeight: '100vh', alignItems: 'center' }}
-    >
+    <div id="root" style={{ display: 'flex', flexDirection: 'column', maxHeight: '100vh', alignItems: 'center' }}>
       <canvas id="canvas" style={{ width: '600px', height: '450px' }} />
       <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
         <App bridge={mockBridge} chromeProxy={mockChrome} />

@@ -91,7 +91,7 @@ export class Tree {
   }
 
   private _getName(container: Container, type: PixiNodeType) {
-    if(type === 'Unknown') {
+    if (type === 'Unknown') {
       type = container.constructor.name as PixiNodeType;
     }
 
