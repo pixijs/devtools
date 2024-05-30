@@ -62,6 +62,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   const active = useDevtoolStore.use.active();
   const setSelectedNode = useDevtoolStore.use.setSelectedNode();
   const setActiveProps = useDevtoolStore.use.setActiveProps();
+  const setOverlayPickerEnabled = useDevtoolStore.use.setOverlayPickerEnabled();
 
   useEffect(() => {
     setBridge(bridge);
@@ -96,11 +97,24 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
             isDifferent(currentState.sceneGraph, data.sceneGraph) && setSceneGraph(data.sceneGraph);
             isDifferent(currentState.selectedNode, data.selectedNode) && setSelectedNode(data.selectedNode);
             isDifferent(currentState.activeProps, data.activeProps) && setActiveProps(data.activeProps);
+            isDifferent(currentState.overlayPickerEnabled, data.overlayPickerEnabled) &&
+              setOverlayPickerEnabled(data.overlayPickerEnabled);
           }
           break;
       }
     });
-  }, [bridge, chromeProxy, setActive, setActiveProps, setBridge, setSceneGraph, setSelectedNode, setStats, setVersion]);
+  }, [
+    bridge,
+    chromeProxy,
+    setActive,
+    setActiveProps,
+    setBridge,
+    setSceneGraph,
+    setSelectedNode,
+    setStats,
+    setVersion,
+    setOverlayPickerEnabled,
+  ]);
 
   const windowString = `import * as PIXI from 'pixi.js';
 
