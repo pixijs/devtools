@@ -13,6 +13,7 @@
     "start": "npm run watch"
   },
   "dependencies": {
-    "@devtool/frontend": "*"
+    "@devtool/frontend": "*",
+    "@devtool/backend": "*"
   }
 }

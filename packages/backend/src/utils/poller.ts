@@ -1,5 +1,4 @@
 import { DevtoolMessage } from '@devtool/frontend/types';
-import { convertPostMessage } from '../../messageUtils';
 import { PixiDevtools } from '../pixi';
 
 // Constants
@@ -46,7 +45,6 @@ function tryDetectPixi(foundCallback: () => void) {
     if (pixiDetectionResult === DevtoolMessage.active) {
       stopPolling();
       foundCallback();
-      window.postMessage(convertPostMessage(DevtoolMessage.active, {}), '*');
     }
   } catch (error) {
     // If an error occurred, stop polling

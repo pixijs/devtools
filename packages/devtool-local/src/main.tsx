@@ -2,7 +2,7 @@ import App from '@devtool/frontend/App';
 import type { BridgeFn } from '@devtool/frontend/lib/utils';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { PixiDevtools } from '../../devtool-chrome/src/inject/pixi';
+import { PixiDevtools } from '@devtool/backend/pixi';
 import scene from './scene.ts';
 import * as PIXI from 'pixi.js';
 

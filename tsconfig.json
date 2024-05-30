@@ -21,6 +21,7 @@
     "baseUrl": "./",
     "paths": {
       "@devtool/frontend/*": ["packages/frontend/src/*"],
+      "@devtool/backend/*": ["packages/backend/src/*"],
       "@pixi/devtools": ["packages/api/src/index.ts"]
     }
   },
