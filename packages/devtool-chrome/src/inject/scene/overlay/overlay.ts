@@ -72,10 +72,12 @@ export class Overlay {
   }
 
   public activatePick() {
+    if (!this._overlay) return;
     this._overlay.style.pointerEvents = 'auto';
   }
 
   public disablePick() {
+    if (!this._overlay) return;
     this._overlay.style.pointerEvents = 'none';
   }
 
