@@ -64,16 +64,15 @@ export class Tree {
   public update(container: Container) {
     const stage = this._devtool.stage;
     const type = getPixiType(container);
-    const { suffix, nameStart } = this._getName(container, type);
+    const { suffix, name } = this._getName(container, type);
     const node = {
       id: this._getId(container),
-      name: nameStart,
+      name: name,
       children: [],
       metadata: {
         type,
         uid: this._getId(container),
         suffix,
-        nameStart,
       },
     };
 
@@ -98,27 +97,11 @@ export class Tree {
     const stage = this._devtool.stage;
     const name = this._devtool.majorVersion === '8' ? container.label : container.name;
     const nameIsType = name === type;
-    let fullName: string;
-    let suffix: string;
-    let nameStart: string;
 
-    if (nameIsType) {
-      fullName = `${name}${stage === container ? ' (Stage)' : ''}`;
-      nameStart = name;
-      suffix = stage === container ? ' (Stage)' : '';
-    } else {
-      if (name) {
-        fullName = `${name} (${stage === container ? 'Stage' : type})`;
-        nameStart = name;
-        suffix = `(${stage === container ? 'Stage' : type})`;
-      } else {
-        fullName = `${type}${stage === container ? ' (Stage)' : ''}`;
-        nameStart = type;
-        suffix = stage === container ? ' (Stage)' : '';
-      }
-    }
+    const nameStart = nameIsType || !name ? type : name;
+    const suffix = name ? ` (${stage === container ? 'Stage' : type})` : stage === container ? ' (Stage)' : '';
 
-    return { fullName, suffix, nameStart };
+    return { suffix, name: nameStart };
   }
 
   private _getId(container: Container) {
