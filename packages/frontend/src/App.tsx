@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter';
-import ts from 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { create } from 'zustand';
@@ -14,8 +13,6 @@ import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
 import { sceneStateSlice } from './pages/scene/state';
 import { DevtoolState } from './types';
-
-SyntaxHighlighter.registerLanguage('typescript', ts);
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -153,7 +150,7 @@ initDevtools({
               <div className="p-4">
                 <p>1. Using the window.__PIXI_DEVTOOLS__ global variable</p>
                 <div className="relative p-4">
-                  <SyntaxHighlighter language="typescript" style={dracula}>
+                  <SyntaxHighlighter language="javascript" style={dracula}>
                     {windowString}
                   </SyntaxHighlighter>
                   <CopyToClipboardButton data={windowString} />
@@ -170,7 +167,7 @@ initDevtools({
                   <CopyToClipboardButton data={npmInstallString} />
                 </div>
                 <div className="relative p-4 pt-0">
-                  <SyntaxHighlighter language="typescript" style={dracula}>
+                  <SyntaxHighlighter language="javascript" style={dracula}>
                     {npmString}
                   </SyntaxHighlighter>
                   <CopyToClipboardButton data={npmString} />

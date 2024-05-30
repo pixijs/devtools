@@ -1,7 +1,9 @@
 // Note: this file is compiled to `dist/content-inject/index.js` and is used by the content script
 
-import { PixiDevtools } from './pixi';
-import { pollPixi } from './utils/poller';
+import { PixiDevtools } from '@devtool/backend/pixi';
+import { pollPixi } from '@devtool/backend/utils/poller';
+import { convertPostMessage } from '../messageUtils';
+import { DevtoolMessage } from '@devtool/frontend/types';
 
 function attach() {
   const renderer = PixiDevtools.renderer;
@@ -15,6 +17,8 @@ function attach() {
       },
     });
   }
+
+  window.postMessage(convertPostMessage(DevtoolMessage.active, {}), '*');
 }
 
 pollPixi(attach);

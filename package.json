@@ -10,12 +10,14 @@
     "./packages/*"
   ],
   "scripts": {
+    "clean": "rimraf .upload && rimraf packages/*/dist",
     "postinstall": "patch-package",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "lint:fix": "eslint --ext .ts,.tsx . --fix && prettier --write .",
     "start": "npm run --ws start --if-present",
     "start:local": "npm run start --workspace @devtool/local --if-present",
     "start:chrome": "npm run start --workspace @devtool/chrome & npm run start --workspace @devtool/example",
+    "prebuild": "npm run clean",
     "build": "npm run --ws build --if-present",
     "postbuild": "mkdir -p .upload && cd ./packages/devtool-chrome && zip -r chrome.zip ./dist/chrome/* && mv chrome.zip ../../.upload/",
     "watch": "npm run --ws watch --if-present",
