@@ -9,15 +9,14 @@ export class Overlay {
   private _selectedHighlight!: HTMLDivElement;
   private _hoverHighlight!: HTMLDivElement;
   private _pickerEnabled = false;
-  private _selectHighlightEnabled = false;
-  private _hoverHighlightEnabled = false;
+  private _highlightEnabled = false;
   private _hoveredNode: Container | null = null;
   private _devtool: typeof PixiDevtools;
   private _updateThrottle = new Throttle();
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
-    this._selectHighlightEnabled = devtool.state.overlayHighlightEnabled;
+    this._highlightEnabled = devtool.state.overlayHighlightEnabled;
     this._pickerEnabled = devtool.state.overlayPickerEnabled;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,23 +53,11 @@ export class Overlay {
       this._updateOverlay();
     }
 
-    const selectedNode = this._devtool.tree.selectedNode;
-
-    if (!selectedNode || !this._selectHighlightEnabled) {
-      this.disableHighlight('_selectedHighlight');
-    } else {
-      this.activateHighlight('_selectedHighlight', selectedNode);
-    }
-
-    if (!this._hoveredNode || !this._hoverHighlightEnabled) {
-      this.disableHighlight('_hoverHighlight');
-    } else {
-      this.activateHighlight('_hoverHighlight', this._hoveredNode!);
-    }
+    this.enableHighlight(this._highlightEnabled);
   }
 
   public complete() {
-    this._devtool.state.overlayHighlightEnabled = this._selectHighlightEnabled;
+    this._devtool.state.overlayHighlightEnabled = this._highlightEnabled;
     this._devtool.state.overlayPickerEnabled = this._pickerEnabled;
   }
 
@@ -93,18 +80,17 @@ export class Overlay {
   }
 
   public enableHighlight(value: boolean) {
-    this._selectHighlightEnabled = value;
-    this._hoverHighlightEnabled = value;
+    this._highlightEnabled = value;
 
     const selectedNode = this._devtool.tree.selectedNode;
 
-    if (!selectedNode || !this._selectHighlightEnabled) {
+    if (!selectedNode || !this._highlightEnabled) {
       this.disableHighlight('_selectedHighlight');
     } else {
       this.activateHighlight('_selectedHighlight', selectedNode);
     }
 
-    if (!this._hoveredNode || !this._hoverHighlightEnabled) {
+    if (!this._hoveredNode || !this._highlightEnabled) {
       this.disableHighlight('_hoverHighlight');
     } else {
       this.activateHighlight('_hoverHighlight', this._hoveredNode!);
@@ -141,7 +127,7 @@ export class Overlay {
       return;
     }
 
-    this.activateHighlight('_hoverHighlight', node);
+    if (this._highlightEnabled) this.activateHighlight('_hoverHighlight', node);
   }
 
   private _buildOverlay() {
