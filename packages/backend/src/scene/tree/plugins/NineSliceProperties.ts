@@ -1,4 +1,4 @@
-import { PropertyPlugin } from '@pixi/devtools';
+import type { PropertyPlugin } from '@pixi/devtools';
 import type { NineSliceSprite } from 'pixi.js';
 import { ContainerPropertiesPlugin } from './ContainerProperties';
 

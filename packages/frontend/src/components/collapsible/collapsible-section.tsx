@@ -1,7 +1,6 @@
 import { cn } from '../../lib/utils';
 import { useState } from 'react';
-import { FaAngleDown } from 'react-icons/fa6';
-import { FaCopy as CopyIcon } from 'react-icons/fa6';
+import { FaAngleDown, FaCopy as CopyIcon } from 'react-icons/fa6';
 
 interface CollapsibleSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

@@ -1,5 +1,6 @@
 import React from 'react';
-import { IChartOptions, ITimeSeriesOptions, ITimeSeriesPresentationOptions, SmoothieChart, TimeSeries } from 'smoothie';
+import type { IChartOptions, ITimeSeriesOptions, ITimeSeriesPresentationOptions } from 'smoothie';
+import { SmoothieChart, TimeSeries } from 'smoothie';
 
 function DefaultTooltip(props: { display?: boolean; time?: number; data?: TooltipData }) {
   if (!props.display) return <div />;

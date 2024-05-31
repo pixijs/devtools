@@ -1,4 +1,5 @@
-import { PanelGroup, Panel, PanelResizeHandle, PanelProps } from 'react-resizable-panels';
+import type { PanelProps } from 'react-resizable-panels';
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { CollapsibleSection } from './collapsible-section';
 
 interface CollapsibleSectionProps {

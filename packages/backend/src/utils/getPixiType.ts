@@ -1,6 +1,6 @@
-import { Container } from 'pixi.js';
+import type { Container } from 'pixi.js';
 import { PixiDevtools } from '../pixi';
-import { PixiNodeType } from '@devtool/frontend/types';
+import type { PixiNodeType } from '@devtool/frontend/types';
 
 export function getPixiType(container: Container): PixiNodeType {
   const pixi = PixiDevtools.pixi;

@@ -1,10 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../global.d.ts" />
-import { Devtools, DevtoolsAPI } from './types';
+import type { Devtools, DevtoolsAPI } from './types';
 
-export * from './propertyPlugin';
-export * from './nodeTrackerPlugin';
-export * from './treePlugin';
+export * from './extensions/ext';
+export * from './extensions/node';
+export * from './extensions/overlay';
+export * from './extensions/properties';
+export * from './extensions/scenePanel';
+export * from './extensions/stats';
+export * from './extensions/tree';
 export * from './types';
 
 export async function initDevtools(opts: DevtoolsAPI) {

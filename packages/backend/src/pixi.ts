@@ -1,4 +1,5 @@
-import { DevtoolMessage, DevtoolState } from '@devtool/frontend/types';
+import type { DevtoolState } from '@devtool/frontend/types';
+import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
 import type { Application, Container, Renderer } from 'pixi.js';
 import { loop } from './utils/loop';
@@ -7,6 +8,8 @@ import { Tree } from './scene/tree/tree';
 import { Properties } from './scene/tree/properties';
 import { Throttle } from './utils/throttle';
 import { Overlay } from './scene/overlay/overlay';
+import { extensions } from './extensions/Extensions';
+import { overlayExt } from './extensions/overlay/OverlayExt';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -77,6 +80,8 @@ class PixiWrapper {
 
   private _updateThrottle = new Throttle();
 
+  private _initialized = false;
+
   /**
    * Searches for a property in the window and its frames.
    * @param props - The properties to search for.
@@ -108,15 +113,18 @@ class PixiWrapper {
 
     if (!this._devtools) return undefined;
 
-    this._devtools.plugins ||= { properties: [], stats: [] };
-    this._devtools.plugins.properties ||= [];
-    this._devtools.plugins.stats ||= [];
+    const plugins = this._devtools.plugins || [];
+    this._devtools.plugins = plugins;
+
+    this._devtools.plugins.forEach((plugin) => {
+      extensions.add(plugin);
+    });
+
     return this._devtools;
   }
 
   /**
    * Gets the PixiJS Application.
-   * @returns The PixiJS Application.
    */
   public get app() {
     if (this._app) return this._app;
@@ -130,7 +138,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS Stage.
-   * @returns The PixiJS Stage.
    */
   public get stage() {
     if (this._stage) return this._stage;
@@ -147,7 +154,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS Renderer.
-   * @returns The PixiJS Renderer.
    */
   public get renderer() {
     if (this._renderer) return this._renderer;
@@ -163,7 +169,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS Canvas.
-   * @returns The PixiJS Canvas.
    */
   public get canvas() {
     if (this._canvas) return this._canvas;
@@ -181,7 +186,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS library.
-   * @returns The PixiJS library.
    */
   public get pixi() {
     if (this._pixi) return this._pixi;
@@ -195,7 +199,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS version.
-   * @returns The PixiJS version.
    */
   public get version() {
     if (this._version) return this._version;
@@ -215,9 +218,21 @@ class PixiWrapper {
     return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
   }
 
+  public reset() {
+    this._devtools = undefined;
+    this._app = undefined;
+    this._stage = undefined;
+    this._renderer = undefined;
+    this._canvas = undefined;
+    this._pixi = undefined;
+    this._version = undefined;
+    this._initialized = false;
+  }
+
   public update() {
-    this.overlay.init();
-    this.overlay.update();
+    if (!this._initialized) {
+      this.init();
+    }
 
     if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
       // reset the state before updating
@@ -226,11 +241,11 @@ class PixiWrapper {
       // TODO: probably don't need to reset this every time
       this.state.setSelectedNode(null);
       this.state.setActiveProps([]);
-
-      this.properties.init();
-      this.statTracker.init();
-      this.tree.init();
       this.state.setVersion(this.version);
+
+      this.overlay.update();
+      this.statTracker.preupdate();
+      this.tree.preupdate();
 
       // check if we are accessing the correct stage
       if (this.renderer!.lastObjectRendered === this.stage) {
@@ -249,21 +264,33 @@ class PixiWrapper {
         });
       }
 
-      this.statTracker.complete();
-      this.tree.complete();
-      this.properties.update();
-      this.properties.complete();
-      this.overlay.complete();
+      this.postupdate();
+    }
+  }
 
-      try {
-        // post the state to the devtools
-        window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
-      } catch (error) {
-        throw new Error(`[PixiJS Devtools] Error posting state update: ${(error as Error).message}`);
-      }
+  private init() {
+    this.overlay.init();
+    this.properties.init();
+    this._initialized = true;
+  }
+
+  private postupdate() {
+    this.statTracker.complete();
+    this.tree.complete();
+    this.properties.update();
+    this.properties.complete();
+    this.overlay.complete();
+
+    try {
+      // post the state to the devtools
+      window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
+    } catch (error) {
+      throw new Error(`[PixiJS Devtools] Error posting state update: ${(error as Error).message}`);
     }
   }
 }
+
+extensions.add(overlayExt);
 
 // Export an instance of PixiWrapper
 export const PixiDevtools = new PixiWrapper();

@@ -1,3 +1,4 @@
+import type { ExtensionMetadata } from './ext';
 import type { Container } from 'pixi.js';
 
 type PropertyPanelData = {
@@ -16,7 +17,9 @@ type NoOnChange = Omit<PropertyPanelData['entry'], 'onChange'>;
 export type Props = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
 export type PropsData = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
 
-export interface PropertyPlugin {
+export interface PropertiesExtension {
+  extension: ExtensionMetadata;
+
   updateProps(container: Container): PropsData[];
   setValue(container: Container, prop: string, value: any): void;
   containsProperty(prop: string): boolean;

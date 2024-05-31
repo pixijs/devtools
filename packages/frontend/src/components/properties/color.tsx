@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChromePicker, ChromePickerProps } from 'react-color';
+import type { ChromePickerProps } from 'react-color';
+import { ChromePicker } from 'react-color';
 import { Button } from '../ui/button';
 
 export interface ColorProps extends Omit<ChromePickerProps, 'onChange'> {

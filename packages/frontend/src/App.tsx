@@ -7,12 +7,13 @@ import { Navbar } from './components/navbar/navbar';
 import { ThemeProvider } from './components/theme-provider';
 import { CopyToClipboardButton } from './components/ui/clipboard';
 import './globals.css';
-import { BridgeFn, NonNullableFields, createSelectors, isDifferent } from './lib/utils';
+import type { BridgeFn, NonNullableFields } from './lib/utils';
+import { createSelectors, isDifferent } from './lib/utils';
 import { AssetsPanel } from './pages/assets/AssetsPanel';
 import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
 import { sceneStateSlice } from './pages/scene/state';
-import { DevtoolState } from './types';
+import type { DevtoolState } from './types';
 
 const tabComponents = {
   Scene: <ScenePanel />,

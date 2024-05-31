@@ -1,6 +1,6 @@
 import type { Container } from 'pixi.js';
 import type { PixiDevtools } from '../../pixi';
-import { SceneGraphEntry, PixiNodeType } from '@devtool/frontend/types';
+import type { SceneGraphEntry, PixiNodeType } from '@devtool/frontend/types';
 import { getPixiType } from '../../utils/getPixiType';
 
 const uidMap = new WeakMap<Container, string>();
@@ -30,6 +30,17 @@ export class Tree {
     window.$pixi = node;
   }
 
+  public moveNode(nodeId: string, parentId: string, index: number) {
+    const node = this._idMap.get(nodeId);
+    const parent = this._idMap.get(parentId);
+
+    if (!node || !parent) return;
+
+    node.parent?.removeChild(node);
+    parent.addChildAt(node, index);
+    console.log('moveNode', node, parent, index);
+  }
+
   public renameNode(nodeId: string, name: string) {
     const sceneNode = this._idMap.get(nodeId);
 
@@ -45,7 +56,7 @@ export class Tree {
     sceneNode.parent?.removeChild(sceneNode);
   }
 
-  public init() {
+  public preupdate() {
     this._sceneGraph.clear();
     this._idMap.clear();
   }

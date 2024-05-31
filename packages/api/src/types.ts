@@ -1,7 +1,5 @@
 import type { Container, Renderer, Application } from 'pixi.js';
-import { PropertyPlugin } from './propertyPlugin';
-import { NodeTrackerPlugin } from './nodeTrackerPlugin';
-
+import type { OverlayExtension } from './extensions/overlay';
 export interface DevtoolApp extends DevtoolPixi {
   app: Application;
 }
@@ -13,10 +11,7 @@ export interface DevtoolRenderer extends DevtoolPixi {
 
 interface DevtoolPixi {
   pixi?: typeof import('pixi.js');
-  plugins?: {
-    stats?: NodeTrackerPlugin[];
-    properties?: PropertyPlugin[];
-  };
+  plugins?: OverlayExtension[];
 }
 
 export type DevtoolsAPI = DevtoolApp | DevtoolRenderer;

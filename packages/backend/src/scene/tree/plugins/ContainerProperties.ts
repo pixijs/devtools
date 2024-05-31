@@ -1,4 +1,4 @@
-import { PropertyPlugin } from '@pixi/devtools';
+import type { PropertyPlugin } from '@pixi/devtools';
 import type { Container, Rectangle } from 'pixi.js';
 
 export const ContainerPropertiesPlugin: PropertyPlugin = {

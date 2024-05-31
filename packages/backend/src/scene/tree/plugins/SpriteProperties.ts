@@ -1,4 +1,4 @@
-import { PropertyPlugin } from '@pixi/devtools';
+import type { PropertyPlugin } from '@pixi/devtools';
 import type { Sprite } from 'pixi.js';
 import { ContainerPropertiesPlugin } from './ContainerProperties';
 

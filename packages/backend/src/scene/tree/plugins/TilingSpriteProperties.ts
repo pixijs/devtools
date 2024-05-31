@@ -1,4 +1,4 @@
-import { PropertyPlugin } from '@pixi/devtools';
+import type { PropertyPlugin } from '@pixi/devtools';
 import type { TilingSprite } from 'pixi.js';
 import { ContainerPropertiesPlugin } from './ContainerProperties';
 

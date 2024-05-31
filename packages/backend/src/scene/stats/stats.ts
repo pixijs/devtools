@@ -1,4 +1,4 @@
-import { DevtoolState } from '@devtool/frontend/types';
+import type { DevtoolState } from '@devtool/frontend/types';
 import type { Container } from 'pixi.js';
 import type { PixiDevtools } from '../../pixi';
 import { getPixiType } from '../../utils/getPixiType';
@@ -14,24 +14,21 @@ const totalNodesPlugin: NodeTrackerPlugin = {
   },
 };
 
-const defaultPlugin: NodeTrackerPlugin = {
-  trackNode: (container: Container, state: NonNullable<DevtoolState['stats']>) => {
-    const type = getPixiType(container);
+const defaultPlugin = {
+  typeMap: {
+    BitmapText: 'bitmapText',
+    HTMLText: 'htmlText',
+    Text: 'text',
+    Mesh: 'mesh',
+    Graphics: 'graphics',
+    Sprite: 'sprite',
+    Container: 'container',
+  },
+  trackNode(container: Container, state: NonNullable<DevtoolState['stats']>) {
+    const type = getPixiType(container) as keyof (typeof defaultPlugin)['typeMap'];
 
-    if (type === 'BitmapText') {
-      state.bitmapText += 1;
-    } else if (type === 'HTMLText') {
-      state.htmlText += 1;
-    } else if (type === 'Text') {
-      state.text += 1;
-    } else if (type === 'Mesh') {
-      state.mesh += 1;
-    } else if (type === 'Graphics') {
-      state.graphics += 1;
-    } else if (type === 'Sprite') {
-      state.sprite += 1;
-    } else if (type === 'Container') {
-      state.container += 1;
+    if (this.typeMap[type]) {
+      state[this.typeMap[type]] += 1;
     }
 
     return true;
@@ -50,7 +47,8 @@ export class NodeTracker {
   private get plugins() {
     return [totalNodesPlugin, ...(this._devtool.devtools?.plugins?.stats ?? []), defaultPlugin];
   }
-  public init() {
+
+  public preupdate() {
     // loop through all plugins and get the keys and set to 0
     const state = this._devtool.state.stats!;
     for (const plugin of this.plugins) {
@@ -62,6 +60,7 @@ export class NodeTracker {
       }
     }
   }
+
   public trackNode(container: Container) {
     const state = this._devtool.state.stats!;
     for (const plugin of this.plugins) {
@@ -70,6 +69,7 @@ export class NodeTracker {
       }
     }
   }
+
   public complete() {
     // remove any nodes that are at 0
     const state = this._devtool.state.stats!;

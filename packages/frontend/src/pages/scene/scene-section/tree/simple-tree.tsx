@@ -1,7 +1,8 @@
-import { BridgeFn } from '@devtool/frontend/lib/utils';
-import { SceneGraphEntry } from '@devtool/frontend/types';
+import type { BridgeFn } from '@devtool/frontend/lib/utils';
+import type { SceneGraphEntry } from '@devtool/frontend/types';
 import { useEffect, useMemo, useState } from 'react';
-import { DeleteHandler, MoveHandler, NodeApi, RenameHandler, SimpleTree } from 'react-arborist';
+import type { DeleteHandler, MoveHandler, NodeApi, RenameHandler } from 'react-arborist';
+import { SimpleTree } from 'react-arborist';
 
 function removeEmptyChildren(node: Partial<SceneGraphEntry>) {
   if (node.children?.length === 0) {

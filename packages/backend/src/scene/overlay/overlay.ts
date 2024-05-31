@@ -1,9 +1,12 @@
-import { PixiDevtools } from '../../pixi';
-import { loop } from '../../utils/loop';
-import { Throttle } from '../../utils/throttle';
+import { ExtensionType, extensions } from '@devtool/backend/extensions/Extensions';
+import { getExtensionProp } from '@devtool/backend/extensions/getExtension';
 import type { Container } from 'pixi.js';
+import type { PixiDevtools } from '../../pixi';
+import { loop } from '../../utils/loop';
+import type { OverlayExtension } from '@pixi/devtools';
 
 export class Overlay {
+  static extensions: OverlayExtension[] = [];
   private _canvas!: HTMLCanvasElement;
   private _overlay!: HTMLDivElement;
   private _selectedHighlight!: HTMLDivElement;
@@ -12,12 +15,12 @@ export class Overlay {
   private _highlightEnabled = false;
   private _hoveredNode: Container | null = null;
   private _devtool: typeof PixiDevtools;
-  private _updateThrottle = new Throttle();
+
+  // cache the extension for bounds as this happens on every frame
+  private _boundsExt!: Required<OverlayExtension>;
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
-    this._highlightEnabled = devtool.state.overlayHighlightEnabled;
-    this._pickerEnabled = devtool.state.overlayPickerEnabled;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey) {
@@ -36,23 +39,29 @@ export class Overlay {
   }
 
   public init() {
+    this._boundsExt = getExtensionProp(Overlay.extensions, 'getGlobalPosition');
+
     const newCanvas = this._devtool.canvas!;
 
     if (newCanvas === this._canvas) {
       return;
     }
 
+    this._highlightEnabled = this._devtool.state.overlayHighlightEnabled;
+    this._pickerEnabled = this._devtool.state.overlayPickerEnabled;
+
     this._canvas = newCanvas;
     this._buildOverlay();
-    this._buildHighlight('_selectedHighlight', 'hsla(340 70% 44% / 35%)');
-    this._buildHighlight('_hoverHighlight', 'hsla(192 84% 40% / 40%)');
+    const selectedColor = getExtensionProp(Overlay.extensions, 'selectedColor').selectedColor;
+    const hoverColor = getExtensionProp(Overlay.extensions, 'hoverColor').hoverColor;
+    this._buildHighlight('_selectedHighlight', selectedColor);
+    this._buildHighlight('_hoverHighlight', hoverColor);
+
+    console.log(Overlay.extensions);
   }
 
   public update() {
-    if (this._updateThrottle.shouldExecute(this._devtool.settings.throttle)) {
-      this._updateOverlay();
-    }
-
+    this._updateOverlay();
     this.enableHighlight(this._highlightEnabled);
   }
 
@@ -100,9 +109,7 @@ export class Overlay {
   }
 
   public activateHighlight(type: '_selectedHighlight' | '_hoverHighlight', node: Container) {
-    const bounds = node.getLocalBounds();
-    const wt = node.worldTransform;
-
+    const { transform: wt, bounds } = this._boundsExt.getGlobalPosition(node);
     Object.assign(this[type].style, {
       transform: `matrix(${wt.a}, ${wt.b}, ${wt.c}, ${wt.d}, ${wt.tx}, ${wt.ty}) translate(${bounds.x}px, ${bounds.y}px)`,
       width: `${bounds.width}px`,
@@ -204,7 +211,8 @@ export class Overlay {
     loop({
       container: this._devtool.stage,
       loop: (node) => {
-        originalInteractiveValues.set(node, node.eventMode);
+        // check if the node has an eventMode property, in earlier v7 versions it didn't exist
+        originalInteractiveValues.set(node, node.eventMode === undefined ? node.interactive : node.eventMode);
         node.interactive = true;
       },
     });
@@ -217,7 +225,11 @@ export class Overlay {
     loop({
       container: this._devtool.stage,
       loop: (node) => {
-        node.eventMode = originalInteractiveValues.get(node);
+        if (node.eventMode === undefined) {
+          node.interactive = originalInteractiveValues.get(node);
+        } else {
+          node.eventMode = originalInteractiveValues.get(node);
+        }
       },
     });
 
@@ -226,3 +238,5 @@ export class Overlay {
     }
   }
 }
+
+extensions.handleByList(ExtensionType.Overlay, Overlay.extensions);

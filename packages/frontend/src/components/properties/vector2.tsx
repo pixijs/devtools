@@ -1,5 +1,6 @@
 import { cn } from '../../lib/utils';
-import { Input, InputProps } from '../ui/input';
+import type { InputProps } from '../ui/input';
+import { Input } from '../ui/input';
 
 export interface Vector2Props {
   x: InputProps & { label: string };

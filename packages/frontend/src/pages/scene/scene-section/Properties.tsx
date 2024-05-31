@@ -1,15 +1,19 @@
-import { SliderProps } from '@radix-ui/react-slider';
-import { SwitchProps } from '@radix-ui/react-switch';
+import type { SliderProps } from '@radix-ui/react-slider';
+import type { SwitchProps } from '@radix-ui/react-switch';
 import Fuse from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 import { FaCopy as CopyIcon } from 'react-icons/fa6';
 import { useDevtoolStore } from '../../../App';
 import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
-import { ColorInput, ColorProps } from '../../../components/properties/color';
+import type { ColorProps } from '../../../components/properties/color';
+import { ColorInput } from '../../../components/properties/color';
 import { PropertyEntry } from '../../../components/properties/property';
-import { Vector2, Vector2Props, VectorX, VectorXProps } from '../../../components/properties/vector2';
-import { Button, ButtonProps } from '../../../components/ui/button';
-import { Input, InputProps } from '../../../components/ui/input';
+import type { Vector2Props, VectorXProps } from '../../../components/properties/vector2';
+import { Vector2, VectorX } from '../../../components/properties/vector2';
+import type { ButtonProps } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/button';
+import type { InputProps } from '../../../components/ui/input';
+import { Input } from '../../../components/ui/input';
 import {
   Select,
   SelectContent,
