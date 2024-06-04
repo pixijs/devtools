@@ -5,6 +5,7 @@ import type { TreeExtension } from './dist/extensions/tree';
 import type { PropertiesExtension } from './dist/extensions/properties';
 import type { ScenePanelExtension } from './dist/extensions/scenePanel';
 import type { NodeExtension } from './dist/extensions/node';
+import type { PixiDevtools } from './dist/pixi';
 
 declare global {
   interface Window {
@@ -13,7 +14,7 @@ declare global {
     __PIXI_RENDERER__: Renderer | undefined;
     __PIXI__: typeof import('pixi.js');
     PIXI: typeof import('pixi.js');
-    __PIXI_DEVTOOLS_WRAPPER__: any;
+    __PIXI_DEVTOOLS_WRAPPER__: PixiDevtools;
     __PIXI_DEVTOOLS__: {
       pixi: typeof import('pixi.js');
       app?: Application | undefined;

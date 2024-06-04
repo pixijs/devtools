@@ -14,14 +14,19 @@ type PropertyPanelData = {
 };
 
 type NoOnChange = Omit<PropertyPanelData['entry'], 'onChange'>;
-export type Props = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
-export type PropsData = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
+type Props = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
+
+export type PropertiesEntry = Props & { allowUndefined?: boolean; allowCopy?: boolean };
+export type Properties = Omit<Props, 'value'> & { allowUndefined?: boolean; allowCopy?: boolean };
 
 export interface PropertiesExtension {
   extension: ExtensionMetadata;
 
-  updateProps(container: Container): PropsData[];
-  setValue(container: Container, prop: string, value: any): void;
-  containsProperty(prop: string): boolean;
-  props: Props[];
+  properties: () => Properties[];
+  testNode(container: Container): boolean;
+  testProp(prop: string): boolean;
+
+  setProperty(container: Container, prop: string, value: any): void;
+  getProperties(container: Container): PropertiesEntry[];
+  copyProperty(container: Container, prop: string): void;
 }

@@ -72,8 +72,8 @@ export const Navbar = ({ tabs, defaultTab }: NavbarProps) => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>PixiJS:{version}</p>
-              <p>Devtool:{pkg.version}</p>
+              <p>PixiJS: {version}</p>
+              <p>Devtool: {pkg.version}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

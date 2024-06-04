@@ -1,20 +1,4 @@
-/**
- * Collection of valid extension types.
- * @memberof extensions
- */
-enum ExtensionType {
-  Overlay = 'overlay',
-  Stats = 'stats',
-  SceneTree = 'sceneTree',
-  SceneProperties = 'sceneProperties',
-  ScenePanel = 'scenePanel',
-}
-
-export enum ExtensionPriority {
-  Low = -1,
-  Normal = 0,
-  High = 1,
-}
+import type { ExtensionType } from '@pixi/devtools';
 
 /**
  * The metadata for an extension.

@@ -3,6 +3,6 @@ import type { ExtensionMetadata } from './ext';
 
 export interface StatsExtension {
   extension: ExtensionMetadata;
-  trackNode: (container: Container, state: Record<string, number>) => boolean;
+  track: (container: Container, state: Record<string, number>) => void;
   getKeys: () => string[];
 }

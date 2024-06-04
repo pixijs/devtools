@@ -1,72 +1,39 @@
-import type { DevtoolState } from '@devtool/frontend/types';
-import type { Container } from 'pixi.js';
+import type { StatsExtension } from '@pixi/devtools';
 import type { PixiDevtools } from '../../pixi';
-import { getPixiType } from '../../utils/getPixiType';
-import type { NodeTrackerPlugin } from '@pixi/devtools';
+import type { Container } from 'pixi.js';
+import { getExtensionsProp } from '../../extensions/getExtension';
+import { extensions } from '../../extensions/Extensions';
 
-const totalNodesPlugin: NodeTrackerPlugin = {
-  trackNode: (_container: Container, state: NonNullable<DevtoolState['stats']>) => {
-    state.total += 1;
-    return false;
-  },
-  getKeys: () => {
-    return ['total'];
-  },
-};
-
-const defaultPlugin = {
-  typeMap: {
-    BitmapText: 'bitmapText',
-    HTMLText: 'htmlText',
-    Text: 'text',
-    Mesh: 'mesh',
-    Graphics: 'graphics',
-    Sprite: 'sprite',
-    Container: 'container',
-  },
-  trackNode(container: Container, state: NonNullable<DevtoolState['stats']>) {
-    const type = getPixiType(container) as keyof (typeof defaultPlugin)['typeMap'];
-
-    if (this.typeMap[type]) {
-      state[this.typeMap[type]] += 1;
-    }
-
-    return true;
-  },
-  getKeys: () => {
-    return ['container', 'sprite', 'graphics', 'mesh', 'text', 'bitmapText', 'htmlText'];
-  },
-};
-
-export class NodeTracker {
+export class Stats {
+  public static extensions: StatsExtension[] = [];
+  private _extensions: Required<StatsExtension>[] = [];
   private _devtool: typeof PixiDevtools;
+
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
   }
 
-  private get plugins() {
-    return [totalNodesPlugin, ...(this._devtool.devtools?.plugins?.stats ?? []), defaultPlugin];
-  }
+  public init() {
+    this._extensions = getExtensionsProp(Stats.extensions, 'track');
+    const allKeys: string[] = [];
+    for (const plugin of this._extensions) {
+      allKeys.push(...plugin.getKeys());
+    }
 
-  public preupdate() {
-    // loop through all plugins and get the keys and set to 0
-    const state = this._devtool.state.stats!;
-    for (const plugin of this.plugins) {
-      for (const key of plugin.getKeys()) {
-        if (state[key] != undefined) {
-          console.warn(`[PixiJS Devtools] NodeTrackerPlugin: Key ${key} already exists. This key will be overwritten.`);
-        }
-        state[key] = 0;
-      }
+    // check for duplicates
+    const duplicates = allKeys.filter((item, index) => allKeys.indexOf(item) !== index);
+
+    if (duplicates.length > 0) {
+      console.warn(`[PixiJS Devtools] StatsPlugin: Duplicate keys found: ${duplicates.join(', ')}`);
     }
   }
 
-  public trackNode(container: Container) {
+  public preupdate() {}
+
+  public update(container: Container) {
     const state = this._devtool.state.stats!;
-    for (const plugin of this.plugins) {
-      if (plugin.trackNode(container, state)) {
-        break;
-      }
+    for (const plugin of this._extensions) {
+      plugin.track(container, state);
     }
   }
 
@@ -92,3 +59,5 @@ export class NodeTracker {
     return result;
   }
 }
+
+extensions.handleByList('stats', Stats.extensions);

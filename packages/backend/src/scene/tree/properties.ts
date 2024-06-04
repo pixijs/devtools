@@ -1,28 +1,12 @@
 import type { PropertyPanelData } from '@devtool/frontend/pages/scene/scene-section/Properties';
-import type { PropertyPlugin } from '@pixi/devtools';
+import type { PropertiesExtension } from '@pixi/devtools';
+import { extensions } from '../../extensions/Extensions';
 import type { PixiDevtools } from '../../pixi';
-import { AnimatedSpritePropertiesPlugin } from './plugins/AnimatedSpriteProperties';
-import { ContainerPropertiesPlugin } from './plugins/ContainerProperties';
-import { GraphicsPropertiesPlugin } from './plugins/GraphicsProperties';
-import { MeshPropertiesPlugin } from './plugins/MeshProperties';
-import { NineSliceSpritePropertiesPlugin } from './plugins/NineSliceProperties';
-import { SpritePropertiesPlugin } from './plugins/SpriteProperties';
-import { TextPropertiesPlugin } from './plugins/TextProperties';
-import { TilingSpritePropertiesPlugin } from './plugins/TilingSpriteProperties';
 
 export class Properties {
-  public defaultPlugins: PropertyPlugin[] = [
-    ContainerPropertiesPlugin,
-    SpritePropertiesPlugin,
-    GraphicsPropertiesPlugin,
-    MeshPropertiesPlugin,
-    TextPropertiesPlugin,
-    NineSliceSpritePropertiesPlugin,
-    TilingSpritePropertiesPlugin,
-    AnimatedSpritePropertiesPlugin,
-  ];
+  public static extensions: PropertiesExtension[] = [];
 
-  private _plugins!: PropertyPlugin[];
+  private _plugins!: PropertiesExtension[];
   private _devtool: typeof PixiDevtools;
 
   constructor(devtool: typeof PixiDevtools) {
@@ -30,7 +14,7 @@ export class Properties {
   }
 
   public init() {
-    this._plugins = [...(this._devtool.devtools?.plugins?.properties ?? []), ...this.defaultPlugins];
+    this._plugins = Properties.extensions;
   }
 
   public setValue(prop: string, value: any) {
@@ -39,22 +23,32 @@ export class Properties {
     if (!selectedNode) return;
 
     this._plugins.forEach((plugin) => {
-      if (plugin.containsProperty(prop)) plugin.setValue(selectedNode, prop, value);
+      if (plugin.testNode(selectedNode) && plugin.testProp(prop)) {
+        plugin.setProperty(selectedNode, prop, value);
+      }
     });
   }
 
   public update() {
     const selectedNode = this._devtool.tree.selectedNode;
     if (!selectedNode) return;
-
-    this._plugins.forEach((plugin) => {
-      plugin.updateProps(this._devtool.tree.selectedNode!);
-    });
   }
 
   public complete() {
-    const activeProps = this._plugins.map((plugin) => plugin.props).flat();
-    const uniqueProps = Array.from(new Set(activeProps.map(JSON.stringify as any))).map(JSON.parse as any);
-    this._devtool.state.activeProps = uniqueProps as PropertyPanelData[];
+    const selectedNode = this._devtool.tree.selectedNode;
+    if (!selectedNode) return;
+
+    const activeProps = this._plugins.reduce(
+      (result, plugin) => {
+        if (plugin.testNode(selectedNode)) {
+          result.push(...plugin.getProperties(selectedNode));
+        }
+        return result;
+      },
+      [] as ReturnType<PropertiesExtension['properties']>,
+    );
+    this._devtool.state.activeProps = activeProps as PropertyPanelData[];
   }
 }
+
+extensions.handleByList('sceneProperties', Properties.extensions);

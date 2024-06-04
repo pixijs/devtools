@@ -1,9 +1,9 @@
-import { ExtensionType, extensions } from '@devtool/backend/extensions/Extensions';
-import { getExtensionProp } from '@devtool/backend/extensions/getExtension';
 import type { Container } from 'pixi.js';
 import type { PixiDevtools } from '../../pixi';
 import { loop } from '../../utils/loop';
 import type { OverlayExtension } from '@pixi/devtools';
+import { getExtensionProp } from '../../extensions/getExtension';
+import { extensions } from '../../extensions/Extensions';
 
 export class Overlay {
   static extensions: OverlayExtension[] = [];
@@ -56,8 +56,6 @@ export class Overlay {
     const hoverColor = getExtensionProp(Overlay.extensions, 'hoverColor').hoverColor;
     this._buildHighlight('_selectedHighlight', selectedColor);
     this._buildHighlight('_hoverHighlight', hoverColor);
-
-    console.log(Overlay.extensions);
   }
 
   public update() {
@@ -239,4 +237,4 @@ export class Overlay {
   }
 }
 
-extensions.handleByList(ExtensionType.Overlay, Overlay.extensions);
+extensions.handleByList('overlay', Overlay.extensions);

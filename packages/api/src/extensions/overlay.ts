@@ -13,6 +13,7 @@ export interface OverlayExtension {
   extension: ExtensionMetadata;
   selectedColor?: Color;
   hoverColor?: Color;
+  // TODO: add getSelectedColor to allow different highlight colors for different nodes
   getGlobalPosition?(node: Container): {
     transform: { a: number; b: number; c: number; d: number; tx: number; ty: number };
     bounds: { x: number; y: number; width: number; height: number };

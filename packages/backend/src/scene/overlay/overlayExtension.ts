@@ -1,12 +1,11 @@
 import type { OverlayExtension } from '@pixi/devtools';
-import { ExtensionPriority } from '@pixi/devtools';
 import type { Container } from 'pixi.js';
 
-export const overlayExt: OverlayExtension = {
+export const overlayExtension: OverlayExtension = {
   extension: {
     type: 'overlay',
-    priority: ExtensionPriority.Low,
-    name: 'overlay',
+    priority: -1,
+    name: 'default-overlay',
   },
 
   selectedColor: 'hsla(340 70% 44% / 35%)',

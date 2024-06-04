@@ -7,9 +7,10 @@ export interface Vector2Props {
   y: InputProps & { label: string };
   className?: string;
   onChange: (val: string) => void;
-  value: [number, number];
+  value: [number, number] | null;
 }
 export const Vector2: React.FC<Vector2Props> = ({ x, y, className, onChange, value }) => {
+  value = value || ([] as unknown as [number, number]);
   x.onChange = (event) => {
     const val = Number(event.target.value);
     onChange(JSON.stringify([val, value[1]]));
@@ -47,9 +48,10 @@ export const Vector2: React.FC<Vector2Props> = ({ x, y, className, onChange, val
 export interface VectorXProps {
   inputs: (InputProps & { label: string })[];
   onChange: (value: string) => void;
-  value: number[];
+  value: number[] | null;
 }
 export const VectorX: React.FC<VectorXProps> = ({ inputs, onChange, value }) => {
+  value = value || [];
   inputs.forEach((vector, index) => {
     vector.onChange = (e) => {
       const newValue = [...value];
@@ -68,7 +70,7 @@ export const VectorX: React.FC<VectorXProps> = ({ inputs, onChange, value }) => 
           <Input
             {...input}
             type="number"
-            className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
+            className="border-border hover:border-secondary focus:border-secondary h-6 w-full max-w-24 rounded text-xs outline-none"
           />
         </div>
       ))}

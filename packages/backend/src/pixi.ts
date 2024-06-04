@@ -3,13 +3,20 @@ import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
 import type { Application, Container, Renderer } from 'pixi.js';
 import { loop } from './utils/loop';
-import { NodeTracker } from './scene/stats/stats';
+import { Stats } from './scene/stats/stats';
 import { Tree } from './scene/tree/tree';
 import { Properties } from './scene/tree/properties';
 import { Throttle } from './utils/throttle';
 import { Overlay } from './scene/overlay/overlay';
 import { extensions } from './extensions/Extensions';
-import { overlayExt } from './extensions/overlay/OverlayExt';
+import { overlayExtension } from './scene/overlay/overlayExtension';
+import { pixiStatsExtension, totalStatsExtension } from './scene/stats/statsExtension';
+import { containerPropertyExtension } from './scene/tree/extensions/container/containerPropertyExtension';
+import { animatedSpritePropertyExtension } from './scene/tree/extensions/animatedSprite/animatedSpritePropertyExtension';
+import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
+import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
+import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSprite/ninesliceSpritePropertyExtension';
+import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -65,7 +72,7 @@ class PixiWrapper {
     },
   };
 
-  public statTracker = new NodeTracker(this);
+  public stats = new Stats(this);
   public tree = new Tree(this);
   public properties = new Properties(this);
   public overlay = new Overlay(this);
@@ -207,6 +214,14 @@ class PixiWrapper {
   }
 
   public get majorVersion() {
+    if (this.version === '') {
+      // lets try and find the version
+      const stage = this.stage;
+      if (stage.effects != null && Array.isArray(stage.effects) && '_updateFlags' in stage) {
+        return '8';
+      }
+      return '7';
+    }
     return this.version.split('.')[0];
   }
 
@@ -234,18 +249,11 @@ class PixiWrapper {
       this.init();
     }
 
-    if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
-      // reset the state before updating
-      this.state.setSceneGraph(null);
-      this.state.setStats({});
-      // TODO: probably don't need to reset this every time
-      this.state.setSelectedNode(null);
-      this.state.setActiveProps([]);
-      this.state.setVersion(this.version);
+    // TODO: tree: 300ms, stats: 300ms, properties: 300ms, overlay: 50ms
 
-      this.overlay.update();
-      this.statTracker.preupdate();
-      this.tree.preupdate();
+    this.overlay.update();
+    if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
+      this.preupdate();
 
       // check if we are accessing the correct stage
       if (this.renderer!.lastObjectRendered === this.stage) {
@@ -253,7 +261,7 @@ class PixiWrapper {
         loop({
           container: this.stage!,
           loop: (container) => {
-            this.statTracker.trackNode(container);
+            this.stats.update(container);
             this.tree.update(container);
           },
           test: (container) => {
@@ -271,11 +279,25 @@ class PixiWrapper {
   private init() {
     this.overlay.init();
     this.properties.init();
+    this.stats.init();
     this._initialized = true;
   }
 
+  private preupdate() {
+    // reset the state before updating
+    this.state.setSceneGraph(null);
+    this.state.setStats({});
+    // TODO: probably don't need to reset this every time
+    this.state.setSelectedNode(null);
+    this.state.setActiveProps([]);
+    this.state.setVersion(this.version === '' ? `>${this.majorVersion}.0.0` : this.version);
+
+    this.stats.preupdate();
+    this.tree.preupdate();
+  }
+
   private postupdate() {
-    this.statTracker.complete();
+    this.stats.complete();
     this.tree.complete();
     this.properties.update();
     this.properties.complete();
@@ -290,7 +312,16 @@ class PixiWrapper {
   }
 }
 
-extensions.add(overlayExt);
+extensions.add(overlayExtension);
+extensions.add(totalStatsExtension, pixiStatsExtension);
+extensions.add(
+  containerPropertyExtension,
+  viewPropertyExtension,
+  textPropertyExtension,
+  nineSlicePropertyExtension,
+  tilingSpritePropertyExtension,
+  animatedSpritePropertyExtension,
+);
 
 // Export an instance of PixiWrapper
 export const PixiDevtools = new PixiWrapper();
