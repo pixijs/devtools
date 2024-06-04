@@ -1,7 +1,7 @@
 import type { SliderProps } from '@radix-ui/react-slider';
 import type { SwitchProps } from '@radix-ui/react-switch';
 import Fuse from 'fuse.js';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { FaCopy as CopyIcon } from 'react-icons/fa6';
 import { useDevtoolStore } from '../../../App';
 import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
@@ -26,7 +26,7 @@ import { Separator } from '../../../components/ui/separator';
 import { Slider } from '../../../components/ui/slider';
 import { Switch } from '../../../components/ui/switch';
 import { TooltipWrapper } from '../../../components/ui/tooltip';
-import { copyToClipboard, formatCamelCase } from '../../../lib/utils';
+import { copyToClipboard, formatCamelCase, isDifferent } from '../../../lib/utils';
 
 interface PanelProps {
   children: React.ReactNode;
@@ -103,6 +103,7 @@ export type PropertyPanelData = {
   prop: string;
   entry: {
     section: string;
+    tooltip?: string;
     label?: string;
     type: PropertyTypes;
     options?: InputProps | SwitchProps | Vector2Props | SliderProps | SelectionProps | any;
@@ -201,16 +202,19 @@ const TextProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
   );
 };
 
+const memoTest = (props: any, nextProps: any) => {
+  return !isDifferent(props, nextProps);
+};
 const properties: Record<PropertyTypes, React.FC<PropertyPanelData>> = {
-  boolean: BooleanProperty,
-  number: NumberProperty,
-  vector2: Vector2Property,
-  range: RangeProperty,
-  select: SelectProperty,
-  text: TextProperty,
-  button: ButtonProperty,
-  vectorX: VectorXProperty,
-  color: ColorProperty,
+  boolean: memo(BooleanProperty, memoTest),
+  number: memo(NumberProperty, memoTest),
+  vector2: memo(Vector2Property, memoTest),
+  range: memo(RangeProperty, memoTest),
+  select: memo(SelectProperty, memoTest),
+  text: memo(TextProperty, memoTest),
+  button: memo(ButtonProperty, memoTest),
+  vectorX: memo(VectorXProperty, memoTest),
+  color: memo(ColorProperty, memoTest),
 };
 
 function clone(obj: any) {
@@ -258,7 +262,6 @@ export const Properties: React.FC = () => {
   );
 
   filteredPropIds.forEach((prop) => {
-    if (prop.value == null) return;
     if (!sections[prop.entry.section]) {
       sections[prop.entry.section] = [];
     }
@@ -304,6 +307,7 @@ export const Properties: React.FC = () => {
                 <PropertyEntry
                   key={`${prop.prop}-${i}`}
                   title={prop.entry.label ?? formatCamelCase(prop.prop)}
+                  tooltip={prop.entry.tooltip}
                   input={<Component {...prop} />}
                 />
               );

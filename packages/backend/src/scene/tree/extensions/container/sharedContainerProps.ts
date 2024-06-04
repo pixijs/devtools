@@ -22,23 +22,23 @@ export const sharedContainerProps = [
     prop: 'skew',
     entry: { section: 'Transform', options: { x: { label: 'x' }, y: { label: 'y' } }, type: 'vector2' },
   },
-  {
-    prop: 'worldTransform',
-    entry: {
-      section: 'Transform',
-      options: {
-        inputs: [
-          { label: 'a', disabled: true },
-          { label: 'b', disabled: true },
-          { label: 'c', disabled: true },
-          { label: 'd', disabled: true },
-          { label: 'tx', disabled: true },
-          { label: 'ty', disabled: true },
-        ],
-      },
-      type: 'vectorX',
-    },
-  },
+  // {
+  //   prop: 'worldTransform',
+  //   entry: {
+  //     section: 'Transform',
+  //     options: {
+  //       inputs: [
+  //         { label: 'a', disabled: true },
+  //         { label: 'b', disabled: true },
+  //         { label: 'c', disabled: true },
+  //         { label: 'd', disabled: true },
+  //         { label: 'tx', disabled: true },
+  //         { label: 'ty', disabled: true },
+  //       ],
+  //     },
+  //     type: 'vectorX',
+  //   },
+  // },
   { prop: 'visible', entry: { section: 'Appearance', type: 'boolean' } },
   { prop: 'renderable', entry: { section: 'Appearance', type: 'boolean' } },
   {

@@ -6,18 +6,15 @@ type PropertyPanelData = {
   prop: string;
   entry: {
     section: string;
+    tooltip?: string;
     label?: string;
     type: 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX' | 'color';
     options?: any;
-    onChange: (value: string | number | boolean) => void;
   };
 };
 
-type NoOnChange = Omit<PropertyPanelData['entry'], 'onChange'>;
-type Props = Omit<PropertyPanelData, 'entry'> & { entry: NoOnChange };
-
-export type PropertiesEntry = Props & { allowUndefined?: boolean; allowCopy?: boolean };
-export type Properties = Omit<Props, 'value'> & { allowUndefined?: boolean; allowCopy?: boolean };
+export type PropertiesEntry = PropertyPanelData & { allowUndefined?: boolean; allowCopy?: boolean };
+export type Properties = Omit<PropertyPanelData, 'value'> & { allowUndefined?: boolean; allowCopy?: boolean };
 
 export interface PropertiesExtension {
   extension: ExtensionMetadata;

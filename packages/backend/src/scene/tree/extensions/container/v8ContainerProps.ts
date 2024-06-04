@@ -8,6 +8,7 @@ export const v8ContainerProps = [
     prop: 'blendMode',
     entry: {
       section: 'Appearance',
+      tooltip: `To use certain modes, enable them as follows:\n{{import 'pixi.js/advanced-blend-modes';}}`,
       options: {
         options: [
           'inherit',
