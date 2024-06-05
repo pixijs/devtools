@@ -1,5 +1,9 @@
-import type { ExtensionMetadata } from './ext';
 import type { Container } from 'pixi.js';
+import type { ExtensionMetadata } from './ext';
+
+export type MultiProps = {
+  inputs: Omit<PropertyPanelData['entry'], 'section' | 'tooltip'>[];
+};
 
 type PropertyPanelData = {
   value: any;
@@ -8,7 +12,7 @@ type PropertyPanelData = {
     section: string;
     tooltip?: string;
     label?: string;
-    type: 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX' | 'color';
+    type: 'boolean' | 'number' | 'range' | 'select' | 'text' | 'button' | 'vector2' | 'vectorX' | 'color' | 'multi';
     options?: any;
   };
 };

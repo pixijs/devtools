@@ -1,6 +1,6 @@
 import { cn } from '../../lib/utils';
-import type { InputProps } from '../ui/input';
-import { Input } from '../ui/input';
+import type { InputProps } from './input';
+import { Input } from './input';
 
 export interface Vector2Props {
   x: InputProps & { label: string };
@@ -50,6 +50,7 @@ export interface VectorXProps {
   onChange: (value: string) => void;
   value: number[] | null;
 }
+
 export const VectorX: React.FC<VectorXProps> = ({ inputs, onChange, value }) => {
   value = value || [];
   inputs.forEach((vector, index) => {

@@ -1,4 +1,4 @@
-import type { PropertyPanelData } from '@devtool/frontend/pages/scene/scene-section/Properties';
+import type { PropertyPanelData } from '@devtool/frontend/components/properties/propertyTypes';
 import type { PropertiesExtension } from '@pixi/devtools';
 import { extensions } from '../../extensions/Extensions';
 import type { PixiDevtools } from '../../pixi';
