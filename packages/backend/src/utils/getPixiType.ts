@@ -1,6 +1,6 @@
 import type { Container } from 'pixi.js';
 import { PixiDevtools } from '../pixi';
-import type { PixiNodeType } from '@devtool/frontend/types';
+import type { PixiNodeType } from '@pixi/devtools';
 
 export function isBitmapText(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
   if (pixi) {

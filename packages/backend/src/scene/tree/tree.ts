@@ -1,19 +1,62 @@
 import type { Container } from 'pixi.js';
 import type { PixiDevtools } from '../../pixi';
-import type { SceneGraphEntry, PixiNodeType } from '@devtool/frontend/types';
+import type { SceneGraphEntry } from '@devtool/frontend/types';
+import type { PixiNodeType, TreeExtension } from '@pixi/devtools';
 import { getPixiType } from '../../utils/getPixiType';
+import { extensions } from '../../extensions/Extensions';
+import { getExtensionsProp } from '../../extensions/getExtension';
 
 const uidMap = new WeakMap<Container, string>();
 let uid = 0;
 export class Tree {
+  public static extensions: TreeExtension[] = [];
   private _sceneGraph: Map<Container, SceneGraphEntry> = new Map();
   private _idMap: Map<string, Container> = new Map();
   public selectedNode: Container | null = null;
 
   private _devtool: typeof PixiDevtools;
+  private _metadataExtensions: Required<TreeExtension>[] = [];
+  private _onButtonPressExtensions: Required<TreeExtension>[] = [];
+  private _onContextMenuExtensions: Required<TreeExtension>[] = [];
+  private _onRenameExtensions: Required<TreeExtension>[] = [];
+  private _onDeletedExtensions: Required<TreeExtension>[] = [];
+  private _onCreateExtensions: Required<TreeExtension>[] = [];
+  private _onSwapExtensions: Required<TreeExtension>[] = [];
+  private _onSelectedExtensions: Required<TreeExtension>[] = [];
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
+  }
+
+  public init() {
+    this._metadataExtensions = getExtensionsProp(Tree.extensions, 'updateNodeMetadata');
+    this._onButtonPressExtensions = getExtensionsProp(Tree.extensions, 'onButtonPress');
+    this._onContextMenuExtensions = getExtensionsProp(Tree.extensions, 'onContextMenu');
+    this._onRenameExtensions = getExtensionsProp(Tree.extensions, 'onRename');
+    this._onDeletedExtensions = getExtensionsProp(Tree.extensions, 'onDeleted');
+    this._onCreateExtensions = getExtensionsProp(Tree.extensions, 'onCreate');
+    this._onSwapExtensions = getExtensionsProp(Tree.extensions, 'onSwap');
+    this._onSelectedExtensions = getExtensionsProp(Tree.extensions, 'onSelected');
+  }
+
+  public nodeButtonPress(nodeId: string, buttonAction: string) {
+    const node = this._idMap.get(nodeId);
+
+    if (!node) return;
+
+    this._onButtonPressExtensions.forEach((ext) => {
+      ext.onButtonPress(node, buttonAction);
+    });
+  }
+
+  public nodeContextMenu(nodeId: string, contextMenuAction: string) {
+    const node = this._idMap.get(nodeId);
+
+    if (!node) return;
+
+    this._onContextMenuExtensions.forEach((ext) => {
+      ext.onContextMenu(node, contextMenuAction);
+    });
   }
 
   public setSelected(nodeId: string | null) {
@@ -23,11 +66,17 @@ export class Tree {
     }
     this.selectedNode = this._idMap.get(nodeId) ?? null;
     window.$pixi = this.selectedNode;
+    this._onSelectedExtensions.forEach((ext) => {
+      ext.onSelected(this.selectedNode!);
+    });
   }
 
   public setSelectedFromNode(node: Container) {
     this.selectedNode = node;
     window.$pixi = node;
+    this._onSelectedExtensions.forEach((ext) => {
+      ext.onSelected(node);
+    });
   }
 
   public moveNode(nodeId: string, parentId: string, index: number) {
@@ -38,7 +87,10 @@ export class Tree {
 
     node.parent?.removeChild(node);
     parent.addChildAt(node, index);
-    console.log('moveNode', node, parent, index);
+
+    this._onSwapExtensions.forEach((ext) => {
+      ext.onSwap(node, index);
+    });
   }
 
   public renameNode(nodeId: string, name: string) {
@@ -46,7 +98,15 @@ export class Tree {
 
     if (!sceneNode) return;
 
-    if (sceneNode.name !== name) sceneNode.name = name;
+    if (this._devtool.majorVersion === '8') {
+      sceneNode.label = name;
+    } else {
+      sceneNode.name = name;
+    }
+
+    this._onRenameExtensions.forEach((ext) => {
+      ext.onRename(sceneNode, name);
+    });
   }
 
   public deleteNode(nodeId: string) {
@@ -54,6 +114,10 @@ export class Tree {
 
     if (!sceneNode) return;
     sceneNode.parent?.removeChild(sceneNode);
+
+    this._onDeletedExtensions.forEach((ext) => {
+      ext.onDeleted(sceneNode);
+    });
   }
 
   public preupdate() {
@@ -86,6 +150,10 @@ export class Tree {
         suffix,
       },
     };
+
+    this._metadataExtensions.forEach((ext) => {
+      ext.updateNodeMetadata(container, node.metadata);
+    });
 
     this._idMap.set(node.id, container);
 
@@ -128,3 +196,5 @@ export class Tree {
     return res;
   }
 }
+
+extensions.handleByList('sceneTree', Tree.extensions);

@@ -35,7 +35,6 @@ export const useDevtoolStore = createSelectors(
       children: [],
       metadata: {
         type: 'Container',
-        uid: 'root',
       },
     },
     setSceneGraph: (sceneGraph: DevtoolState['sceneGraph']) => set({ sceneGraph }),

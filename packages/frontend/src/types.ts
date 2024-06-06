@@ -1,29 +1,11 @@
 import type { BridgeFn } from './lib/utils';
 import type { SceneState } from './pages/scene/state';
+import type { PixiMetadata } from '@pixi/devtools';
 
 export enum DevtoolMessage {
   active = 'pixi-active',
   inactive = 'pixi-inactive',
   stateUpdate = 'pixi-state-update',
-}
-
-export type PixiNodeType =
-  | 'BitmapText'
-  | 'HTMLText'
-  | 'Text'
-  | 'Mesh'
-  | 'Graphics'
-  | 'Sprite'
-  | 'Container'
-  | 'AnimatedSprite'
-  | 'NineSliceSprite'
-  | 'TilingSprite'
-  | 'Unknown';
-export interface PixiMetadata {
-  type: PixiNodeType;
-  uid: string;
-  suffix?: string;
-  isStage?: boolean;
 }
 
 export type SceneGraphEntry = {

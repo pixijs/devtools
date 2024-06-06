@@ -3,7 +3,6 @@
 import type { Devtools, DevtoolsAPI } from './types';
 
 export * from './extensions/ext';
-export * from './extensions/node';
 export * from './extensions/overlay';
 export * from './extensions/properties';
 export * from './extensions/scenePanel';

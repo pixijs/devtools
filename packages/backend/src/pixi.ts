@@ -41,7 +41,6 @@ class PixiWrapper {
         children: [],
         metadata: {
           type: 'Container',
-          uid: 'root',
         },
       };
     },
@@ -280,6 +279,7 @@ class PixiWrapper {
     this.overlay.init();
     this.properties.init();
     this.stats.init();
+    this.tree.init();
     this._initialized = true;
   }
 
