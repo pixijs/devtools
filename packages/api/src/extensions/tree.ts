@@ -30,7 +30,6 @@ export interface TreeExtension {
 
   onRename?: (container: Container, newName: string) => void;
   onDeleted?: (container: Container) => void;
-  onCreate?: (container: Container) => void;
   onSwap?: (container: Container, newIndex: number) => void;
   onSelected?: (container: Container) => void;
 }

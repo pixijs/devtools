@@ -20,7 +20,6 @@ export class Tree {
   private _onContextMenuExtensions: Required<TreeExtension>[] = [];
   private _onRenameExtensions: Required<TreeExtension>[] = [];
   private _onDeletedExtensions: Required<TreeExtension>[] = [];
-  private _onCreateExtensions: Required<TreeExtension>[] = [];
   private _onSwapExtensions: Required<TreeExtension>[] = [];
   private _onSelectedExtensions: Required<TreeExtension>[] = [];
 
@@ -34,7 +33,6 @@ export class Tree {
     this._onContextMenuExtensions = getExtensionsProp(Tree.extensions, 'onContextMenu');
     this._onRenameExtensions = getExtensionsProp(Tree.extensions, 'onRename');
     this._onDeletedExtensions = getExtensionsProp(Tree.extensions, 'onDeleted');
-    this._onCreateExtensions = getExtensionsProp(Tree.extensions, 'onCreate');
     this._onSwapExtensions = getExtensionsProp(Tree.extensions, 'onSwap');
     this._onSelectedExtensions = getExtensionsProp(Tree.extensions, 'onSelected');
   }
