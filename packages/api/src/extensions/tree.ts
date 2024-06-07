@@ -25,11 +25,13 @@ export interface TreeExtension {
   extension: ExtensionMetadata;
   updateNodeMetadata?(node: Container, metadata: PixiMetadata): PixiMetadata;
 
-  onButtonPress?: (container: Container, buttonAction: string) => void;
+  onButtonPress?: (container: Container, buttonAction: string, pressed?: boolean) => void;
   onContextMenu?: (container: Container, contextMenuAction: string) => void;
 
   onRename?: (container: Container, newName: string) => void;
   onDeleted?: (container: Container) => void;
   onSwap?: (container: Container, newIndex: number) => void;
   onSelected?: (container: Container) => void;
+
+  panelButtons?: string[];
 }

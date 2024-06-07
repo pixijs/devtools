@@ -27,4 +27,9 @@ export interface DevtoolState extends SceneState {
 
   bridge: BridgeFn | null;
   setBridge: (bridge: DevtoolState['bridge']) => void;
+
+  sceneTreeData: {
+    buttons: string[];
+  } | null;
+  setSceneTreeData: (data: DevtoolState['sceneTreeData']) => void;
 }

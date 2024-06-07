@@ -42,6 +42,11 @@ export const useDevtoolStore = createSelectors(
     bridge: null,
     setBridge: (bridge: DevtoolState['bridge']) => set({ bridge }),
 
+    sceneTreeData: {
+      buttons: [],
+    },
+    setSceneTreeData: (data: DevtoolState['sceneTreeData']) => set({ sceneTreeData: data }),
+
     ...sceneStateSlice(set),
   })),
 );
@@ -60,6 +65,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   const setSelectedNode = useDevtoolStore.use.setSelectedNode();
   const setActiveProps = useDevtoolStore.use.setActiveProps();
   const setOverlayPickerEnabled = useDevtoolStore.use.setOverlayPickerEnabled();
+  const setSceneTreeData = useDevtoolStore.use.setSceneTreeData();
 
   useEffect(() => {
     setBridge(bridge);
@@ -96,6 +102,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
             isDifferent(currentState.activeProps, data.activeProps) && setActiveProps(data.activeProps);
             isDifferent(currentState.overlayPickerEnabled, data.overlayPickerEnabled) &&
               setOverlayPickerEnabled(data.overlayPickerEnabled);
+            isDifferent(currentState.sceneTreeData, data.sceneTreeData) && setSceneTreeData(data.sceneTreeData);
           }
           break;
       }
@@ -111,6 +118,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     setStats,
     setVersion,
     setOverlayPickerEnabled,
+    setSceneTreeData,
   ]);
 
   const windowString = `import * as PIXI from 'pixi.js';

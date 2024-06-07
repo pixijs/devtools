@@ -22,6 +22,7 @@ export class Tree {
   private _onDeletedExtensions: Required<TreeExtension>[] = [];
   private _onSwapExtensions: Required<TreeExtension>[] = [];
   private _onSelectedExtensions: Required<TreeExtension>[] = [];
+  private _treePanelButtons: Required<TreeExtension>[] = [];
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
@@ -35,15 +36,22 @@ export class Tree {
     this._onDeletedExtensions = getExtensionsProp(Tree.extensions, 'onDeleted');
     this._onSwapExtensions = getExtensionsProp(Tree.extensions, 'onSwap');
     this._onSelectedExtensions = getExtensionsProp(Tree.extensions, 'onSelected');
+    this._treePanelButtons = getExtensionsProp(Tree.extensions, 'panelButtons');
   }
 
-  public nodeButtonPress(nodeId: string, buttonAction: string) {
+  public nodeButtonPress(nodeId: string, buttonAction: string, value?: boolean) {
     const node = this._idMap.get(nodeId);
 
     if (!node) return;
 
     this._onButtonPressExtensions.forEach((ext) => {
-      ext.onButtonPress(node, buttonAction);
+      ext.onButtonPress(node, buttonAction, value);
+    });
+  }
+
+  public treePanelButtonPress(buttonAction: string) {
+    this._onButtonPressExtensions.forEach((ext) => {
+      ext.onButtonPress(this._devtool.stage, buttonAction);
     });
   }
 
@@ -132,6 +140,10 @@ export class Tree {
     this._devtool.state.selectedNode = this.selectedNode
       ? (this._sceneGraph.get(this.selectedNode)!.id as string)
       : null;
+
+    this._treePanelButtons.forEach((ext) => {
+      this._devtool.state.sceneTreeData!.buttons.push(...ext.panelButtons);
+    });
   }
 
   public update(container: Container) {

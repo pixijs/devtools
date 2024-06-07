@@ -58,6 +58,8 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
     args.ids.forEach((id) => tree.drop({ id }));
     setData(tree.data);
     bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.id)})`);
+    if (!node || !node.parent) return;
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(node.parent.id)})`);
   };
 
   const onSelect = (nodes: NodeApi[]) => {

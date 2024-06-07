@@ -17,6 +17,7 @@ import { viewPropertyExtension } from './scene/tree/extensions/view/viewProperty
 import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
 import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSprite/ninesliceSpritePropertyExtension';
 import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
+import { treeExtension } from './scene/tree/extensions/tree/treeExtension';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -43,6 +44,13 @@ class PixiWrapper {
           type: 'Container',
         },
       };
+    },
+
+    sceneTreeData: {
+      buttons: [],
+    },
+    setSceneTreeData: function (data: DevtoolState['sceneTreeData']) {
+      this.sceneTreeData = data;
     },
 
     stats: null,
@@ -291,6 +299,7 @@ class PixiWrapper {
     this.state.setSelectedNode(null);
     this.state.setActiveProps([]);
     this.state.setVersion(this.version === '' ? `>${this.majorVersion}.0.0` : this.version);
+    this.state.setSceneTreeData({ buttons: [] });
 
     this.stats.preupdate();
     this.tree.preupdate();
@@ -322,6 +331,7 @@ extensions.add(
   tilingSpritePropertyExtension,
   animatedSpritePropertyExtension,
 );
+extensions.add(treeExtension);
 
 // Export an instance of PixiWrapper
 export const PixiDevtools = new PixiWrapper();
