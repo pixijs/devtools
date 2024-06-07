@@ -2,13 +2,16 @@ import type { NodeApi } from 'react-arborist';
 import {
   FaPlus as LayerIconClosed,
   FaMinus as LayerIconOpen,
+  FaLock as LockIcon,
+  FaLockOpen as LockOpenIcon,
   FaRegObjectGroup as SceneNodeIcon,
 } from 'react-icons/fa6';
 import { Input } from '../../../../components/ui/input';
+import { TooltipWrapper } from '../../../../components/ui/tooltip';
 import type { BridgeFn } from '../../../../lib/utils';
 import { cn } from '../../../../lib/utils';
 import type { SceneGraphEntry } from '../../../../types';
-import { CustomNodeButton } from './node-button';
+import { CustomNodeButton, CustomNodeToggleButton } from './node-button';
 
 const NodeInput: React.FC<{ node: NodeApi<SceneGraphEntry> }> = ({ node }) => {
   return (
@@ -68,6 +71,22 @@ export const NodeTrigger: React.FC<{
         {node.data.metadata.buttons?.map((button, i) => (
           <CustomNodeButton key={node.id + button + i} node={node} button={button} bridge={bridge} />
         ))}
+        <TooltipWrapper
+          contentProps={{ side: 'left' }}
+          providerProps={{ delayDuration: 2500 }}
+          trigger={
+            <CustomNodeToggleButton
+              asChild={true}
+              button={'locked'}
+              value={node.data.metadata.locked ?? false}
+              icon={node.data.metadata.locked ? <LockIcon /> : <LockOpenIcon />}
+              node={node}
+              className="mt-[-2px] w-[20px] px-1 py-0.5"
+              bridge={bridge}
+            />
+          }
+          tip={'When locked, the node cannot be moved, renamed, deleted, or hit tested.'}
+        />
       </div>
     </div>
   );

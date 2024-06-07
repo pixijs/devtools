@@ -211,7 +211,7 @@ export class Overlay {
       loop: (node) => {
         // check if the node has an eventMode property, in earlier v7 versions it didn't exist
         originalInteractiveValues.set(node, node.eventMode === undefined ? node.interactive : node.eventMode);
-        node.interactive = true;
+        node.interactive = node.__devtoolLocked ? false : true;
       },
     });
 

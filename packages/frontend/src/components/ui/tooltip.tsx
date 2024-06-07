@@ -26,7 +26,13 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-const TooltipWrapper: React.FC<{ trigger: React.ReactNode; tip: string }> = ({ trigger, tip }) => {
+const TooltipWrapper: React.FC<{
+  trigger: React.ReactNode;
+  tip: string;
+  triggerProps?: React.ComponentPropsWithoutRef<typeof TooltipTrigger>;
+  contentProps?: React.ComponentPropsWithoutRef<typeof TooltipContent>;
+  providerProps?: Omit<React.ComponentPropsWithoutRef<typeof TooltipProvider>, 'children'>;
+}> = ({ trigger, tip, triggerProps, contentProps, providerProps }) => {
   const parts = tip.split(/{{(.*?)}}/g);
 
   const content = parts.map((part, i) => {
@@ -41,12 +47,14 @@ const TooltipWrapper: React.FC<{ trigger: React.ReactNode; tip: string }> = ({ t
   });
 
   return (
-    <TooltipProvider>
+    <TooltipProvider {...providerProps}>
       <Tooltip>
-        <TooltipTrigger> {trigger} </TooltipTrigger>
-        <TooltipContent className="max-w-72">
-          <div>{content}</div>
-        </TooltipContent>
+        <TooltipTrigger {...triggerProps}>{trigger}</TooltipTrigger>
+        <TooltipPrimitive.Portal>
+          <TooltipContent {...contentProps} className="max-w-72">
+            <div>{content}</div>
+          </TooltipContent>
+        </TooltipPrimitive.Portal>
       </Tooltip>
     </TooltipProvider>
   );

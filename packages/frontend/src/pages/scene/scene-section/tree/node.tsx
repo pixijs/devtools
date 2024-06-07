@@ -18,12 +18,13 @@ export function Node({ node, style, dragHandle }: NodeRendererProps<SceneGraphEn
   }, [node]);
 
   const onDeleted = useCallback(() => {
-    if (!node.parent) return;
+    if (!node.parent || node.data.metadata.locked) return;
     node.tree.delete(node);
   }, [node]);
 
   const onRename = useCallback(() => {
     setTimeout(() => {
+      if (node.data.metadata.locked) return;
       node.tree.edit(node);
     }, 200);
   }, [node]);

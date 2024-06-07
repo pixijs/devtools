@@ -2,13 +2,15 @@ import { useCallback } from 'react';
 import type { NodeApi } from 'react-arborist';
 import { Button } from '../../../../components/ui/button';
 import type { BridgeFn } from '../../../../lib/utils';
+import { cn } from '../../../../lib/utils';
 import type { SceneGraphEntry } from '../../../../types';
 import { Toggle } from '../../../../components/ui/toggle';
 
-export const NodeButton: React.FC<{ onClick: React.MouseEventHandler<HTMLButtonElement>; button: string }> = ({
-  button,
-  onClick,
-}) => {
+export const NodeButton: React.FC<{
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  button: string;
+  icon?: React.ReactNode;
+}> = ({ button, onClick, icon }) => {
   return (
     <Button
       size={'xs'}
@@ -19,16 +21,17 @@ export const NodeButton: React.FC<{ onClick: React.MouseEventHandler<HTMLButtonE
       }}
       onClick={onClick}
     >
-      {button}
+      {icon ? icon : button}
     </Button>
   );
 };
 
-export const CustomNodeButton: React.FC<{ node: NodeApi<SceneGraphEntry>; button: string; bridge: BridgeFn }> = ({
-  node,
-  button,
-  bridge,
-}) => {
+export const CustomNodeButton: React.FC<{
+  node: NodeApi<SceneGraphEntry>;
+  button: string;
+  bridge: BridgeFn;
+  icon?: React.ReactNode;
+}> = ({ node, button, bridge, icon }) => {
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
@@ -40,18 +43,23 @@ export const CustomNodeButton: React.FC<{ node: NodeApi<SceneGraphEntry>; button
     [node, button, bridge],
   );
 
-  return <NodeButton onClick={handleClick} button={button} />;
+  return <NodeButton onClick={handleClick} button={button} icon={icon} />;
 };
 
 export const NodeToggleButton: React.FC<{
   onClick: (value: boolean) => void;
   button: string;
-}> = ({ button, onClick }) => {
+  icon?: React.ReactNode;
+  value: boolean;
+  asChild?: boolean;
+  className?: string;
+}> = ({ button, onClick, icon, value, asChild, className }) => {
   return (
     <Toggle
+      asChild={asChild ?? false}
       variant={'outline'}
       size={'xs'}
-      className="text-overflow-ellipsis overflow-hidden whitespace-nowrap px-1"
+      className={cn('text-overflow-ellipsis overflow-hidden whitespace-nowrap px-1', className)}
       onDoubleClick={(e) => {
         e.stopPropagation();
       }}
@@ -59,9 +67,9 @@ export const NodeToggleButton: React.FC<{
         e.stopPropagation();
       }}
       onPressedChange={onClick}
-      defaultPressed={true}
+      pressed={value}
     >
-      {button}
+      {icon ? icon : button}
     </Toggle>
   );
 };
@@ -70,7 +78,11 @@ export const CustomNodeToggleButton: React.FC<{
   node: NodeApi<SceneGraphEntry>;
   button: string;
   bridge: BridgeFn;
-}> = ({ node, button, bridge }) => {
+  icon?: React.ReactNode;
+  value: boolean;
+  asChild?: boolean;
+  className?: string;
+}> = ({ node, button, bridge, icon, value, asChild, className }) => {
   const handleClick = useCallback(
     (pressed: boolean) => {
       bridge(
@@ -80,5 +92,14 @@ export const CustomNodeToggleButton: React.FC<{
     [node, button, bridge],
   );
 
-  return <NodeToggleButton onClick={handleClick} button={button} />;
+  return (
+    <NodeToggleButton
+      onClick={handleClick}
+      button={button}
+      icon={icon}
+      value={value}
+      asChild={asChild}
+      className={className}
+    />
+  );
 };

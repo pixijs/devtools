@@ -16,6 +16,7 @@ export type PixiNodeType =
 
 export interface PixiMetadata {
   type: PixiNodeType;
+  locked?: boolean;
   suffix?: string;
   buttons?: string[];
   contextMenu?: string[];

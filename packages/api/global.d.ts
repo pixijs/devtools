@@ -36,6 +36,7 @@ declare global {
     interface Container {
       __devtoolIgnore?: boolean;
       __devtoolIgnoreChildren?: string;
+      __devtoolLocked?: boolean;
     }
   }
 
@@ -43,6 +44,7 @@ declare global {
     interface Container {
       __devtoolIgnore?: boolean;
       __devtoolIgnoreChildren?: string;
+      __devtoolLocked?: boolean;
     }
   }
 }

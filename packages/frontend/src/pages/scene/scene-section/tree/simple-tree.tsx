@@ -55,6 +55,9 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
 
   const onDelete: DeleteHandler<T> = (args: { ids: string[] }) => {
     const node = tree.find(args.ids[0]);
+
+    if (node?.data.metadata.locked) return;
+
     args.ids.forEach((id) => tree.drop({ id }));
     setData(tree.data);
     bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.id)})`);

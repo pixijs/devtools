@@ -44,6 +44,10 @@ export class Tree {
 
     if (!node) return;
 
+    if (buttonAction === 'locked') {
+      node.__devtoolLocked = value;
+    }
+
     this._onButtonPressExtensions.forEach((ext) => {
       ext.onButtonPress(node, buttonAction, value);
     });
@@ -90,6 +94,7 @@ export class Tree {
     const parent = this._idMap.get(parentId);
 
     if (!node || !parent) return;
+    if (node.__devtoolLocked) return;
 
     node.parent?.removeChild(node);
     parent.addChildAt(node, index);
@@ -103,6 +108,7 @@ export class Tree {
     const sceneNode = this._idMap.get(nodeId);
 
     if (!sceneNode) return;
+    if (sceneNode.__devtoolLocked) return;
 
     if (this._devtool.majorVersion === '8') {
       sceneNode.label = name;
@@ -119,6 +125,8 @@ export class Tree {
     const sceneNode = this._idMap.get(nodeId);
 
     if (!sceneNode) return;
+    if (sceneNode.__devtoolLocked) return;
+
     sceneNode.parent?.removeChild(sceneNode);
 
     this._onDeletedExtensions.forEach((ext) => {
@@ -156,6 +164,7 @@ export class Tree {
       children: [],
       metadata: {
         type,
+        locked: container.__devtoolLocked,
         uid: this._getId(container),
         suffix,
       },

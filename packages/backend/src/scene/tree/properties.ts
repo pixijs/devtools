@@ -38,6 +38,8 @@ export class Properties {
     const selectedNode = this._devtool.tree.selectedNode;
     if (!selectedNode) return;
 
+    if (selectedNode.__devtoolLocked) return;
+
     const activeProps = this._plugins.reduce(
       (result, plugin) => {
         if (plugin.testNode(selectedNode)) {
