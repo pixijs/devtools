@@ -1,3 +1,4 @@
+import type { ButtonMetadata } from '@pixi/devtools';
 import { useState } from 'react';
 import { Tree } from 'react-arborist';
 import { FaWandMagicSparkles as PickIcon } from 'react-icons/fa6';
@@ -9,9 +10,8 @@ import { Toggle } from '../../../components/ui/toggle';
 import { TooltipWrapper } from '../../../components/ui/tooltip';
 import { Cursor } from './tree/cursor';
 import { Node } from './tree/node';
+import { NodeButton } from './tree/node-button';
 import { useSimpleTree } from './tree/simple-tree';
-import { Button } from '../../../components/ui/button';
-import type { ButtonMetadata } from '@pixi/devtools';
 
 interface PanelProps {
   children: React.ReactNode;
@@ -79,17 +79,16 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
               tip="Highlight selected node in the scene, and the currently hovered node."
             />
             {panelButtons?.map((button, i) => (
-              <Button
-                key={button.name + i}
+              <NodeButton
                 size={'icon'}
                 variant={'ghost'}
+                key={button.name + i}
+                button={button}
                 className="text-overflow-ellipsis overflow-hidden whitespace-nowrap"
                 onClick={() =>
                   bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.treePanelButtonPress(${JSON.stringify(button)})`)
                 }
-              >
-                {button.icon ? button.icon : button.name}
-              </Button>
+              />
             ))}
             <Separator orientation="vertical" className="h-4" />
             {/* search wrapper */}

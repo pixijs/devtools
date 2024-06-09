@@ -22,12 +22,14 @@ export interface ButtonMetadata {
   value?: boolean;
 }
 
+export type ContextMenuButtonMetadata = Omit<ButtonMetadata, 'type' | 'value'>;
+
 export interface PixiMetadata {
   type: PixiNodeType;
   locked?: boolean;
   suffix?: string;
   buttons?: ButtonMetadata[];
-  contextMenu?: ButtonMetadata[];
+  contextMenu?: ContextMenuButtonMetadata[];
 }
 
 export interface TreeExtension {
