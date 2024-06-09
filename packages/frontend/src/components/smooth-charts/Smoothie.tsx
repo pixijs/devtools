@@ -140,7 +140,7 @@ class SmoothieComponent extends React.Component<SmoothieComponentProps, Smoothie
   canvas!: HTMLCanvasElement;
   static defaultProps = {
     width: 800,
-    height: 200,
+    height: 30,
     streamDelay: 0,
   };
   constructor(props: SmoothieComponentProps) {
@@ -236,11 +236,8 @@ class SmoothieComponent extends React.Component<SmoothieComponentProps, Smoothie
   render() {
     let style = {} as React.CSSProperties;
 
-    if (this.props.responsive === true) {
-      style.width = '100%';
-      style.height = this.props.height;
-    }
-
+    // style.maxWidth = this.props.width;
+    // style.maxHeight = this.props.height;
     // Prevent extra pixels in wrapping element
     style.display = 'block';
 
@@ -263,9 +260,16 @@ class SmoothieComponent extends React.Component<SmoothieComponentProps, Smoothie
       <canvas
         className={this.props.classNameCanvas || this.props.className}
         style={style}
-        width={this.props.responsive === true ? undefined : this.props.width}
+        width={this.props.width}
         height={this.props.height}
-        ref={(canv) => (this.canvas = canv!) && this.smoothie.streamTo(canv, this.props.streamDelay)}
+        ref={(canv) => {
+          (this.canvas = canv!) && this.smoothie.streamTo(canv, this.props.streamDelay);
+          const smoothieCanvas = (this.smoothie as any).canvas;
+          smoothieCanvas.style.width = `${this.props.width}px`;
+          smoothieCanvas.style.height = `${this.props.height}px`;
+          smoothieCanvas.width = this.props.width!;
+          smoothieCanvas.height = this.props.height!;
+        }}
       />
     );
 
