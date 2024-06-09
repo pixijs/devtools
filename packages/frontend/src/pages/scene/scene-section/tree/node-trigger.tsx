@@ -11,7 +11,7 @@ import { TooltipWrapper } from '../../../../components/ui/tooltip';
 import type { BridgeFn } from '../../../../lib/utils';
 import { cn } from '../../../../lib/utils';
 import type { SceneGraphEntry } from '../../../../types';
-import { CustomNodeButton, CustomNodeToggleButton } from './node-button';
+import { CustomNodeButton } from './node-button';
 
 const NodeInput: React.FC<{ node: NodeApi<SceneGraphEntry> }> = ({ node }) => {
   return (
@@ -69,16 +69,15 @@ export const NodeTrigger: React.FC<{
       <div className="flex-grow" />
       <div className="flex items-center gap-1">
         {node.data.metadata.buttons?.map((button, i) => (
-          <CustomNodeButton key={node.id + button + i} node={node} button={button} bridge={bridge} />
+          <CustomNodeButton key={node.id + button.name + i} node={node} button={button} bridge={bridge} />
         ))}
         <TooltipWrapper
           contentProps={{ side: 'left' }}
           providerProps={{ delayDuration: 2500 }}
           trigger={
-            <CustomNodeToggleButton
+            <CustomNodeButton
               asChild={true}
-              button={'locked'}
-              value={node.data.metadata.locked ?? false}
+              button={{ name: 'locked', type: 'toggle', value: node.data.metadata.locked ?? false }}
               icon={node.data.metadata.locked ? <LockIcon /> : <LockOpenIcon />}
               node={node}
               className="mt-[-2px] w-[20px] px-1 py-0.5"

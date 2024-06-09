@@ -3,7 +3,9 @@ import type { NodeApi } from 'react-arborist';
 import { ContextMenuItem, ContextMenuSeparator } from '../../../../components/ui/context-menu';
 import type { BridgeFn } from '../../../../lib/utils';
 import type { SceneGraphEntry } from '../../../../types';
+import type { ButtonMetadata } from '@pixi/devtools';
 
+// TODO: convert to allow for toggle buttons
 export const NodeContextMenuItem: React.FC<{
   title: string;
   onClick: React.MouseEventHandler<HTMLDivElement>;
@@ -20,7 +22,7 @@ export const NodeContextMenuItem: React.FC<{
 
 export const CustomNodeContextMenuItem: React.FC<{
   node: NodeApi<SceneGraphEntry>;
-  item: string;
+  item: ButtonMetadata;
   bridge: BridgeFn;
   isLast?: boolean;
 }> = ({ node, item, bridge, isLast }) => {
@@ -30,5 +32,5 @@ export const CustomNodeContextMenuItem: React.FC<{
     );
   }, [node, item, bridge]);
 
-  return <NodeContextMenuItem title={item} onClick={handleClick} isLast={isLast} />;
+  return <NodeContextMenuItem title={item.icon ?? item.name} onClick={handleClick} isLast={isLast} />;
 };

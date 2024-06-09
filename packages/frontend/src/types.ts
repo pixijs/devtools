@@ -1,6 +1,6 @@
 import type { BridgeFn } from './lib/utils';
 import type { SceneState } from './pages/scene/state';
-import type { PixiMetadata } from '@pixi/devtools';
+import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
 export enum DevtoolMessage {
   active = 'pixi-active',
@@ -29,7 +29,7 @@ export interface DevtoolState extends SceneState {
   setBridge: (bridge: DevtoolState['bridge']) => void;
 
   sceneTreeData: {
-    buttons: string[];
+    buttons: ButtonMetadata[];
   } | null;
   setSceneTreeData: (data: DevtoolState['sceneTreeData']) => void;
 }

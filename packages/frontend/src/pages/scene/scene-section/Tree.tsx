@@ -11,11 +11,12 @@ import { Cursor } from './tree/cursor';
 import { Node } from './tree/node';
 import { useSimpleTree } from './tree/simple-tree';
 import { Button } from '../../../components/ui/button';
+import type { ButtonMetadata } from '@pixi/devtools';
 
 interface PanelProps {
   children: React.ReactNode;
   onSearch?: (searchTerm: string) => void;
-  panelButtons: string[];
+  panelButtons: ButtonMetadata[];
 }
 const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +80,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
             />
             {panelButtons?.map((button, i) => (
               <Button
-                key={button + i}
+                key={button.name + i}
                 size={'icon'}
                 variant={'ghost'}
                 className="text-overflow-ellipsis overflow-hidden whitespace-nowrap"
@@ -87,7 +88,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
                   bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.treePanelButtonPress(${JSON.stringify(button)})`)
                 }
               >
-                {button}
+                {button.icon ? button.icon : button.name}
               </Button>
             ))}
             <Separator orientation="vertical" className="h-4" />

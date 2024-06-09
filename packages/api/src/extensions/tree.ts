@@ -14,12 +14,20 @@ export type PixiNodeType =
   | 'TilingSprite'
   | 'Unknown';
 
+export interface ButtonMetadata {
+  name: string;
+  icon?: string;
+  // tooltip?: string; // TODO: Add tooltip support
+  type: 'button' | 'toggle';
+  value?: boolean;
+}
+
 export interface PixiMetadata {
   type: PixiNodeType;
   locked?: boolean;
   suffix?: string;
-  buttons?: string[];
-  contextMenu?: string[];
+  buttons?: ButtonMetadata[];
+  contextMenu?: ButtonMetadata[];
 }
 
 export interface TreeExtension {
@@ -34,5 +42,5 @@ export interface TreeExtension {
   onSwap?: (container: Container, newIndex: number) => void;
   onSelected?: (container: Container) => void;
 
-  panelButtons?: string[];
+  panelButtons?: ButtonMetadata[];
 }
