@@ -20,7 +20,7 @@ export const ColorInput: React.FC<ColorProps> = ({ value, onChange, ...rest }) =
   };
 
   // convert number ot hex
-  const hexString = value.toString(16);
+  const hexString = value?.toString(16) ?? 'ffffff';
 
   const hex = `#${'000000'.substring(0, 6 - hexString.length) + hexString}`;
 

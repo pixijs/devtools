@@ -7,7 +7,7 @@ export const NumberProperty: React.FC<PropertyPanelData> = ({ value, entry }) =>
     <Input
       {...(entry.options as InputProps)}
       type="number"
-      value={value}
+      value={value ?? undefined}
       onChange={(e) => entry.onChange(Number(e.target.value))}
       className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
     />
