@@ -1,7 +1,7 @@
 /**
  * Collection of valid extension types.
  */
-export type ExtensionType = 'overlay' | 'stats' | 'sceneTree' | 'sceneProperties' | 'scenePanel';
+export type ExtensionType = 'overlay' | 'stats' | 'sceneTree' | 'sceneProperties';
 
 export enum ExtensionPriority {
   Low = -1,

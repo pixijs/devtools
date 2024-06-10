@@ -29,5 +29,6 @@ export interface PropertiesExtension {
 
   setProperty(container: Container, prop: string, value: any): void;
   getProperties(container: Container): PropertiesEntry[];
-  copyProperty(container: Container, prop: string): void;
+  // TODO: Implement copyProperty
+  copyProperty?(container: Container, prop: string): void;
 }

@@ -3,7 +3,6 @@ import type { OverlayExtension } from './dist/extensions/overlay';
 import type { StatsExtension } from './dist/extensions/stats';
 import type { TreeExtension } from './dist/extensions/tree';
 import type { PropertiesExtension } from './dist/extensions/properties';
-import type { ScenePanelExtension } from './dist/extensions/scenePanel';
 import type { NodeExtension } from './dist/extensions/node';
 import type { PixiDevtools } from './dist/pixi';
 
@@ -20,14 +19,7 @@ declare global {
       app?: Application | undefined;
       stage?: Container | undefined;
       renderer?: Renderer | undefined;
-      plugins?: (
-        | OverlayExtension
-        | StatsExtension
-        | TreeExtension
-        | PropertiesExtension
-        | ScenePanelExtension
-        | NodeExtension
-      )[];
+      plugins?: (OverlayExtension | StatsExtension | TreeExtension | PropertiesExtension | NodeExtension)[];
     };
     $pixi: Container | null;
   }

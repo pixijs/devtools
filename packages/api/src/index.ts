@@ -5,7 +5,6 @@ import type { Devtools, DevtoolsAPI } from './types';
 export * from './extensions/ext';
 export * from './extensions/overlay';
 export * from './extensions/properties';
-export * from './extensions/scenePanel';
 export * from './extensions/stats';
 export * from './extensions/tree';
 export * from './types';
