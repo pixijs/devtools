@@ -157,7 +157,7 @@ export class Tree {
   public update(container: Container) {
     const stage = this._devtool.stage;
     const type = getPixiType(container);
-    const { suffix, name } = this._getName(container, type);
+    const { suffix, name } = this._getName(container);
     const node = {
       id: this._getId(container),
       name: name,
@@ -167,8 +167,10 @@ export class Tree {
         locked: container.__devtoolLocked,
         uid: this._getId(container),
         suffix,
+        buttons: [],
+        contextMenu: [],
       },
-    };
+    } as SceneGraphEntry;
 
     this._metadataExtensions.forEach((ext) => {
       ext.updateNodeMetadata(container, node.metadata);
@@ -187,9 +189,11 @@ export class Tree {
     this._sceneGraph.set(container, node);
   }
 
-  private _getName(container: Container, type: PixiNodeType) {
-    if (type === 'Unknown') {
-      type = container.constructor.name as PixiNodeType;
+  private _getName(container: Container) {
+    let type = container.constructor.name as PixiNodeType;
+
+    if (type.startsWith('_')) {
+      type = type.slice(1) as PixiNodeType;
     }
 
     const stage = this._devtool.stage;

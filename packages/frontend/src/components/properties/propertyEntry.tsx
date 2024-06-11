@@ -8,11 +8,12 @@ interface PropertyEntryProps {
   input: React.ReactNode;
   className?: string;
   tooltip?: string;
+  isLast: boolean;
 }
-export const PropertyEntry: React.FC<PropertyEntryProps> = memo(({ title, input, className, tooltip }) => {
+export const PropertyEntry: React.FC<PropertyEntryProps> = memo(({ title, input, className, tooltip, isLast }) => {
   return (
     <>
-      <div className={cn('flex h-full items-center pt-2', className)}>
+      <div className={cn('flex h-full items-center pt-1', className)}>
         {tooltip ? (
           <div className="w-1/4 overflow-hidden break-keep pr-2 text-xs">
             <TooltipWrapper trigger={<div className="text-start">{title}</div>} tip={tooltip} />
@@ -22,7 +23,7 @@ export const PropertyEntry: React.FC<PropertyEntryProps> = memo(({ title, input,
         )}
         <div className="flex w-full items-center pl-2">{input}</div>
       </div>
-      <Separator orientation="horizontal" className="mt-2 opacity-40" />
+      {!isLast && <Separator orientation="horizontal" className="mt-1 opacity-40" />}
     </>
   );
 });

@@ -4,7 +4,7 @@ import {
   FaMinus as LayerIconOpen,
   FaLock as LockIcon,
   FaLockOpen as LockOpenIcon,
-  FaRegObjectGroup as SceneNodeIcon,
+  // FaRegObjectGroup as SceneNodeIcon,
 } from 'react-icons/fa6';
 import { Input } from '../../../../components/ui/input';
 import { TooltipWrapper } from '../../../../components/ui/tooltip';
@@ -31,12 +31,7 @@ const NodeInput: React.FC<{ node: NodeApi<SceneGraphEntry> }> = ({ node }) => {
 };
 
 const FolderArrow: React.FC<{ node: NodeApi<SceneGraphEntry> }> = ({ node }) => {
-  if (node.isLeaf)
-    return (
-      <span>
-        <SceneNodeIcon />
-      </span>
-    );
+  if (node.isLeaf) return <></>;
   return <span>{node.isOpen ? <LayerIconOpen /> : <LayerIconClosed />}</span>;
 };
 

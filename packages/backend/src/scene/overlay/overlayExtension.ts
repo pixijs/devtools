@@ -8,15 +8,23 @@ export const overlayExtension: OverlayExtension = {
     name: 'default-overlay',
   },
 
-  selectedColor: 'hsla(340 70% 44% / 35%)',
-  hoverColor: 'hsla(192 84% 40% / 40%)',
+  getSelectedStyle() {
+    return {
+      backgroundColor: 'hsla(340 70% 44% / 35%)',
+      border: '1px solid hsla(0, 0%, 100%, 0.5)',
+    };
+  },
+
+  getHoverStyle() {
+    return {
+      backgroundColor: 'hsla(192 84% 40% / 40%)',
+      border: '1px solid hsla(0, 0%, 100%, 0.5)',
+    };
+  },
 
   getGlobalPosition(node: Container) {
-    const bounds = node.getLocalBounds();
-    const wt = node.worldTransform;
-
+    const bounds = node.getBounds();
     return {
-      transform: wt,
       bounds,
     };
   },

@@ -8,9 +8,10 @@ import {
   matrixToArray,
   pointToArray,
 } from '../utils/convertProp';
-import { v7ContainerProps } from './v7ContainerProps';
+import { v7BlendModeMap, v7ContainerProps } from './v7ContainerProps';
 import { v8ContainerProps } from './v8ContainerProps';
 import { getProps } from '../utils/getProps';
+import { PixiDevtools } from '../../../../pixi';
 
 const propertyValueExtractors = {
   position: pointToArray,
@@ -60,6 +61,8 @@ export const containerPropertyExtension: PropertiesExtension = {
 
       if (prop === 'type') {
         value = container.constructor.name;
+      } else if (prop === 'blendMode' && PixiDevtools.majorVersion === '7') {
+        value = Object.keys(v7BlendModeMap).find((key) => v7BlendModeMap[key as keyof typeof v7BlendModeMap] === value);
       } else if (value != null && propertyValueExtractors[prop as PropertyValueExtractors]) {
         value = propertyValueExtractors[prop as PropertyValueExtractors](value);
       }
@@ -82,6 +85,9 @@ export const containerPropertyExtension: PropertiesExtension = {
     // set the property on the container
     if (propertyValueSetters[prop as PropertyValueExtractors]) {
       propertyValueSetters[prop as PropertyValueExtractors](container, prop, value);
+    } else if (prop === 'blendMode' && PixiDevtools.majorVersion === '7') {
+      // convert string to blendmode number
+      (container as any)[prop] = v7BlendModeMap[value as keyof typeof v7BlendModeMap];
     } else {
       (container as any)[prop] = value;
     }

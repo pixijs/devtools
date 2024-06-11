@@ -19,6 +19,9 @@ export class Overlay {
   // cache the extension for bounds as this happens on every frame
   private _boundsExt!: Required<OverlayExtension>;
 
+  private _selectedStylesExt!: Required<OverlayExtension>;
+  private _hoverStylesExt!: Required<OverlayExtension>;
+
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
 
@@ -52,10 +55,10 @@ export class Overlay {
 
     this._canvas = newCanvas;
     this._buildOverlay();
-    const selectedColor = getExtensionProp(Overlay.extensions, 'selectedColor').selectedColor;
-    const hoverColor = getExtensionProp(Overlay.extensions, 'hoverColor').hoverColor;
-    this._buildHighlight('_selectedHighlight', selectedColor);
-    this._buildHighlight('_hoverHighlight', hoverColor);
+    this._selectedStylesExt = getExtensionProp(Overlay.extensions, 'getSelectedStyle');
+    this._hoverStylesExt = getExtensionProp(Overlay.extensions, 'getHoverStyle');
+    this._buildHighlight('_selectedHighlight', {});
+    this._buildHighlight('_hoverHighlight', {});
   }
 
   public update() {
@@ -97,19 +100,24 @@ export class Overlay {
       this.disableHighlight('_selectedHighlight');
     } else {
       this.activateHighlight('_selectedHighlight', selectedNode);
+      this._updateHighlight(
+        '_selectedHighlight',
+        this._selectedStylesExt.getSelectedStyle(this._devtool.tree.selectedNode),
+      );
     }
 
-    if (!this._hoveredNode || !this._highlightEnabled) {
+    if (!this._hoveredNode || !this._highlightEnabled || this._hoveredNode === selectedNode) {
       this.disableHighlight('_hoverHighlight');
     } else {
       this.activateHighlight('_hoverHighlight', this._hoveredNode!);
+      this._updateHighlight('_hoverHighlight', this._hoverStylesExt.getHoverStyle(this._hoveredNode));
     }
   }
 
   public activateHighlight(type: '_selectedHighlight' | '_hoverHighlight', node: Container) {
-    const { transform: wt, bounds } = this._boundsExt.getGlobalPosition(node);
+    const { bounds } = this._boundsExt.getGlobalPosition(node);
     Object.assign(this[type].style, {
-      transform: `matrix(${wt.a}, ${wt.b}, ${wt.c}, ${wt.d}, ${wt.tx}, ${wt.ty}) translate(${bounds.x}px, ${bounds.y}px)`,
+      transform: `translate(${bounds.x}px, ${bounds.y}px)`,
       width: `${bounds.width}px`,
       height: `${bounds.height}px`,
     });
@@ -164,7 +172,7 @@ export class Overlay {
     });
   }
 
-  private _buildHighlight(type: '_selectedHighlight' | '_hoverHighlight', color: string) {
+  private _buildHighlight(type: '_selectedHighlight' | '_hoverHighlight', styles: Partial<CSSStyleDeclaration>) {
     const box = document.createElement('div');
     Object.assign(box.style, {
       position: 'absolute',
@@ -174,11 +182,14 @@ export class Overlay {
       height: '0',
       pointerEvents: 'none',
       transformOrigin: 'top left',
-      backgroundColor: color,
-      border: '1px solid hsla(0, 0%, 100%, 0.5)',
+      ...styles,
     });
     this._overlay.appendChild(box);
     this[type] = box;
+  }
+
+  private _updateHighlight(type: '_selectedHighlight' | '_hoverHighlight', styles: Partial<CSSStyleDeclaration>) {
+    Object.assign(this[type].style, styles);
   }
 
   private _updateOverlay() {

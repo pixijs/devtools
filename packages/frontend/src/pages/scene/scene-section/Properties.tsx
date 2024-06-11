@@ -152,7 +152,7 @@ export const Properties: React.FC = () => {
     <Panel onSearch={onSearch} onCopy={onCopy}>
       {(Object.keys(sections) as (keyof typeof sections)[]).map((section) => (
         <CollapsibleSection key={section} title={section} className="border-x" onCopy={() => onCopy(section)}>
-          <div className="p-2 [&>*:first-child]:pt-0">
+          <div className="px-2 py-1 [&>*:first-child]:pt-0">
             {sections[section].map((prop, i) => {
               const Component = propertyMap[prop.entry.type];
               return (
@@ -161,6 +161,7 @@ export const Properties: React.FC = () => {
                   title={prop.entry.label ?? formatCamelCase(prop.prop)}
                   tooltip={prop.entry.tooltip}
                   input={<Component {...prop} />}
+                  isLast={i === sections[section].length - 1}
                 />
               );
             })}

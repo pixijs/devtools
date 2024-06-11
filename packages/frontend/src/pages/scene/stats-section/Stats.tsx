@@ -83,7 +83,7 @@ export const Stats: React.FC = () => {
         <div className="flex h-full w-full flex-wrap justify-start overflow-auto">
           {currentStats.map((item) => {
             return (
-              <div className="min-h-10 p-2" key={item.name}>
+              <div className="min-h-10 px-2 pt-2" key={item.name}>
                 <span className="text-xs">
                   {item.name} ({stats![item.name]})
                 </span>

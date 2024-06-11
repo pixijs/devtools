@@ -2,22 +2,21 @@ import type { DevtoolState } from '@devtool/frontend/types';
 import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
 import type { Application, Container, Renderer } from 'pixi.js';
-import { loop } from './utils/loop';
-import { Stats } from './scene/stats/stats';
-import { Tree } from './scene/tree/tree';
-import { Properties } from './scene/tree/properties';
-import { Throttle } from './utils/throttle';
-import { Overlay } from './scene/overlay/overlay';
 import { extensions } from './extensions/Extensions';
+import { Overlay } from './scene/overlay/overlay';
 import { overlayExtension } from './scene/overlay/overlayExtension';
+import { Stats } from './scene/stats/stats';
 import { pixiStatsExtension, totalStatsExtension } from './scene/stats/statsExtension';
-import { containerPropertyExtension } from './scene/tree/extensions/container/containerPropertyExtension';
 import { animatedSpritePropertyExtension } from './scene/tree/extensions/animatedSprite/animatedSpritePropertyExtension';
-import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
-import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
+import { containerPropertyExtension } from './scene/tree/extensions/container/containerPropertyExtension';
 import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSprite/ninesliceSpritePropertyExtension';
+import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
 import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
-import { treeExtension } from './scene/tree/extensions/tree/treeExtension';
+import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
+import { Properties } from './scene/tree/properties';
+import { Tree } from './scene/tree/tree';
+import { loop } from './utils/loop';
+import { Throttle } from './utils/throttle';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -331,7 +330,6 @@ extensions.add(
   tilingSpritePropertyExtension,
   animatedSpritePropertyExtension,
 );
-extensions.add(treeExtension);
 
 // Export an instance of PixiWrapper
 export const PixiDevtools = new PixiWrapper();
