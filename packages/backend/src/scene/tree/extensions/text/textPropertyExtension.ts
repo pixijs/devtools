@@ -1,10 +1,11 @@
-import type { PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
+import type { PropertiesEntry } from '@pixi/devtools';
 import type { Text } from 'pixi.js';
 import { PixiDevtools } from '../../../../pixi';
 import { isText } from '../../../../utils/getPixiType';
+import type { DefaultPropertyExtension } from '../container/containerPropertyExtension';
 import { textProps } from './textProps';
 
-export const textPropertyExtension: PropertiesExtension = {
+export const textPropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-text-properties',
@@ -42,9 +43,5 @@ export const textPropertyExtension: PropertiesExtension = {
   },
   setProperty(container: Text, prop, value) {
     (container as any)[prop] = value;
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

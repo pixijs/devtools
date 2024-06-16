@@ -42,7 +42,7 @@ export class Overlay {
   }
 
   public init() {
-    this._boundsExt = getExtensionProp(Overlay.extensions, 'getGlobalPosition');
+    this._boundsExt = getExtensionProp(Overlay.extensions, 'getGlobalBounds');
 
     const newCanvas = this._devtool.canvas!;
 
@@ -115,7 +115,7 @@ export class Overlay {
   }
 
   public activateHighlight(type: '_selectedHighlight' | '_hoverHighlight', node: Container) {
-    const { bounds } = this._boundsExt.getGlobalPosition(node);
+    const bounds = this._boundsExt.getGlobalBounds(node);
     Object.assign(this[type].style, {
       transform: `translate(${bounds.x}px, ${bounds.y}px)`,
       width: `${bounds.width}px`,

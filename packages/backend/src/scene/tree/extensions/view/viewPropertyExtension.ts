@@ -1,9 +1,10 @@
-import type { PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
+import type { PropertiesEntry } from '@pixi/devtools';
 import type { AnimatedSprite } from 'pixi.js';
-import { sharedViewProps } from './viewProps';
+import type { DefaultPropertyExtension } from '../container/containerPropertyExtension';
 import { arrayToPoint, pointToArray } from '../utils/convertProp';
+import { sharedViewProps } from './viewProps';
 
-export const viewPropertyExtension: PropertiesExtension = {
+export const viewPropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-view-properties',
@@ -50,9 +51,5 @@ export const viewPropertyExtension: PropertiesExtension = {
     } else {
       (container as any)[prop] = value;
     }
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

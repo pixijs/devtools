@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../global.d.ts" />
-import type { Devtools, DevtoolsAPI } from './types';
+import type { Devtools } from './types';
 
 export * from './extensions/ext';
 export * from './extensions/overlay';
@@ -9,26 +9,30 @@ export * from './extensions/stats';
 export * from './extensions/tree';
 export * from './types';
 
-export async function initDevtools(opts: DevtoolsAPI) {
-  const castOpts = opts as Devtools;
+export async function initDevtools(opts: Devtools) {
+  const options: Devtools = {
+    importPixi: false,
+    ...opts,
+  };
 
-  if (!castOpts.app && !castOpts.renderer && !castOpts.stage) {
-    throw new Error('You must provide either an app or a renderer and stage');
+  if (!options.app && !options.renderer) {
+    throw new Error('You must provide either an app or a renderer');
   }
-  if (castOpts.app) {
-    castOpts.renderer = castOpts.app.renderer;
-    castOpts.stage = castOpts.app.stage;
+  if (options.app) {
+    options.renderer = options.app.renderer;
+    options.stage = options.app.stage;
   }
 
-  if (!castOpts.pixi) {
-    castOpts.pixi = await import('pixi.js');
+  if (options.importPixi && !options.pixi) {
+    options.pixi = await import('pixi.js');
   }
 
   window.__PIXI_DEVTOOLS__ = {
-    pixi: castOpts.pixi,
-    app: castOpts.app,
-    stage: castOpts.stage,
-    renderer: castOpts.renderer,
-    plugins: castOpts.plugins,
+    ...(window.__PIXI_DEVTOOLS__ || {}),
+    app: options.app,
+    stage: options.stage,
+    renderer: options.renderer,
+    extensions: [...(window.__PIXI_DEVTOOLS__?.extensions || []), ...(options.extensions || [])],
+    plugins: {},
   };
 }

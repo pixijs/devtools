@@ -24,7 +24,7 @@ export class Stats {
     const duplicates = allKeys.filter((item, index) => allKeys.indexOf(item) !== index);
 
     if (duplicates.length > 0) {
-      console.warn(`[PixiJS Devtools] StatsPlugin: Duplicate keys found: ${duplicates.join(', ')}`);
+      console.warn(`[PixiJS Devtools] Stats: Duplicate keys found: ${duplicates.join(', ')}`);
     }
   }
 

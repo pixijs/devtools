@@ -1,12 +1,12 @@
-import type { PropertiesExtension } from '@pixi/devtools';
 import type { AnimatedSprite } from 'pixi.js';
 import { PixiDevtools } from '../../../../pixi';
 import { isNineSliceSprite } from '../../../../utils/getPixiType';
+import type { DefaultPropertyExtension } from '../container/containerPropertyExtension';
 import { getProps } from '../utils/getProps';
 import { v7NineSliceProps } from './v7NinesliceSpriteProps';
 import { v8NinesSliceProps } from './v8NinesliceSpriteProps';
 
-export const nineSlicePropertyExtension: PropertiesExtension = {
+export const nineSlicePropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-nineslice-properties',
@@ -44,9 +44,5 @@ export const nineSlicePropertyExtension: PropertiesExtension = {
   },
   setProperty(container: AnimatedSprite, prop, value) {
     (container as any)[prop] = value;
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

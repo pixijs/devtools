@@ -1,10 +1,11 @@
-import type { PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
-import { PixiDevtools } from '../../../../pixi';
+import type { PropertiesEntry } from '@pixi/devtools';
 import type { AnimatedSprite } from 'pixi.js';
+import { PixiDevtools } from '../../../../pixi';
 import { isAnimatedSprite } from '../../../../utils/getPixiType';
+import type { DefaultPropertyExtension } from '../container/containerPropertyExtension';
 import { sharedAnimatedSpriteProps } from './sharedAnimatedSpriteProps';
 
-export const animatedSpritePropertyExtension: PropertiesExtension = {
+export const animatedSpritePropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-animated-sprite-properties',
@@ -54,9 +55,5 @@ export const animatedSpritePropertyExtension: PropertiesExtension = {
     } else {
       (container as any)[prop] = value;
     }
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

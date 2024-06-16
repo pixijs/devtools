@@ -16,9 +16,9 @@ export enum ExtensionPriority {
 export interface ExtensionMetadataDetails {
   /** The extension type, can be multiple types */
   type: ExtensionType | ExtensionType[];
-  /** Optional. Some plugins provide an API name/property, to make them more easily accessible */
+  /** Optional. Some extensions provide an API name/property, to make them more easily accessible */
   name?: string;
-  /** Optional, used for sorting the plugins in a particular order */
+  /** Optional, used for sorting the extensions in a particular order */
   priority?: number;
 }
 

@@ -22,13 +22,26 @@ export type Properties = Omit<PropertyPanelData, 'value'> & { allowUndefined?: b
 
 export interface PropertiesExtension {
   extension: ExtensionMetadata;
-
-  properties: () => Properties[];
+  /**
+   * Test if the plugin can handle the container.
+   * @param container The current node.
+   */
   testNode(container: Container): boolean;
+  /**
+   * Test if the plugin can handle the property.
+   * @param prop The property name.
+   */
   testProp(prop: string): boolean;
-
+  /**
+   * Set the property for the container.
+   * @param container The current node.
+   * @param prop The property name.
+   * @param value The new value. This value will be an array if the property has multiple inputs. e.g position.
+   */
   setProperty(container: Container, prop: string, value: any): void;
+  /**
+   * Get the properties for the container.
+   * @param container The current node.
+   */
   getProperties(container: Container): PropertiesEntry[];
-  // TODO: Implement copyProperty
-  copyProperty?(container: Container, prop: string): void;
 }

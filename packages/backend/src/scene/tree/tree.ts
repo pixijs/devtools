@@ -31,7 +31,7 @@ export class Tree {
   public init() {
     this._metadataExtensions = getExtensionsProp(Tree.extensions, 'updateNodeMetadata');
     this._onButtonPressExtensions = getExtensionsProp(Tree.extensions, 'onButtonPress');
-    this._onContextMenuExtensions = getExtensionsProp(Tree.extensions, 'onContextMenu');
+    this._onContextMenuExtensions = getExtensionsProp(Tree.extensions, 'onContextButtonPress');
     this._onRenameExtensions = getExtensionsProp(Tree.extensions, 'onRename');
     this._onDeletedExtensions = getExtensionsProp(Tree.extensions, 'onDeleted');
     this._onSwapExtensions = getExtensionsProp(Tree.extensions, 'onSwap');
@@ -65,7 +65,7 @@ export class Tree {
     if (!node) return;
 
     this._onContextMenuExtensions.forEach((ext) => {
-      ext.onContextMenu(node, contextMenuAction);
+      ext.onContextButtonPress(node, contextMenuAction);
     });
   }
 

@@ -6,7 +6,7 @@ import type { PixiDevtools } from '../../pixi';
 export class Properties {
   public static extensions: PropertiesExtension[] = [];
 
-  private _plugins!: PropertiesExtension[];
+  private _extensions!: PropertiesExtension[];
   private _devtool: typeof PixiDevtools;
 
   constructor(devtool: typeof PixiDevtools) {
@@ -14,7 +14,7 @@ export class Properties {
   }
 
   public init() {
-    this._plugins = Properties.extensions;
+    this._extensions = Properties.extensions;
   }
 
   public setValue(prop: string, value: any) {
@@ -22,7 +22,7 @@ export class Properties {
 
     if (!selectedNode) return;
 
-    this._plugins.forEach((plugin) => {
+    this._extensions.forEach((plugin) => {
       if (plugin.testNode(selectedNode) && plugin.testProp(prop)) {
         plugin.setProperty(selectedNode, prop, value);
       }
@@ -40,14 +40,14 @@ export class Properties {
 
     if (selectedNode.__devtoolLocked) return;
 
-    const activeProps = this._plugins.reduce(
+    const activeProps = this._extensions.reduce(
       (result, plugin) => {
         if (plugin.testNode(selectedNode)) {
           result.push(...plugin.getProperties(selectedNode));
         }
         return result;
       },
-      [] as ReturnType<PropertiesExtension['properties']>,
+      [] as ReturnType<PropertiesExtension['getProperties']>,
     );
     this._devtool.state.activeProps = activeProps as PropertyPanelData[];
   }

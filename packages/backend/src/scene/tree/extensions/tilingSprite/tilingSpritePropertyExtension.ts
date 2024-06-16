@@ -1,7 +1,8 @@
-import type { PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
+import type { PropertiesEntry } from '@pixi/devtools';
+import type { Container } from 'pixi.js';
 import { PixiDevtools } from '../../../../pixi';
 import { isTilingSprite } from '../../../../utils/getPixiType';
-import type { Container } from 'pixi.js';
+import type { DefaultPropertyExtension } from '../container/containerPropertyExtension';
 import { arrayToPoint, pointToArray } from '../utils/convertProp';
 import { getProps } from '../utils/getProps';
 import { v7TilingSpriteProps } from './v7TilingSpriteProps';
@@ -19,7 +20,7 @@ const propertyValueSetters: Record<PropertyValueExtractors, any> = {
   tileScale: arrayToPoint,
 };
 
-export const tilingSpritePropertyExtension: PropertiesExtension = {
+export const tilingSpritePropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-tiling-sprite-properties',
@@ -64,9 +65,5 @@ export const tilingSpritePropertyExtension: PropertiesExtension = {
     } else {
       (container as any)[prop] = value;
     }
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

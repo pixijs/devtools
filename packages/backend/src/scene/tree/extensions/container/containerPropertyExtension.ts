@@ -1,4 +1,4 @@
-import type { PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
+import type { Properties, PropertiesEntry, PropertiesExtension } from '@pixi/devtools';
 import type { Container } from 'pixi.js';
 import {
   arrayToBounds,
@@ -39,7 +39,11 @@ const propertyValueSetters: Record<PropertyValueExtractors, any> = {
   worldTransform: arrayToMatrix,
 };
 
-export const containerPropertyExtension: PropertiesExtension = {
+export interface DefaultPropertyExtension extends PropertiesExtension {
+  properties: () => Properties[];
+}
+
+export const containerPropertyExtension: DefaultPropertyExtension = {
   extension: {
     type: 'sceneProperties',
     name: 'default-container-properties',
@@ -91,9 +95,5 @@ export const containerPropertyExtension: PropertiesExtension = {
     } else {
       (container as any)[prop] = value;
     }
-  },
-  copyProperty() {
-    // copy the property from the container
-    console.error('Not implemented');
   },
 };

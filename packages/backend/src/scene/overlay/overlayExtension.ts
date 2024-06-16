@@ -22,10 +22,7 @@ export const overlayExtension: OverlayExtension = {
     };
   },
 
-  getGlobalPosition(node: Container) {
-    const bounds = node.getBounds();
-    return {
-      bounds,
-    };
+  getGlobalBounds(node: Container) {
+    return node.getBounds();
   },
 };

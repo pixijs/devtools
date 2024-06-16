@@ -126,10 +126,10 @@ class PixiWrapper {
 
     if (!this._devtools) return undefined;
 
-    const plugins = this._devtools.plugins || [];
-    this._devtools.plugins = plugins;
+    const exts = this._devtools.extensions || [];
+    this._devtools.extensions = exts;
 
-    this._devtools.plugins.forEach((plugin) => {
+    this._devtools.extensions.forEach((plugin) => {
       extensions.add(plugin);
     });
 
@@ -162,6 +162,9 @@ class PixiWrapper {
     if (this._stage) return this._stage;
 
     this._stage = this.app?.stage;
+    if (this._stage) return this._stage;
+
+    this._stage = this.renderer?.lastObjectRendered as Container;
     return this._stage;
   }
 
