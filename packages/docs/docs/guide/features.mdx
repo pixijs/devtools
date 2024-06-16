@@ -1,0 +1,135 @@
+---
+sidebar_position: 2
+title: Features
+---
+
+import React from 'react';
+import { useColorMode } from '@docusaurus/theme-common';
+
+export const Gif = ({ src, alt }) => {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 4rem', paddingTop: '1rem' }}>
+      <img src={src} alt={alt} style={{ maxWidth: '100%', borderRadius: '0.5rem', border: '1px solid #676767' }} />
+    </div>
+  );
+};
+
+# Features
+
+## Editing PixiJS Objects
+
+The PixiJS Devtools allows you to edit the properties of PixiJS objects in real-time.
+
+You can change the properties of a PixiJS object and see the changes reflected in the scene immediately.
+This includes properties such as position, scale, rotation, and more.
+
+<Gif src="/devtools/gif/devtool-properties.gif" alt="Editing PixiJS objects in the PixiJS Devtools" />
+
+:::info
+By default pixi properties that do not exist on the object are not shown.
+
+For example `filterArea` is not shown in the devtools until it's set on the object in your code.
+
+```js
+const sprite = new Sprite(texture);
+sprite.filterArea = new Rectangle(0, 0, 100, 100);
+```
+
+:::
+
+### Searching for PixiJS Objects
+
+The search feature in the PixiJS Devtools allows you to search for specific PixiJS objects in the scene by their name or other properties,
+making it easier to locate and edit objects in complex scenes.
+
+<Gif src="/devtools/gif/devtool-search.gif" alt="Searching for PixiJS objects in the PixiJS Devtools" />
+
+---
+
+## Overlay Highlight
+
+The overlay feature in the PixiJS Devtools allows you to highlight the bounds of a PixiJS object in the scene.
+This is useful for debugging layout and alignment issues.
+
+<Gif src="/devtools/gif/devtool-highlight.gif" alt="Highlight overlay for the PixiJS Devtools" />
+
+---
+
+## Selection
+
+The selection feature in the PixiJS Devtools allows you to select specific PixiJS objects in the scene, enabling focused editing and inspection.
+
+<Gif src="/devtools/gif/devtool-selection.gif" alt="Selecting nodes in the PixiJS Devtools" />
+
+---
+
+## Stats
+
+The stats feature in the PixiJS Devtools allows you to view the total number of PixiJS objects in the scene.
+This can help you identify performance issues and optimize your application.
+
+<Gif src="/devtools/gif/devtool-stats.gif" alt="Viewing stats in the PixiJS Devtools" />
+
+---
+
+## Rename Nodes
+
+The rename nodes feature in the PixiJS Devtools allows you to rename specific PixiJS objects in the scene,
+which is particularly useful for organizing and managing your scene graph.
+
+<Gif src="/devtools/gif/devtool-rename.gif" alt="Renaming nodes in the PixiJS Devtools" />
+
+---
+
+## Deleting Nodes
+
+The delete nodes feature in the PixiJS Devtools allows you to delete specific PixiJS objects from the scene, helping you to manage debug your scene graph.
+
+<Gif src="/devtools/gif/devtool-delete.gif" alt="Deleting nodes in the PixiJS Devtools" />
+
+---
+
+## Reparenting Nodes
+
+The reparent nodes feature in the PixiJS Devtools allows you to move your PixiJS objects around the scene.
+This can be useful for debugging layout issues.
+
+<Gif src="/devtools/gif/devtool-reparent.gif" alt="Reparenting nodes in the PixiJS Devtools" />
+
+---
+
+## Locking Nodes
+
+The lock nodes feature in the PixiJS Devtools allows you to lock specific PixiJS objects in the scene.
+
+This means that the node can no longer by edited, moved, deleted, or selected using the selection tool.
+
+<Gif src="/devtools/gif/devtool-lock.gif" alt="Locking nodes in the PixiJS Devtools" />
+
+---
+
+## Copying Properties
+
+The copy properties feature in the PixiJS Devtools allows you to copy specific properties of a PixiJS object and paste them back into your code, saving you time and effort.
+
+<Gif src="/devtools/gif/devtool-copy.gif" alt="Copying properties in the PixiJS Devtools" />
+
+---
+
+## Ignoring Nodes
+
+The ignore nodes feature in the PixiJS Devtools allows you to hide specific PixiJS objects in the scene.
+This can be useful when you have a large number of objects in the scene and you are seeing performance issues with the devtools.
+
+You have the option to ignore a node and its children, or just its children.
+
+```js
+// Example of ignoring a node
+const manyChildren = new Container();
+manyChildren.__devtoolsIgnore = true;
+manyChildren.__devtoolsIgnoreChildren = true;
+```
+
+:::info
+Installing `@pixi/devtools` will automatically add the `__devtoolsIgnore` and `__devtoolsIgnoreChildren` types
+:::
