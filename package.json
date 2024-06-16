@@ -23,8 +23,8 @@
     "watch": "npm run --ws watch --if-present",
     "types": "tsc --noEmit",
     "release": "tsx ./scripts/release.mts",
-    "prepare": "husky",
-    "upload": "xs upload"
+    "deploy": "npm run deploy --workspace @devtool/docs",
+    "prepare": "husky"
   },
   "husky": {
     "hooks": {
@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.23",
-    "@pixi/extension-scripts": "^2.4.1",
     "@types/chrome": "^0.0.268",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.14.1",

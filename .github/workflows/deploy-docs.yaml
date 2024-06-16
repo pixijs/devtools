@@ -1,32 +1,33 @@
-name: Deploy Doc
+name: Reusable Deploy
 
 on:
-    push:
-        branches:
-            - main
-            - docs
+  push:
+      branches:
+          - main
+          - docs
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.head_ref }}
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Setup Project
-              uses: ./.github/actions/setup
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-            - name: Build Project
-              run: |
-                git config --global user.name "${{ github.actor }}"
-                git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-                git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/pixijs/spine-v8.git
-                npm run build
-                npm run upload -- -u "github-actions-bot <support+actions@github.com>"
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm ci
+      - run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git remote set-url origin https://git:${GIT_PASS}@github.com/pixijs/devtools.git
+          npm run deploy
+        env:
+          GIT_USER: $GITHUB_ACTOR
+          GIT_PASS: ${{ secrets.GITHUB_TOKEN }}
