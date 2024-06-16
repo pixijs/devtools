@@ -1,0 +1,32 @@
+name: Deploy Doc
+
+on:
+    push:
+        branches:
+            - main
+            - docs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
+
+            - name: Setup Project
+              uses: ./.github/actions/setup
+
+            - name: Build Project
+              run: |
+                git config --global user.name "${{ github.actor }}"
+                git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+                git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/pixijs/spine-v8.git
+                npm run build
+                npm run upload -- -u "github-actions-bot <support+actions@github.com>"
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

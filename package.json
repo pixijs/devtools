@@ -23,7 +23,8 @@
     "watch": "npm run --ws watch --if-present",
     "types": "tsc --noEmit",
     "release": "tsx ./scripts/release.mts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "upload": "xs upload"
   },
   "husky": {
     "hooks": {
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.23",
+    "@pixi/extension-scripts": "^2.4.1",
     "@types/chrome": "^0.0.268",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.14.1",
@@ -71,5 +73,10 @@
     "tsx": "^4.11.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.12"
+  },
+  "extensionConfig": {
+    "deployRoot": "./packages/docs",
+    "deployFiles": "{build}/**",
+    "deployBranch": "gh-pages"
   }
 }
