@@ -8,6 +8,9 @@ import type { NodeExtension } from './dist/extensions/node';
 import type { PixiDevtools } from './dist/pixi';
 
 declare global {
+  var __PIXI_APP_INIT__: (arg: Application | Renderer) => void;
+  var __PIXI_RENDERER_INIT__: (arg: Application | Renderer) => void;
+
   interface Window {
     __PIXI_APP__: Application | undefined;
     __PIXI_STAGE__: Container | undefined;

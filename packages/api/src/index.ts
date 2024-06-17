@@ -15,9 +15,6 @@ export async function initDevtools(opts: Devtools) {
     ...opts,
   };
 
-  if (!options.app && !options.renderer) {
-    throw new Error('You must provide either an app or a renderer');
-  }
   if (options.app) {
     options.renderer = options.app.renderer;
     options.stage = options.app.stage;
