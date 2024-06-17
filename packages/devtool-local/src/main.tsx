@@ -14,10 +14,10 @@ import * as PIXI from 'pixi.js';
 
   const app = await scene(canvas);
 
-  window.__PIXI_DEVTOOLS__ = {
-    pixi: PIXI,
-    app,
-  };
+  // window.__PIXI_DEVTOOLS__ = {
+  //   pixi: PIXI,
+  //   app,
+  // };
 
   const renderer = PixiDevtools.renderer;
 

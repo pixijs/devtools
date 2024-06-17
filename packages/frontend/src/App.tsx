@@ -121,10 +121,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     setSceneTreeData,
   ]);
 
-  const windowString = `import * as PIXI from 'pixi.js';
-
-window.__PIXI_DEVTOOLS__ = {
-  pixi: PIXI,
+  const windowString = `window.__PIXI_DEVTOOLS__ = {
   app: app,
   // If you are not using a pixi app, you can pass the renderer and stage directly
   // renderer: myRenderer,
@@ -153,6 +150,21 @@ initDevtools({
               <p>
                 This page doesn’t appear to be using PixiJS. If this seems wrong, follow the project setup guide below
               </p>
+              <br />
+              <div
+                style={{
+                  borderLeft: '6px solid #38bdf8', // Blue left border
+                }}
+                className="shadow-[0 2px 4px rgba(0, 0, 0.1)] m-4 mt-0 rounded-md border-l-4 border-[#38bdf8] bg-[#193c47] p-4 shadow-md"
+              >
+                <h2 className="mb-2 text-lg font-bold">PixiJS Support</h2>
+                <div>This extension is designed to work with PixiJS v7/v8 applications.</div>
+                <br />
+                <p>
+                  If using PixiJS v8.2.0 or later simply try refreshing the page. Global hooks were exposed that allow
+                  the devtool to work without any additional setup.
+                </p>
+              </div>
               <br />
               <p>There are two ways to set up the devtool:</p>
               <div className="p-4">
