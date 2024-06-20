@@ -1,6 +1,7 @@
-import { clsx, type ClassValue } from 'clsx';
+import { clsx } from 'clsx';
+import type { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { StoreApi, UseBoundStore } from 'zustand';
+import type { StoreApi, UseBoundStore } from 'zustand';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

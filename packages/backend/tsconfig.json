@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@devtool/frontend/*": ["packages/frontend/src/*"],
+      "@pixi/devtools": ["packages/api/src/index.ts"]
+    }
+  }
+}

@@ -1,7 +1,8 @@
-import { BridgeFn } from '@devtool/frontend/lib/utils';
-import { SceneGraphEntry } from '@devtool/frontend/types';
+import type { BridgeFn } from '../../../../lib/utils';
+import type { SceneGraphEntry } from '../../../../types';
 import { useEffect, useMemo, useState } from 'react';
-import { DeleteHandler, MoveHandler, NodeApi, RenameHandler, SimpleTree } from 'react-arborist';
+import type { DeleteHandler, MoveHandler, NodeApi, RenameHandler } from 'react-arborist';
+import { SimpleTree } from 'react-arborist';
 
 function removeEmptyChildren(node: Partial<SceneGraphEntry>) {
   if (node.children?.length === 0) {
@@ -31,7 +32,7 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
 
     tree.move({ id: args.dragIds[0], parentId: args.parentId, index: args.index });
     bridge(
-      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.moveNode(${JSON.stringify(node.data.metadata.uid)}, ${JSON.stringify(parent.data.metadata.uid)}, ${JSON.stringify(args.index)})`,
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.moveNode(${JSON.stringify(node.id)}, ${JSON.stringify(parent.id)}, ${JSON.stringify(args.index)})`,
     );
     setData(tree.data);
   };
@@ -40,9 +41,7 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
     tree.update({ id, changes: { name } as any });
     setData(tree.data);
     const node = tree.find(id);
-    bridge(
-      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.renameNode(${JSON.stringify(node?.data.metadata.uid)}, ${JSON.stringify(name)})`,
-    );
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.renameNode(${JSON.stringify(node?.id)}, ${JSON.stringify(name)})`);
   };
 
   // TODO: allow for creating new nodes
@@ -56,17 +55,20 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
 
   const onDelete: DeleteHandler<T> = (args: { ids: string[] }) => {
     const node = tree.find(args.ids[0]);
+
+    if (node?.data.metadata.locked) return;
+
     args.ids.forEach((id) => tree.drop({ id }));
     setData(tree.data);
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.data.metadata.uid)})`);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.id)})`);
+    if (!node || !node.parent) return;
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(node.parent.id)})`);
   };
 
   const onSelect = (nodes: NodeApi[]) => {
     const node = nodes[0];
     if (!node) return;
-    bridge(
-      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${node ? JSON.stringify(node.data.metadata.uid) : null})`,
-    );
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${node ? JSON.stringify(node.id) : null})`);
   };
 
   const controller = { onMove, onRename, onDelete, onSelect };

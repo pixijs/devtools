@@ -1,12 +1,22 @@
-import { DevtoolMessage, DevtoolState } from '@devtool/frontend/types';
+import type { DevtoolState } from '@devtool/frontend/types';
+import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
 import type { Application, Container, Renderer } from 'pixi.js';
-import { loop } from './utils/loop';
-import { NodeTracker } from './scene/stats/stats';
-import { Tree } from './scene/tree/tree';
-import { Properties } from './scene/tree/properties';
-import { Throttle } from './utils/throttle';
+import { extensions } from './extensions/Extensions';
 import { Overlay } from './scene/overlay/overlay';
+import { overlayExtension } from './scene/overlay/overlayExtension';
+import { Stats } from './scene/stats/stats';
+import { pixiStatsExtension, totalStatsExtension } from './scene/stats/statsExtension';
+import { animatedSpritePropertyExtension } from './scene/tree/extensions/animatedSprite/animatedSpritePropertyExtension';
+import { containerPropertyExtension } from './scene/tree/extensions/container/containerPropertyExtension';
+import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSprite/ninesliceSpritePropertyExtension';
+import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
+import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
+import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
+import { Properties } from './scene/tree/properties';
+import { Tree } from './scene/tree/tree';
+import { loop } from './utils/loop';
+import { Throttle } from './utils/throttle';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -31,9 +41,15 @@ class PixiWrapper {
         children: [],
         metadata: {
           type: 'Container',
-          uid: 'root',
         },
       };
+    },
+
+    sceneTreeData: {
+      buttons: [],
+    },
+    setSceneTreeData: function (data: DevtoolState['sceneTreeData']) {
+      this.sceneTreeData = data;
     },
 
     stats: null,
@@ -62,7 +78,7 @@ class PixiWrapper {
     },
   };
 
-  public statTracker = new NodeTracker(this);
+  public stats = new Stats(this);
   public tree = new Tree(this);
   public properties = new Properties(this);
   public overlay = new Overlay(this);
@@ -76,6 +92,8 @@ class PixiWrapper {
   private _version: string | undefined;
 
   private _updateThrottle = new Throttle();
+
+  private _initialized = false;
 
   /**
    * Searches for a property in the window and its frames.
@@ -108,15 +126,18 @@ class PixiWrapper {
 
     if (!this._devtools) return undefined;
 
-    this._devtools.plugins ||= { properties: [], stats: [] };
-    this._devtools.plugins.properties ||= [];
-    this._devtools.plugins.stats ||= [];
+    const exts = this._devtools.extensions || [];
+    this._devtools.extensions = exts;
+
+    this._devtools.extensions.forEach((plugin) => {
+      extensions.add(plugin);
+    });
+
     return this._devtools;
   }
 
   /**
    * Gets the PixiJS Application.
-   * @returns The PixiJS Application.
    */
   public get app() {
     if (this._app) return this._app;
@@ -130,7 +151,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS Stage.
-   * @returns The PixiJS Stage.
    */
   public get stage() {
     if (this._stage) return this._stage;
@@ -142,12 +162,14 @@ class PixiWrapper {
     if (this._stage) return this._stage;
 
     this._stage = this.app?.stage;
+    if (this._stage) return this._stage;
+
+    this._stage = this.renderer?.lastObjectRendered as Container;
     return this._stage;
   }
 
   /**
    * Gets the PixiJS Renderer.
-   * @returns The PixiJS Renderer.
    */
   public get renderer() {
     if (this._renderer) return this._renderer;
@@ -163,7 +185,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS Canvas.
-   * @returns The PixiJS Canvas.
    */
   public get canvas() {
     if (this._canvas) return this._canvas;
@@ -181,7 +202,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS library.
-   * @returns The PixiJS library.
    */
   public get pixi() {
     if (this._pixi) return this._pixi;
@@ -195,7 +215,6 @@ class PixiWrapper {
 
   /**
    * Gets the PixiJS version.
-   * @returns The PixiJS version.
    */
   public get version() {
     if (this._version) return this._version;
@@ -204,6 +223,14 @@ class PixiWrapper {
   }
 
   public get majorVersion() {
+    if (this.version === '') {
+      // lets try and find the version
+      const stage = this.stage;
+      if (stage.effects != null && Array.isArray(stage.effects) && '_updateFlags' in stage) {
+        return '8';
+      }
+      return '7';
+    }
     return this.version.split('.')[0];
   }
 
@@ -215,22 +242,27 @@ class PixiWrapper {
     return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
   }
 
+  public reset() {
+    this._devtools = undefined;
+    this._app = undefined;
+    this._stage = undefined;
+    this._renderer = undefined;
+    this._canvas = undefined;
+    this._pixi = undefined;
+    this._version = undefined;
+    this._initialized = false;
+  }
+
   public update() {
-    this.overlay.init();
+    if (!this._initialized) {
+      this.init();
+    }
+
+    // TODO: tree: 300ms, stats: 300ms, properties: 300ms, overlay: 50ms
+
     this.overlay.update();
-
     if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
-      // reset the state before updating
-      this.state.setSceneGraph(null);
-      this.state.setStats({});
-      // TODO: probably don't need to reset this every time
-      this.state.setSelectedNode(null);
-      this.state.setActiveProps([]);
-
-      this.properties.init();
-      this.statTracker.init();
-      this.tree.init();
-      this.state.setVersion(this.version);
+      this.preupdate();
 
       // check if we are accessing the correct stage
       if (this.renderer!.lastObjectRendered === this.stage) {
@@ -238,7 +270,7 @@ class PixiWrapper {
         loop({
           container: this.stage!,
           loop: (container) => {
-            this.statTracker.trackNode(container);
+            this.stats.update(container);
             this.tree.update(container);
           },
           test: (container) => {
@@ -249,21 +281,59 @@ class PixiWrapper {
         });
       }
 
-      this.statTracker.complete();
-      this.tree.complete();
-      this.properties.update();
-      this.properties.complete();
-      this.overlay.complete();
+      this.postupdate();
+    }
+  }
 
-      try {
-        // post the state to the devtools
-        window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
-      } catch (error) {
-        throw new Error(`[PixiJS Devtools] Error posting state update: ${(error as Error).message}`);
-      }
+  private init() {
+    this.overlay.init();
+    this.properties.init();
+    this.stats.init();
+    this.tree.init();
+    this._initialized = true;
+  }
+
+  private _resetState() {
+    this.state.setSceneGraph(null);
+    this.state.setStats({});
+    this.state.setSelectedNode(null);
+    this.state.setActiveProps([]);
+    this.state.setVersion(this.version === '' ? `>${this.majorVersion}.0.0` : this.version);
+    this.state.setSceneTreeData({ buttons: [] });
+  }
+
+  private preupdate() {
+    this._resetState();
+    this.stats.preupdate();
+    this.tree.preupdate();
+  }
+
+  private postupdate() {
+    this.stats.complete();
+    this.tree.complete();
+    this.properties.update();
+    this.properties.complete();
+    this.overlay.complete();
+
+    try {
+      // post the state to the devtools
+      window.postMessage({ method: DevtoolMessage.stateUpdate, data: JSON.stringify(this.state) }, '*');
+    } catch (error) {
+      throw new Error(`[PixiJS Devtools] Error posting state update: ${(error as Error).message}`);
     }
   }
 }
+
+extensions.add(overlayExtension);
+extensions.add(totalStatsExtension, pixiStatsExtension);
+extensions.add(
+  containerPropertyExtension,
+  viewPropertyExtension,
+  textPropertyExtension,
+  nineSlicePropertyExtension,
+  tilingSpritePropertyExtension,
+  animatedSpritePropertyExtension,
+);
 
 // Export an instance of PixiWrapper
 export const PixiDevtools = new PixiWrapper();

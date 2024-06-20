@@ -1,37 +1,133 @@
-import { Container } from 'pixi.js';
+import type { Container } from 'pixi.js';
 import { PixiDevtools } from '../pixi';
-import { PixiNodeType } from '@devtool/frontend/types';
+import type { PixiNodeType } from '@pixi/devtools';
+
+export function isBitmapText(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.BitmapText && container instanceof pixi.BitmapText;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'BitmapText') || '_activePagesMeshData' in container
+  );
+}
+
+export function isHTMLText(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.HTMLText && container instanceof pixi.HTMLText;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'htmlText') ||
+    ('_foreignObject' in container && '_svgRoot' in container)
+  );
+}
+
+export function isText(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.Text && container instanceof pixi.Text;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'text') ||
+    ('updateText' in container && 'drawLetterSpacing' in container && '_render' in container)
+  );
+}
+
+export function isMesh(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.Mesh && container instanceof pixi.Mesh;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'mesh') ||
+    ('_geometry' in container && 'drawMode' in container && 'vertexData' in container && 'batchUvs' in container)
+  );
+}
+
+export function isGraphics(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.Graphics && container instanceof pixi.Graphics;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'graphics') ||
+    ('drawRect' in container && 'drawPolygon' in container)
+  );
+}
+
+export function isAnimatedSprite(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.AnimatedSprite && container instanceof pixi.AnimatedSprite;
+  }
+  return (
+    'gotoAndPlay' in container && 'stop' in container && 'play' in container && '_isConnectedToTicker' in container
+  );
+}
+
+export function isNineSliceSprite(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.NineSliceSprite && container instanceof pixi.NineSliceSprite;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'nineSliceSprite') ||
+    ('_leftWidth' in container &&
+      '_rightWidth' in container &&
+      '_topHeight' in container &&
+      '_bottomHeight' in container &&
+      '_getMinScale' in container)
+  );
+}
+
+export function isTilingSprite(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.TilingSprite && container instanceof pixi.TilingSprite;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'tilingSprite') ||
+    ('tileTransform' in container && 'uvRespectAnchor' in container && 'uvMatrix' in container)
+  );
+}
+
+export function isSprite(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.Sprite && container instanceof pixi.Sprite;
+  }
+  return (
+    ('renderPipeId' in container && container['renderPipeId'] === 'sprite') ||
+    ('vertexTrimmedData' in container && 'indices' in container)
+  );
+}
+
+export function isContainer(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    return pixi.Container && container instanceof pixi.Container;
+  }
+  return (
+    ('includeInBuild' in container && 'measurable' in container && '_didLocalTransformChangeId' in container) ||
+    ('_maskRefCount' in container && '_render' in container && '_tempDisplayObjectParent' in container)
+  );
+}
 
 export function getPixiType(container: Container): PixiNodeType {
   const pixi = PixiDevtools.pixi;
 
-  if (!pixi) return 'Unknown';
-
-  if (pixi.BitmapText && container instanceof pixi.BitmapText) {
+  if (isBitmapText(container, pixi)) {
     return 'BitmapText';
-  } else if (pixi.HTMLText && container instanceof pixi.HTMLText) {
+  } else if (isHTMLText(container, pixi)) {
     return 'HTMLText';
-  } else if (pixi.Text && container instanceof pixi.Text) {
+  } else if (isText(container, pixi)) {
     return 'Text';
-  } else if (pixi.Mesh && container instanceof pixi.Mesh) {
+  } else if (isMesh(container, pixi)) {
     return 'Mesh';
-  } else if (pixi.Graphics && container instanceof pixi.Graphics) {
+  } else if (isGraphics(container, pixi)) {
     return 'Graphics';
-  } else if (pixi.AnimatedSprite && container instanceof pixi.AnimatedSprite) {
+  } else if (isAnimatedSprite(container, pixi)) {
     return 'AnimatedSprite';
-  } else if (
-    // in v7 NineSliceSprite does not exist
-    (pixi.NineSliceSprite && container instanceof pixi.NineSliceSprite) ||
-    (pixi.NineSlicePlane && container instanceof pixi.NineSlicePlane)
-  ) {
+  } else if (isNineSliceSprite(container, pixi)) {
     return 'NineSliceSprite';
-  } else if (pixi.TilingSprite && container instanceof pixi.TilingSprite) {
+  } else if (isTilingSprite(container, pixi)) {
     return 'TilingSprite';
-  } else if (pixi.Sprite && container instanceof pixi.Sprite) {
+  } else if (isSprite(container, pixi)) {
     return 'Sprite';
-  } else if (pixi.Container && container instanceof pixi.Container) {
+  } else if (isContainer(container, pixi)) {
     return 'Container';
+  } else {
+    return 'Unknown';
   }
-
-  return 'Unknown';
 }

@@ -1,4 +1,4 @@
-import { CursorProps } from 'react-arborist';
+import type { CursorProps } from 'react-arborist';
 
 export function Cursor({ top, left, indent }: CursorProps) {
   return (

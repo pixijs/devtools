@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@devtool/frontend": "*",
-    "@devtool/backend": "*"
+    "@devtool/backend": "*",
+    "@pixi/devtools": "*"
   }
 }

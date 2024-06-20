@@ -1,10 +1,10 @@
-import { crx, ManifestV3Export } from '@crxjs/vite-plugin';
+import type { ManifestV3Export } from '@crxjs/vite-plugin';
+import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import fs from 'fs';
-import path from 'node:path';
+import path, { resolve } from 'node:path';
 
-import { resolve } from 'node:path';
 import pkg from './package.json';
 import devManifest from './manifest.dev.json';
 import manifest from './manifest.json';

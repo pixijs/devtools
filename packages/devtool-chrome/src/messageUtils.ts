@@ -1,4 +1,4 @@
-import { DevtoolMessage } from '@devtool/frontend/types';
+import type { DevtoolMessage } from '@devtool/frontend/types';
 
 export enum MessageType {
   Inactive = 'inactive',
