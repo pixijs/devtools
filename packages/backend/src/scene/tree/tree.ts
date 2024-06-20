@@ -6,7 +6,7 @@ import { getPixiType } from '../../utils/getPixiType';
 import { extensions } from '../../extensions/Extensions';
 import { getExtensionsProp } from '../../extensions/getExtension';
 
-const uidMap = new WeakMap<Container, string>();
+let uidMap = new WeakMap<Container, string>();
 let uid = 0;
 export class Tree {
   public static extensions: TreeExtension[] = [];
@@ -29,6 +29,8 @@ export class Tree {
   }
 
   public init() {
+    uidMap = new WeakMap();
+    uid = 0;
     this._metadataExtensions = getExtensionsProp(Tree.extensions, 'updateNodeMetadata');
     this._onButtonPressExtensions = getExtensionsProp(Tree.extensions, 'onButtonPress');
     this._onContextMenuExtensions = getExtensionsProp(Tree.extensions, 'onContextButtonPress');

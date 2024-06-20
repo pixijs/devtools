@@ -293,16 +293,17 @@ class PixiWrapper {
     this._initialized = true;
   }
 
-  private preupdate() {
-    // reset the state before updating
+  private _resetState() {
     this.state.setSceneGraph(null);
     this.state.setStats({});
-    // TODO: probably don't need to reset this every time
     this.state.setSelectedNode(null);
     this.state.setActiveProps([]);
     this.state.setVersion(this.version === '' ? `>${this.majorVersion}.0.0` : this.version);
     this.state.setSceneTreeData({ buttons: [] });
+  }
 
+  private preupdate() {
+    this._resetState();
     this.stats.preupdate();
     this.tree.preupdate();
   }
