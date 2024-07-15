@@ -1,0 +1,42 @@
+---
+sidebar_position: 1
+title: Assets
+---
+
+import React from 'react';
+import { useColorMode } from '@docusaurus/theme-common';
+
+export const Gif = ({ src, alt }) => {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 4rem', paddingTop: '1rem' }}>
+      <img src={src} alt={alt} style={{ maxWidth: '100%', borderRadius: '0.5rem', border: '1px solid #676767' }} />
+    </div>
+  );
+};
+
+# Asset Panel
+
+The Asset Panel in PixiJS provides a detailed view of all assets currently utilized by your application. This tool is invaluable for monitoring GPU memory usage
+and identifying which textures are loaded onto the GPU.
+
+By visualizing your assets, the Asset Panel becomes a powerful resource for debugging and optimizing your PixiJS application. It helps you detect and remove
+unused assets that are still loaded on the GPU, ensuring efficient memory usage and improved performance.
+
+## Texture Inspection
+
+The Asset Panel displays all textures currently loaded onto the GPU. You can view the texture's dimensions, format, and memory usage. The panel also provides
+a preview of the texture, making it easy to identify the asset.
+
+<Gif src="/devtools/gif/devtool-asset-selection.gif" alt="Selecting texture" />
+
+## Texture Search
+
+The Asset Panel includes a search feature that allows you to quickly find a specific texture.
+<Gif src="/devtools/gif/devtool-asset-search.gif" alt="Searching for texture" />
+
+## Texture Sorting
+
+You can sort the textures in the Asset Panel by various criteria, such as memory usage or dimensions. This feature helps you identify large textures that may
+be impacting your application's performance.
+
+<Gif src="/devtools/gif/devtool-asset-sorting.gif" alt="Sorting textures" />

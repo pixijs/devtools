@@ -49,11 +49,11 @@ export const TextureViewer: React.FC<TextureViewerProps> = memo(
             <div className={`h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white`}>
               Size: {formatNumber(width, 1)} x {formatNumber(height, 1)}
             </div>
-            {imageSize && (
-              <div className="h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white">
-                File: {formatNumber(imageSize, 3)} KB
-              </div>
-            )}
+
+            <div className="h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white">
+              {imageSize ? `File: ${formatNumber(imageSize, 3)} KB` : 'File: N/A'}
+            </div>
+
             <div className={`h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white`}>
               GPU: {formatNumber(gpuSize / (1024 * 1024), 3)} MB
             </div>

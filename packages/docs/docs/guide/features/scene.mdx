@@ -1,6 +1,6 @@
 ---
-sidebar_position: 2
-title: Features
+sidebar_position: 0
+title: Scene
 ---
 
 import React from 'react';
@@ -14,7 +14,12 @@ export const Gif = ({ src, alt }) => {
   );
 };
 
-# Features
+# Scene Panel
+
+The Scene Panel is a powerful tool that allows you to inspect and manipulate the scene graph of your PixiJS application in real-time.
+It provides a visual representation of the scene graph, allowing you to view and edit the properties of PixiJS objects, search for objects, and more.
+
+See below for a detailed overview of the features available in the Scene Panel.
 
 ## Editing PixiJS Objects
 
@@ -46,10 +51,6 @@ making it easier to locate and edit objects in complex scenes.
 
 ---
 
-### $pixi
-
-When a PixiJS object is selected in the PixiJS Devtools, you can access it in the console using the `$pixi` variable.
-
 ## Overlay Highlight
 
 The overlay feature in the PixiJS Devtools allows you to highlight the bounds of a PixiJS object in the scene.
@@ -64,6 +65,10 @@ This is useful for debugging layout and alignment issues.
 The selection feature in the PixiJS Devtools allows you to select specific PixiJS objects in the scene, enabling focused editing and inspection.
 
 <Gif src="/devtools/gif/devtool-selection.gif" alt="Selecting nodes in the PixiJS Devtools" />
+
+### $pixi
+
+When a PixiJS object is selected in the PixiJS Devtools, you can access it in the console using the `$pixi` variable.
 
 ---
 

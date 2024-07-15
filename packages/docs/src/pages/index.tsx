@@ -21,7 +21,11 @@ function HomepageHeader() {
           <Link className="button button--primary button--lg" style={{ color: 'white' }} to="/docs/guide/installation">
             Get Started
           </Link>
-          <Link className="button button--primary button--lg" style={{ color: 'white' }} to="/docs/guide/features">
+          <Link
+            className="button button--primary button--lg"
+            style={{ color: 'white' }}
+            to="/docs/guide/features/scene"
+          >
             Features
           </Link>
         </div>
