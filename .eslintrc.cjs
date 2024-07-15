@@ -16,5 +16,17 @@ module.exports = {
     '@typescript-eslint/consistent-type-imports': ['error', { disallowTypeAnnotations: false }],
     'import/consistent-type-specifier-style': ['error', 'prefer-top-level'],
     'import/no-duplicates': ['error'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'none',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
   },
 };

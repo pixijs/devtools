@@ -62,3 +62,22 @@ export function copyToClipboard(text: string) {
   document.execCommand('copy');
   document.body.removeChild(dummyTextArea);
 }
+
+export function clone<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+export function formatNumber(num: number, max: number) {
+  // If the number is an integer, return it as is
+  if (Number.isInteger(num)) {
+    return num.toString();
+  }
+
+  // Limit the number to a maximum number of decimal places
+  let formatted = num.toFixed(max);
+
+  // Remove trailing zeros and the decimal point if not needed
+  formatted = formatted.replace(/(\.\d*?[1-9])0+$|\.0*$/, '$1');
+
+  return formatted;
+}

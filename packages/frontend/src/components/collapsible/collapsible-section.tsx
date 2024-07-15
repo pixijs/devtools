@@ -6,9 +6,16 @@ interface CollapsibleSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   title: string;
   onCopy?: () => void;
+  defaultCollapsed?: boolean;
 }
-export const CollapsibleSection = ({ className, children, title, onCopy }: CollapsibleSectionProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+export const CollapsibleSection = ({
+  className,
+  children,
+  title,
+  onCopy,
+  defaultCollapsed,
+}: CollapsibleSectionProps) => {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed ?? false);
 
   return (
     <>

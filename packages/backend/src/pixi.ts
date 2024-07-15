@@ -17,6 +17,8 @@ import { Properties } from './scene/tree/properties';
 import { Tree } from './scene/tree/tree';
 import { loop } from './utils/loop';
 import { Throttle } from './utils/throttle';
+import { Textures } from './assets/gpuTextures/textures';
+import type { TextureState } from '@devtool/frontend/pages/assets/assets';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -27,7 +29,10 @@ class PixiWrapper {
   public settings = {
     throttle: 100,
   };
-  public state: Omit<DevtoolState, 'active' | 'setActive' | 'bridge' | 'setBridge'> = {
+  public state: Omit<
+    DevtoolState,
+    'active' | 'setActive' | 'bridge' | 'setBridge' | 'chromeProxy' | 'setChromeProxy' | keyof TextureState
+  > = {
     version: null,
     setVersion: function (version: DevtoolState['version']) {
       this.version = version;
@@ -82,6 +87,7 @@ class PixiWrapper {
   public tree = new Tree(this);
   public properties = new Properties(this);
   public overlay = new Overlay(this);
+  public textures = new Textures(this);
   // Private properties
   private _devtools: Devtools | undefined;
   private _app: Application | undefined;
@@ -290,6 +296,7 @@ class PixiWrapper {
     this.properties.init();
     this.stats.init();
     this.tree.init();
+    this.textures.init();
     this._initialized = true;
   }
 

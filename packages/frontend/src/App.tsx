@@ -14,6 +14,7 @@ import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
 import { sceneStateSlice } from './pages/scene/state';
 import type { DevtoolState } from './types';
+import { textureStateSlice } from './pages/assets/assets';
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -25,6 +26,9 @@ export const useDevtoolStore = createSelectors(
   create<DevtoolState>((set) => ({
     active: false,
     setActive: (active: boolean) => set({ active }),
+
+    chromeProxy: null,
+    setChromeProxy: (chromeProxy: DevtoolState['chromeProxy']) => set({ chromeProxy }),
 
     version: null,
     setVersion: (version: DevtoolState['version']) => set({ version }),
@@ -48,6 +52,7 @@ export const useDevtoolStore = createSelectors(
     setSceneTreeData: (data: DevtoolState['sceneTreeData']) => set({ sceneTreeData: data }),
 
     ...sceneStateSlice(set),
+    ...textureStateSlice(set),
   })),
 );
 
@@ -57,6 +62,7 @@ interface AppProps {
 }
 const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   const setActive = useDevtoolStore.use.setActive();
+  const setChromeProxy = useDevtoolStore.use.setChromeProxy();
   const setVersion = useDevtoolStore.use.setVersion();
   const setSceneGraph = useDevtoolStore.use.setSceneGraph();
   const setStats = useDevtoolStore.use.setStats();
@@ -69,6 +75,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
 
   useEffect(() => {
     setBridge(bridge);
+    setChromeProxy(chromeProxy);
 
     const devToolsConnection = chromeProxy.runtime.connect({ name: 'devtools-connection' });
     devToolsConnection.postMessage({
@@ -110,6 +117,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   }, [
     bridge,
     chromeProxy,
+    setChromeProxy,
     setActive,
     setActiveProps,
     setBridge,

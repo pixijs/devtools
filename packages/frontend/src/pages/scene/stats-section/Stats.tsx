@@ -2,7 +2,35 @@ import { useDevtoolStore } from '../../../App';
 import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
 import SmoothieComponent, { TimeSeries } from '../../../components/smooth-charts/Smoothie';
 import { useTheme } from '../../../components/theme-provider';
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef } from 'react';
+
+const SmoothieStat: React.FC<{
+  item: StatData;
+  stat: number;
+  seriesFillStyle: string;
+  defaultSmoothieOptions: any;
+}> = memo(({ item, stat, seriesFillStyle, defaultSmoothieOptions }) => {
+  const seriesOptions = useMemo(
+    () => [
+      {
+        data: item.timeSeries,
+        strokeStyle: item.color,
+        fillStyle: seriesFillStyle,
+        lineWidth: 1,
+      },
+    ],
+    [item.timeSeries, item.color, seriesFillStyle],
+  );
+
+  return (
+    <div className="min-h-10 px-2 pt-2" key={item.name}>
+      <span className="text-xs">
+        {item.name} ({stat})
+      </span>
+      <SmoothieComponent {...defaultSmoothieOptions} minValue={0} series={seriesOptions} />
+    </div>
+  );
+});
 
 interface StatData {
   timeSeries: TimeSeries;
@@ -83,24 +111,13 @@ export const Stats: React.FC = () => {
         <div className="flex h-full w-full flex-wrap justify-start overflow-auto">
           {currentStats.map((item) => {
             return (
-              <div className="min-h-10 px-2 pt-2" key={item.name}>
-                <span className="text-xs">
-                  {item.name} ({stats![item.name]})
-                </span>
-                <SmoothieComponent
-                  key={item.name}
-                  {...defaultSmoothieOptions}
-                  minValue={0}
-                  series={[
-                    {
-                      data: item.timeSeries,
-                      strokeStyle: item.color,
-                      fillStyle: seriesFillStyle,
-                      lineWidth: 1,
-                    },
-                  ]}
-                />
-              </div>
+              <SmoothieStat
+                key={item.name}
+                item={item}
+                stat={stats![item.name]}
+                seriesFillStyle={seriesFillStyle}
+                defaultSmoothieOptions={defaultSmoothieOptions}
+              />
             );
           })}
         </div>

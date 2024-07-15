@@ -1,4 +1,5 @@
 import type { BridgeFn } from './lib/utils';
+import type { TextureState } from './pages/assets/assets';
 import type { SceneState } from './pages/scene/state';
 import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
@@ -15,9 +16,12 @@ export type SceneGraphEntry = {
   children: SceneGraphEntry[];
 };
 
-export interface DevtoolState extends SceneState {
+export interface DevtoolState extends SceneState, TextureState {
   active: boolean;
   setActive: (active: DevtoolState['active']) => void;
+
+  chromeProxy: typeof chrome | null;
+  setChromeProxy: (chromeProxy: DevtoolState['chromeProxy']) => void;
 
   version: string | null;
   setVersion: (version: DevtoolState['version']) => void;

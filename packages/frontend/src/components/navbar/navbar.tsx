@@ -1,15 +1,15 @@
 import { FaGear } from 'react-icons/fa6';
+import logo from '../../assets/icon-active-48.png';
 import { ModeToggle } from '../mode-toggle';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
-import logo from '../../assets/icon-active-48.png';
 
-import { cn } from '../../lib/utils';
 import { cva } from 'class-variance-authority';
-import { useState } from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { useDevtoolStore } from '../../App';
 import pkg from '../../../../../package.json';
+import { useDevtoolStore } from '../../App';
+import { useLocalStorage } from '../../lib/localStorage';
+import { cn } from '../../lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const tabVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap px-3 py-1 text-sm h-full w-full rounded-none border-r-2 border-border hover:border-b-2 hover:border-b-primary bg-muted cursor-pointer',
@@ -49,7 +49,7 @@ interface NavbarProps {
   defaultTab: string;
 }
 export const Navbar = ({ tabs, defaultTab }: NavbarProps) => {
-  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [activeTab, setActiveTab] = useLocalStorage('activeTab', defaultTab);
   const version = useDevtoolStore.use.version();
 
   const onClick = (value: string) => {
