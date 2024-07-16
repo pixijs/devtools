@@ -248,6 +248,22 @@ class PixiWrapper {
     return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
   }
 
+  public inject() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
+    if (this.renderer) {
+      this.renderer.render = new Proxy(this.renderer.render, {
+        apply(target, thisArg, ...args) {
+          that.update();
+          // @ts-expect-error - TODO: fix this type
+          return target.apply(thisArg, ...args);
+        },
+      });
+    }
+
+    window.postMessage({ method: DevtoolMessage.active, data: {} }, '*');
+  }
+
   public reset() {
     this._devtools = undefined;
     this._app = undefined;

@@ -77,6 +77,8 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     setBridge(bridge);
     setChromeProxy(chromeProxy);
 
+    bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
+
     const devToolsConnection = chromeProxy.runtime.connect({ name: 'devtools-connection' });
     devToolsConnection.postMessage({
       name: 'init',

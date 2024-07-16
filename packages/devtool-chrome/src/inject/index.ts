@@ -10,16 +10,8 @@ function attach() {
   const renderer = PixiDevtools.renderer;
 
   if (renderer) {
-    renderer.render = new Proxy(renderer.render, {
-      apply(target, thisArg, ...args) {
-        PixiDevtools.update();
-        // @ts-expect-error - TODO: fix this type
-        return target.apply(thisArg, ...args);
-      },
-    });
+    window.postMessage(convertPostMessage(DevtoolMessage.active, {}), '*');
   }
-
-  window.postMessage(convertPostMessage(DevtoolMessage.active, {}), '*');
 }
 
 pollPixi(attach);
