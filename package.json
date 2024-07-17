@@ -3,6 +3,12 @@
   "version": "2.0.0",
   "private": true,
   "description": "",
+  "homepage": "https://pixijs.io/devtools/",
+  "bugs": "https://github.com/pixijs/devtools/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pixijs/devtools.git"
+  },
   "keywords": [],
   "license": "MIT",
   "author": "Zyie",
