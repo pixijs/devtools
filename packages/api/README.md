@@ -10,7 +10,7 @@
 
 # Getting Started
 
-Please follow the documentation at [pixijs.io.devtools](https://pixijs.io.devtools)
+Please follow the documentation at [pixijs.io/devtools](https://pixijs.io/devtools)
 
 ## License
 
