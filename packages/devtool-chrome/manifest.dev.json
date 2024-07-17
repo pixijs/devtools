@@ -24,7 +24,7 @@
     "48": "icon-active-48.png",
     "128": "icon-active-128.png"
   },
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab"],
   "devtools_page": "devtools/index.html",
   "web_accessible_resources": [
     {
