@@ -195,10 +195,13 @@ export class Overlay {
   private _updateOverlay() {
     const canvas = this._devtool.canvas!;
     const renderer = this._devtool.renderer!;
+    const version = this._devtool.majorVersion;
+
+    const res = version === '8' ? 1 : renderer.resolution;
 
     Object.assign(this._overlay!.style, {
-      width: `${renderer.width / renderer.resolution}px`,
-      height: `${renderer.height / renderer.resolution}px`,
+      width: `${renderer.width / res}px`,
+      height: `${renderer.height / res}px`,
     });
     const cBounds = canvas.getBoundingClientRect();
     this._overlay!.style.transform = '';
