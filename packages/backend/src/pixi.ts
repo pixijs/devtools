@@ -251,7 +251,8 @@ class PixiWrapper {
   public inject() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
-    if (this.renderer) {
+    if (this.renderer && !this.renderer.__devtoolInjected) {
+      this.renderer.__devtoolInjected = true;
       this.renderer.render = new Proxy(this.renderer.render, {
         apply(target, thisArg, ...args) {
           that.update();
@@ -259,9 +260,8 @@ class PixiWrapper {
           return target.apply(thisArg, ...args);
         },
       });
+      window.postMessage({ method: DevtoolMessage.active, data: {} }, '*');
     }
-
-    window.postMessage({ method: DevtoolMessage.active, data: {} }, '*');
   }
 
   public reset() {
@@ -273,6 +273,7 @@ class PixiWrapper {
     this._pixi = undefined;
     this._version = undefined;
     this._initialized = false;
+    window.postMessage({ method: DevtoolMessage.pulse, data: {} }, '*');
   }
 
   public update() {

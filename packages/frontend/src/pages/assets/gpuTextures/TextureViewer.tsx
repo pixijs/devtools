@@ -10,7 +10,7 @@ interface TextureViewerProps extends TextureDataState {
   selected?: boolean;
 }
 export const TextureViewer: React.FC<TextureViewerProps> = memo(
-  ({ blob, width, height, name, isLoaded, onClick, selected, gpuSize }) => {
+  ({ blob, pixelWidth, pixelHeight, name, isLoaded, onClick, selected, gpuSize }) => {
     const { theme } = useTheme();
     const [imageSize, setImageSize] = useState<number | null>(null);
     useEffect(() => {
@@ -47,7 +47,7 @@ export const TextureViewer: React.FC<TextureViewerProps> = memo(
           <div className={`${bg} group-hover:bg-secondary rounded-b-sm`}>
             <div className={`w-full truncate px-1 py-0.5 pb-2 text-center text-xs text-white`}>{sanitizedName}</div>
             <div className={`h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white`}>
-              Size: {formatNumber(width, 1)} x {formatNumber(height, 1)}
+              Size: {formatNumber(pixelWidth, 1)} x {formatNumber(pixelHeight, 1)}
             </div>
 
             <div className="h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white">
