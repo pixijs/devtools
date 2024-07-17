@@ -7,6 +7,7 @@ export enum DevtoolMessage {
   active = 'pixi-active',
   inactive = 'pixi-inactive',
   stateUpdate = 'pixi-state-update',
+  pulse = 'pixi-pulse',
 }
 
 export type SceneGraphEntry = {

@@ -92,6 +92,10 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
             setActive(true);
           }
           break;
+        case 'pixi-pulse': {
+          bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
+          break;
+        }
         case 'pixi-inactive':
           {
             setActive(false);

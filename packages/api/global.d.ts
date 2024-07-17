@@ -36,6 +36,14 @@ declare global {
       __devtoolIgnoreChildren?: string;
       __devtoolLocked?: boolean;
     }
+
+    interface WebGLSystems {
+      __devtoolInjected?: boolean;
+    }
+
+    interface WebGPUSystems {
+      __devtoolInjected?: boolean;
+    }
   }
 
   namespace GlobalMixins {

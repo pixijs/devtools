@@ -1,6 +1,6 @@
 import type { TextureDataState } from '@devtool/frontend/pages/assets/assets';
 import type { PixiDevtools } from '../../pixi';
-import type { TextureSource, GlTexture } from 'pixi.js';
+import type { TextureSource, GlTexture, CanvasSource } from 'pixi.js';
 
 const gpuTextureFormatSize: Record<string, number> = {
   r8unorm: 1,
@@ -67,6 +67,7 @@ export class Textures {
   private _devtool: typeof PixiDevtools;
   private _textures: Map<number, string> = new Map();
   private _gpuTextureSize: Map<number, number> = new Map();
+  private _canvas = document.createElement('canvas');
 
   constructor(devtool: typeof PixiDevtools) {
     this._devtool = devtool;
@@ -88,6 +89,8 @@ export class Textures {
 
     const data: TextureDataState[] = [];
     currentTextures.forEach((texture) => {
+      if (!texture.resource) return;
+
       if (!this._textures.get(texture.uid)) {
         const res = this._getTextureSource(texture);
         if (res) {
@@ -127,27 +130,42 @@ export class Textures {
   }
 
   private _getTextureSource(texture: TextureSource) {
-    if (texture.resource instanceof ImageBitmap) {
+    if (
+      texture.resource instanceof ImageBitmap ||
+      texture.resource instanceof HTMLImageElement ||
+      texture.resource instanceof HTMLVideoElement
+    ) {
       return this._imageBitmapToString(texture.resource);
     } else if (texture.resource instanceof HTMLCanvasElement) {
       return this._canvasToString(texture.resource);
     }
+
+    // in an iframe instanceof does not work due to different window objects
+    // we now try using the textures uploadID
+    if (texture.uploadMethodId === 'image' || texture.uploadMethodId === 'video') {
+      if ((texture as CanvasSource).resizeCanvas) {
+        return this._canvasToString(texture.resource);
+      }
+      return this._imageBitmapToString(texture.resource);
+    }
+
+    // TODO buffer resource and compressed texture
+
     return null;
   }
 
   private _imageBitmapToString(imageBitmap: ImageBitmap | HTMLImageElement | HTMLVideoElement): string {
     // Create a canvas element
-    const canvas = document.createElement('canvas');
-    canvas.width = imageBitmap.width;
-    canvas.height = imageBitmap.height;
+    this._canvas.width = imageBitmap.width;
+    this._canvas.height = imageBitmap.height;
 
     // Get the context of the canvas
-    const ctx = canvas.getContext('2d')!;
+    const ctx = this._canvas.getContext('2d')!;
 
     // Draw the ImageBitmap on the canvas
     ctx.drawImage(imageBitmap, 0, 0);
 
-    const res = this._canvasToString(canvas);
+    const res = this._canvasToString(this._canvas);
 
     // Convert the canvas to a blob
     return res;
