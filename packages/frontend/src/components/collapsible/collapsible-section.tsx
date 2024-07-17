@@ -1,15 +1,21 @@
 import { cn } from '../../lib/utils';
 import { useState } from 'react';
-import { FaAngleDown } from 'react-icons/fa6';
-import { FaCopy as CopyIcon } from 'react-icons/fa6';
+import { FaAngleDown, FaCopy as CopyIcon } from 'react-icons/fa6';
 
 interface CollapsibleSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   title: string;
   onCopy?: () => void;
+  defaultCollapsed?: boolean;
 }
-export const CollapsibleSection = ({ className, children, title, onCopy }: CollapsibleSectionProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+export const CollapsibleSection = ({
+  className,
+  children,
+  title,
+  onCopy,
+  defaultCollapsed,
+}: CollapsibleSectionProps) => {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed ?? false);
 
   return (
     <>

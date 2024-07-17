@@ -1,5 +1,4 @@
-import { FaRegCopy as ClipboardIcon } from 'react-icons/fa6';
-import { FaCheck as CheckIcon } from 'react-icons/fa6';
+import { FaRegCopy as ClipboardIcon, FaCheck as CheckIcon } from 'react-icons/fa6';
 import { useState, useEffect } from 'react';
 import { Button } from './button';
 import { copyToClipboard } from '@devtool/frontend/lib/utils';

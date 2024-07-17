@@ -1,26 +1,13 @@
-import { SliderProps } from '@radix-ui/react-slider';
-import { SwitchProps } from '@radix-ui/react-switch';
 import Fuse from 'fuse.js';
 import { useCallback, useEffect, useState } from 'react';
 import { FaCopy as CopyIcon } from 'react-icons/fa6';
 import { useDevtoolStore } from '../../../App';
 import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
-import { ColorInput, ColorProps } from '../../../components/properties/color';
-import { PropertyEntry } from '../../../components/properties/property';
-import { Vector2, Vector2Props, VectorX, VectorXProps } from '../../../components/properties/vector2';
-import { Button, ButtonProps } from '../../../components/ui/button';
-import { Input, InputProps } from '../../../components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../../components/ui/select';
+import { PropertyEntry } from '../../../components/properties/propertyEntry';
+import type { PropertyPanelData } from '../../../components/properties/propertyTypes';
+import { propertyMap } from '../../../components/properties/propertyTypes';
+import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
-import { Slider } from '../../../components/ui/slider';
-import { Switch } from '../../../components/ui/switch';
 import { TooltipWrapper } from '../../../components/ui/tooltip';
 import { copyToClipboard, formatCamelCase } from '../../../lib/utils';
 
@@ -82,133 +69,6 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, onCopy }) => {
   );
 };
 
-export type PropertyTypes =
-  | 'boolean'
-  | 'number'
-  | 'range'
-  | 'select'
-  | 'text'
-  | 'button'
-  | 'vector2'
-  | 'vectorX'
-  | 'color';
-type SelectionProps = { options: string[] };
-type ButtonFnProps = { label: string } & ButtonProps;
-export type PropertyPanelData = {
-  value: any;
-  prop: string;
-  entry: {
-    section: string;
-    label?: string;
-    type: PropertyTypes;
-    options?: InputProps | SwitchProps | Vector2Props | SliderProps | SelectionProps | any;
-    onChange: (value: string | number | boolean) => void;
-  };
-};
-
-const BooleanProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return (
-    <Switch
-      className="bg-border h-6"
-      {...(entry.options as SwitchProps)}
-      checked={value}
-      onCheckedChange={entry.onChange}
-    />
-  );
-};
-
-const NumberProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return (
-    <Input
-      {...entry.options}
-      type="number"
-      value={value}
-      onChange={(e) => entry.onChange(Number(e.target.value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
-    />
-  );
-};
-
-const Vector2Property: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return <Vector2 {...(entry.options as Vector2Props)} onChange={entry.onChange} value={value} />;
-};
-
-const RangeProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return (
-    <Slider
-      {...(entry.options as SliderProps)}
-      value={[value]}
-      onValueChange={(value) => entry.onChange(JSON.stringify(value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
-    />
-  );
-};
-
-const SelectProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return (
-    <Select value={value} onValueChange={(value) => entry.onChange(JSON.stringify(value))}>
-      <SelectTrigger className="border-border hover:border-secondary focus:border-secondary h-7 w-full text-sm outline-none">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          {(entry.options as SelectionProps).options.map((option: string) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-};
-
-const ButtonProperty: React.FC<PropertyPanelData> = ({ entry }) => {
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
-      onClick={() => entry.onChange(true)}
-      {...(entry.options as ButtonFnProps)}
-    >
-      {(entry.options as ButtonFnProps)?.label ?? entry.label ?? 'Click'}
-    </Button>
-  );
-};
-
-const VectorXProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return <VectorX {...(entry.options as VectorXProps)} onChange={entry.onChange} value={value} />;
-};
-
-const ColorProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return <ColorInput {...(entry.options as ColorProps)} value={value} onChange={entry.onChange} />;
-};
-
-const TextProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
-  return (
-    <Input
-      {...entry.options}
-      type="text"
-      value={value}
-      onChange={(e) => entry.onChange(JSON.stringify(e.target.value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
-    />
-  );
-};
-
-const properties: Record<PropertyTypes, React.FC<PropertyPanelData>> = {
-  boolean: BooleanProperty,
-  number: NumberProperty,
-  vector2: Vector2Property,
-  range: RangeProperty,
-  select: SelectProperty,
-  text: TextProperty,
-  button: ButtonProperty,
-  vectorX: VectorXProperty,
-  color: ColorProperty,
-};
-
 function clone(obj: any) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -254,7 +114,6 @@ export const Properties: React.FC = () => {
   );
 
   filteredPropIds.forEach((prop) => {
-    if (prop.value == null) return;
     if (!sections[prop.entry.section]) {
       sections[prop.entry.section] = [];
     }
@@ -293,14 +152,16 @@ export const Properties: React.FC = () => {
     <Panel onSearch={onSearch} onCopy={onCopy}>
       {(Object.keys(sections) as (keyof typeof sections)[]).map((section) => (
         <CollapsibleSection key={section} title={section} className="border-x" onCopy={() => onCopy(section)}>
-          <div className="p-2 [&>*:first-child]:pt-0">
+          <div className="px-2 py-1 [&>*:first-child]:pt-0">
             {sections[section].map((prop, i) => {
-              const Component = properties[prop.entry.type];
+              const Component = propertyMap[prop.entry.type];
               return (
                 <PropertyEntry
                   key={`${prop.prop}-${i}`}
                   title={prop.entry.label ?? formatCamelCase(prop.prop)}
+                  tooltip={prop.entry.tooltip}
                   input={<Component {...prop} />}
+                  isLast={i === sections[section].length - 1}
                 />
               );
             })}

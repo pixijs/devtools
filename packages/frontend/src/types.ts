@@ -1,29 +1,12 @@
 import type { BridgeFn } from './lib/utils';
+import type { TextureState } from './pages/assets/assets';
 import type { SceneState } from './pages/scene/state';
+import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
 export enum DevtoolMessage {
   active = 'pixi-active',
   inactive = 'pixi-inactive',
   stateUpdate = 'pixi-state-update',
-}
-
-export type PixiNodeType =
-  | 'BitmapText'
-  | 'HTMLText'
-  | 'Text'
-  | 'Mesh'
-  | 'Graphics'
-  | 'Sprite'
-  | 'Container'
-  | 'AnimatedSprite'
-  | 'NineSliceSprite'
-  | 'TilingSprite'
-  | 'Unknown';
-export interface PixiMetadata {
-  type: PixiNodeType;
-  uid: string;
-  suffix?: string;
-  isStage?: boolean;
 }
 
 export type SceneGraphEntry = {
@@ -33,9 +16,12 @@ export type SceneGraphEntry = {
   children: SceneGraphEntry[];
 };
 
-export interface DevtoolState extends SceneState {
+export interface DevtoolState extends SceneState, TextureState {
   active: boolean;
   setActive: (active: DevtoolState['active']) => void;
+
+  chromeProxy: typeof chrome | null;
+  setChromeProxy: (chromeProxy: DevtoolState['chromeProxy']) => void;
 
   version: string | null;
   setVersion: (version: DevtoolState['version']) => void;
@@ -45,4 +31,9 @@ export interface DevtoolState extends SceneState {
 
   bridge: BridgeFn | null;
   setBridge: (bridge: DevtoolState['bridge']) => void;
+
+  sceneTreeData: {
+    buttons: ButtonMetadata[];
+  } | null;
+  setSceneTreeData: (data: DevtoolState['sceneTreeData']) => void;
 }

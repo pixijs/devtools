@@ -1,3 +1,4 @@
+import type { ButtonMetadata } from '@pixi/devtools';
 import { useState } from 'react';
 import { Tree } from 'react-arborist';
 import { FaWandMagicSparkles as PickIcon } from 'react-icons/fa6';
@@ -9,13 +10,15 @@ import { Toggle } from '../../../components/ui/toggle';
 import { TooltipWrapper } from '../../../components/ui/tooltip';
 import { Cursor } from './tree/cursor';
 import { Node } from './tree/node';
+import { NodeButton } from './tree/node-button';
 import { useSimpleTree } from './tree/simple-tree';
 
 interface PanelProps {
   children: React.ReactNode;
   onSearch?: (searchTerm: string) => void;
+  panelButtons: ButtonMetadata[];
 }
-const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
+const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const overlayPickerEnabled = useDevtoolStore.use.overlayPickerEnabled();
   const overlayHighlightEnabled = useDevtoolStore.use.overlayHighlightEnabled();
@@ -75,6 +78,18 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
               }
               tip="Highlight selected node in the scene, and the currently hovered node."
             />
+            {panelButtons?.map((button, i) => (
+              <NodeButton
+                size={'icon'}
+                variant={'ghost'}
+                key={button.name + i}
+                button={button}
+                className="text-overflow-ellipsis overflow-hidden whitespace-nowrap"
+                onClick={() =>
+                  bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.treePanelButtonPress(${JSON.stringify(button)})`)
+                }
+              />
+            ))}
             <Separator orientation="vertical" className="h-4" />
             {/* search wrapper */}
             <div className="hover:border-b-primary inline-block h-8 w-auto min-w-0 flex-1 cursor-text align-middle hover:border-b-2">
@@ -99,6 +114,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch }) => {
 
 export const SceneTree: React.FC = () => {
   const bridge = useDevtoolStore.use.bridge()!;
+  const panelButtons = useDevtoolStore.use.sceneTreeData()!.buttons;
   const sceneGraph = useDevtoolStore.use.sceneGraph()!;
   const selectedNode = useDevtoolStore.use.selectedNode();
   const sceneGraphClone = JSON.parse(JSON.stringify(sceneGraph));
@@ -110,7 +126,7 @@ export const SceneTree: React.FC = () => {
   };
 
   return (
-    <Panel onSearch={onSearch}>
+    <Panel onSearch={onSearch} panelButtons={panelButtons}>
       <AutoSizer style={{ width: '100%', height: '100%' }}>
         {({ height }) => (
           <Tree

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { CodeArea } from './codearea';
 
 import { cn } from '../../lib/utils';
 
@@ -25,14 +26,35 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-const TooltipWrapper: React.FC<{ trigger: React.ReactNode; tip: string }> = ({ trigger, tip }) => {
+const TooltipWrapper: React.FC<{
+  trigger: React.ReactNode;
+  tip: string;
+  triggerProps?: React.ComponentPropsWithoutRef<typeof TooltipTrigger>;
+  contentProps?: React.ComponentPropsWithoutRef<typeof TooltipContent>;
+  providerProps?: Omit<React.ComponentPropsWithoutRef<typeof TooltipProvider>, 'children'>;
+}> = ({ trigger, tip, triggerProps, contentProps, providerProps }) => {
+  const parts = tip.split(/{{(.*?)}}/g);
+
+  const content = parts.map((part, i) => {
+    const isCode = i % 2 === 1; // code parts are at odd indices after split
+    return isCode ? (
+      <CodeArea key={i} codeString={part} />
+    ) : (
+      <pre key={i} style={{ whiteSpace: 'pre-wrap' }}>
+        {part}
+      </pre>
+    );
+  });
+
   return (
-    <TooltipProvider>
+    <TooltipProvider {...providerProps}>
       <Tooltip>
-        <TooltipTrigger> {trigger} </TooltipTrigger>
-        <TooltipContent className="max-w-72">
-          <p>{tip}</p>
-        </TooltipContent>
+        <TooltipTrigger {...triggerProps}>{trigger}</TooltipTrigger>
+        <TooltipPrimitive.Portal>
+          <TooltipContent {...contentProps} className="max-w-72">
+            <div>{content}</div>
+          </TooltipContent>
+        </TooltipPrimitive.Portal>
       </Tooltip>
     </TooltipProvider>
   );

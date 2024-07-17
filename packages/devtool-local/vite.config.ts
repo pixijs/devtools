@@ -8,6 +8,7 @@ export default defineConfig({
     alias: {
       '@devtool/frontend': path.resolve(process.cwd(), '../../packages/frontend/src/'),
       '@devtool/backend': path.resolve(process.cwd(), '../../packages/backend/src/'),
+      '@pixi/devtool': path.resolve(process.cwd(), '../../packages/api/src/'),
     },
   },
 });
