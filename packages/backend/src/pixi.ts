@@ -19,6 +19,8 @@ import { loop } from './utils/loop';
 import { Throttle } from './utils/throttle';
 import { Textures } from './assets/gpuTextures/textures';
 import type { TextureState } from '@devtool/frontend/pages/assets/assets';
+import { Rendering } from './rendering/rendering';
+import type { RenderingState } from '@devtool/frontend/pages/rendering/rendering';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -31,7 +33,14 @@ class PixiWrapper {
   };
   public state: Omit<
     DevtoolState,
-    'active' | 'setActive' | 'bridge' | 'setBridge' | 'chromeProxy' | 'setChromeProxy' | keyof TextureState
+    | 'active'
+    | 'setActive'
+    | 'bridge'
+    | 'setBridge'
+    | 'chromeProxy'
+    | 'setChromeProxy'
+    | keyof TextureState
+    | keyof RenderingState
   > = {
     version: null,
     setVersion: function (version: DevtoolState['version']) {
@@ -88,6 +97,7 @@ class PixiWrapper {
   public properties = new Properties(this);
   public overlay = new Overlay(this);
   public textures = new Textures(this);
+  public rendering = new Rendering(this);
   // Private properties
   private _devtools: Devtools | undefined;
   private _app: Application | undefined;
@@ -230,6 +240,10 @@ class PixiWrapper {
 
   public get majorVersion() {
     if (this.version === '') {
+      if (!this.stage) {
+        return null;
+      }
+
       // lets try and find the version
       const stage = this.stage;
       if (stage.effects != null && Array.isArray(stage.effects) && '_updateFlags' in stage) {
@@ -284,6 +298,7 @@ class PixiWrapper {
     // TODO: tree: 300ms, stats: 300ms, properties: 300ms, overlay: 50ms
 
     this.overlay.update();
+    this.rendering.update();
     if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
       this.preupdate();
 
@@ -314,6 +329,7 @@ class PixiWrapper {
     this.stats.init();
     this.tree.init();
     this.textures.init();
+    this.rendering.init();
     this._initialized = true;
   }
 

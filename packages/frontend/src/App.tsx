@@ -15,6 +15,7 @@ import { ScenePanel } from './pages/scene/ScenePanel';
 import { sceneStateSlice } from './pages/scene/state';
 import type { DevtoolState } from './types';
 import { textureStateSlice } from './pages/assets/assets';
+import { renderingStateSlice } from './pages/rendering/rendering';
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -53,6 +54,7 @@ export const useDevtoolStore = createSelectors(
 
     ...sceneStateSlice(set),
     ...textureStateSlice(set),
+    ...renderingStateSlice(set),
   })),
 );
 
@@ -90,15 +92,18 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
         case 'pixi-active':
           {
             setActive(true);
+            console.log('PixiJS detected');
           }
           break;
         case 'pixi-pulse': {
           bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
+          console.log('Pulsing');
           break;
         }
         case 'pixi-inactive':
           {
-            setActive(false);
+            // setActive(false);
+            // console.log('PixiJS not detected');
           }
           break;
         case 'pixi-state-update':

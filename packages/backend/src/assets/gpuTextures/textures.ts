@@ -92,14 +92,14 @@ export class Textures {
       if (!texture.resource) return;
 
       if (!this._textures.get(texture.uid)) {
-        const res = this._getTextureSource(texture);
+        const res = this.getTextureSource(texture);
         if (res) {
           this._textures.set(texture.uid, res);
         }
       }
 
       if (!this._gpuTextureSize.has(texture.uid)) {
-        const size = this._getMemorySize(texture, glTextures[texture.uid]);
+        const size = this.getMemorySize(texture, glTextures[texture.uid]);
         if (size) {
           this._gpuTextureSize.set(texture.uid, size);
         }
@@ -129,7 +129,7 @@ export class Textures {
     return data;
   }
 
-  private _getTextureSource(texture: TextureSource) {
+  public getTextureSource(texture: TextureSource) {
     if (
       texture.resource instanceof ImageBitmap ||
       texture.resource instanceof HTMLImageElement ||
@@ -175,7 +175,7 @@ export class Textures {
     return canvas.toDataURL('image/png');
   }
 
-  private _getMemorySize(texture: TextureSource, webTexture: GlTexture | GPUTexture): number | null {
+  public getMemorySize(texture: TextureSource, webTexture: GlTexture | GPUTexture): number | null {
     if (!webTexture) return null;
     if (Array.isArray(texture.resource) && texture.resource[0] instanceof Uint8Array) {
       return texture.resource.reduce((acc, res) => acc + res.byteLength, 0);

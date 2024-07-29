@@ -93,6 +93,19 @@ h6 {
 
     --scroll: 0, 0%, 81%;
     --scrollHover: 0, 0%, 45%;
+
+    --instruction-red: 12, 76%, 61%;
+    --instruction-orange: 27, 87%, 67%;
+    --instruction-yellow: 43, 74%, 66%;
+    --instruction-dark-blue: 198, 63%, 38%;
+    --instruction-cyan: 173, 58%, 39%;
+
+    --instruction-pink: 322, 55%, 59%;
+    --instruction-purple: 261, 57%, 58%;
+    --instruction-blue: 207, 64%, 54%;
+    --instruction-lime: 74, 59%, 55%;
+    --instruction-tan: 29, 41%, 33%;
+
   }
 
   .dark {
