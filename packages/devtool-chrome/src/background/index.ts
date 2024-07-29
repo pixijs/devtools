@@ -57,7 +57,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
 // Receive message from content script and relay to the devTools page for the
 // current tab
-chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.MessageSender) => {
+chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.MessageSender, sendResponse) => {
   const converted = convertPostMessageData(request);
   if (converted.method === DevtoolMessage.active) {
     setIconAndPopup(DevtoolMessage.active, sender.tab?.id ?? 0);
@@ -73,11 +73,15 @@ chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.M
         tabId: sender.tab?.id,
         ...message,
       });
+      // Send a response back to the sender
+      sendResponse({ status: 'success' });
     } else {
       console.log('Tab not found in connection list.');
+      sendResponse({ status: 'error', message: 'Tab not found in connection list.' });
     }
   } else {
     console.log('sender.tab not defined.');
+    sendResponse({ status: 'error', message: 'sender.tab not defined.' });
   }
   return true;
 });
