@@ -27,14 +27,6 @@ export const InstructionSection: React.FC<InstructionSectionProps> = memo(
                 ))}
               </div>
             </div>
-            // <>
-            //   <div className="break-keep py-2 text-xs text-white">Draw Call Textures</div>
-            //   <div className="ml-2 flex flex-row flex-wrap justify-center gap-2 py-1">
-            //     {drawTextures.map((texture, i) => (
-            //       <Texture key={i + 'bt'} texture={texture} size={64} border={'border-border'} />
-            //     ))}
-            //   </div>
-            // </>
           )}
         </div>
       </CollapsibleSection>
