@@ -39,6 +39,33 @@ export interface FrameCaptureData {
     masks: number;
   };
 }
+
+export interface CanvasData {
+  width: number;
+  height: number;
+  clientWidth: number;
+  clientHeight: number;
+  browserAgent: string;
+  backgroundAlpha: string;
+  antialias: string;
+  depth: string;
+  premultipliedAlpha: string;
+  preserveDrawingBuffer: string;
+  powerPreference: 'default' | 'high-performance' | 'low-power';
+  type: 'webgl' | 'webgl2' | 'webgpu';
+  resolution: string;
+  roundPixels: string;
+  autoDensity: string;
+  background: string;
+  clearBeforeRender: string;
+  failIfMajorPerformanceCaveat: string | undefined;
+  renderableGCFrequency: string;
+  renderableGCActive: string;
+  renderableGCMaxUnusedTime: string;
+  textureGCAMaxIdle: string;
+  textureGCActive: string;
+  textureGCCheckCountMax: string;
+}
 export interface RenderingState {
   selectedInstruction: number | null;
   setSelectedInstruction: (instruction: RenderingState['selectedInstruction']) => void;
@@ -51,6 +78,9 @@ export interface RenderingState {
 
   captureWithScreenshot: boolean;
   setCaptureWithScreenshot: (value: boolean) => void;
+
+  canvasData: CanvasData | null;
+  setCanvasData: (data: RenderingState['canvasData']) => void;
 }
 
 export const renderingStateSlice = (set: ZustSet<RenderingState>) => ({
@@ -67,4 +97,7 @@ export const renderingStateSlice = (set: ZustSet<RenderingState>) => ({
 
   captureWithScreenshot: true,
   setCaptureWithScreenshot: (value: boolean) => set((state) => ({ ...state, captureWithScreenshot: value })),
+
+  canvasData: null,
+  setCanvasData: (data: RenderingState['canvasData']) => set((state) => ({ ...state, canvasData: data })),
 });

@@ -1,22 +1,12 @@
 import { useEffect, useState } from 'react';
-import { FaCircleDot as CaptureIcon } from 'react-icons/fa6';
 import { useDevtoolStore } from '../../App';
-import { CollapsibleSection } from '../../components/collapsible/collapsible-section';
-import { Button } from '../../components/ui/button';
-import { Checkbox } from '../../components/ui/checkbox';
-import { Separator } from '../../components/ui/separator';
-import { Instructions } from './instructions/Instructions';
-import type { RenderingState } from './rendering';
+import { InstructionsPanel } from './InstructionsPanel';
 import { RenderingStats } from './RenderingStats';
+import { CanvasPanel } from './CanvasPanel';
 
 export const RenderingPanel = () => {
-  const [loading, setLoading] = useState(false);
   const [version, setVersion] = useState<string | null>(null);
   const bridge = useDevtoolStore.use.bridge();
-  const captureWithScreenshot = useDevtoolStore.use.captureWithScreenshot();
-  const setCaptureWithScreenshot = useDevtoolStore.use.setCaptureWithScreenshot();
-  const setFrameCaptureData = useDevtoolStore.use.setFrameCaptureData();
-  const setSelectedInstruction = useDevtoolStore.use.setSelectedInstruction();
 
   useEffect(() => {
     async function fetchData() {
@@ -40,26 +30,12 @@ export const RenderingPanel = () => {
     );
   }
 
-  const onCapture = async () => {
-    setLoading(true);
-    const res = await bridge!(`window.__PIXI_DEVTOOLS_WRAPPER__.rendering.capture(${captureWithScreenshot})`);
-    setSelectedInstruction(null);
-    setFrameCaptureData(res as RenderingState['frameCaptureData']);
-    setLoading(false);
-  };
-
-  // const onPause = async () => {
-  //   await bridge!('window.__PIXI_DEVTOOLS_WRAPPER__.rendering.pauseRenderer()');
-  // };
-
-  const onCaptureWithScreenshot = async (checked: boolean) => {
-    setCaptureWithScreenshot(checked);
-  };
-
   return (
     <div className="flex flex-grow flex-col overflow-hidden">
       <RenderingStats />
-      <CollapsibleSection title={'Inspector'}>
+      <CanvasPanel />
+      <InstructionsPanel />
+      {/* <CollapsibleSection title={'Inspector'}>
         <div className="flex h-full w-full flex-col overflow-hidden">
           <div className="flex flex-col">
             <div className="border-border flex h-8 max-h-8 items-center gap-2 border-b">
@@ -95,7 +71,7 @@ export const RenderingPanel = () => {
             <Instructions />
           )}
         </div>
-      </CollapsibleSection>
+      </CollapsibleSection> */}
     </div>
   );
 };

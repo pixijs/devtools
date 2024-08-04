@@ -24,6 +24,7 @@ import type {
   WebGLRenderer,
   RenderGroup,
   Container,
+  CanvasSource,
 } from 'pixi.js';
 import type { PixiDevtools } from '../pixi';
 import { getPixiType } from '../utils/getPixiType';
@@ -113,6 +114,47 @@ export class Rendering {
     this.stats.update();
   }
   public complete() {}
+
+  public captureCanvasData(): RenderingState['canvasData'] {
+    const renderer = this._devtool.renderer as WebGLRenderer;
+    const canvas = renderer.view.canvas as HTMLCanvasElement;
+    const options = renderer['_initOptions'];
+    const contextAttributes = renderer.gl.getContextAttributes()!;
+
+    const type = renderer.type === 0b10 ? 'webgpu' : renderer.context.webGLVersion === 1 ? 'webgl' : 'webgl2';
+
+    return {
+      type,
+      width: canvas.width,
+      height: canvas.height,
+      clientWidth: canvas.clientWidth,
+      clientHeight: canvas.clientHeight,
+      browserAgent: navigator.userAgent,
+
+      background: renderer.background.color.toHex(),
+      backgroundAlpha: renderer.background.alpha.toString(),
+      antialias: renderer.view.antialias.toString(),
+      autoDensity: (renderer.view.texture.source as CanvasSource).autoDensity.toString(),
+      clearBeforeRender: renderer.background.clearBeforeRender.toString(),
+      depth: renderer.view.renderTarget.depth.toString(),
+      powerPreference: contextAttributes.powerPreference as 'default' | 'high-performance' | 'low-power',
+      preserveDrawingBuffer: options.preserveDrawingBuffer.toString(),
+      premultipliedAlpha: options.premultipliedAlpha.toString(),
+      resolution: renderer.resolution.toString(),
+      roundPixels: renderer.roundPixels.toString(),
+      failIfMajorPerformanceCaveat: contextAttributes.failIfMajorPerformanceCaveat?.toString(),
+
+      // @ts-expect-error - private properties
+      renderableGCActive: renderer.renderableGC?.enabled.toString(),
+      // @ts-expect-error - private properties
+      renderableGCFrequency: renderer.renderableGC?._frequency.toString(),
+      // @ts-expect-error - private properties
+      renderableGCMaxUnusedTime: renderer.renderableGC?.maxUnusedTime.toString(),
+      textureGCAMaxIdle: renderer.textureGC.maxIdle.toString(),
+      textureGCActive: renderer.textureGC.active.toString(),
+      textureGCCheckCountMax: renderer.textureGC.checkCountMax.toString(),
+    };
+  }
 
   public captureRenderingData(): RenderingState['renderingData'] {
     const rebuildFrequency = this._rebuilt ? 1 : 0;
