@@ -79,6 +79,9 @@ export interface RenderingState {
   captureWithScreenshot: boolean;
   setCaptureWithScreenshot: (value: boolean) => void;
 
+  disableCaptureWithScreenshot: boolean;
+  setDisableCaptureWithScreenshot: (value: boolean) => void;
+
   canvasData: CanvasData | null;
   setCanvasData: (data: RenderingState['canvasData']) => void;
 }
@@ -97,6 +100,10 @@ export const renderingStateSlice = (set: ZustSet<RenderingState>) => ({
 
   captureWithScreenshot: true,
   setCaptureWithScreenshot: (value: boolean) => set((state) => ({ ...state, captureWithScreenshot: value })),
+
+  disableCaptureWithScreenshot: false,
+  setDisableCaptureWithScreenshot: (value: boolean) =>
+    set((state) => ({ ...state, disableCaptureWithScreenshot: value })),
 
   canvasData: null,
   setCanvasData: (data: RenderingState['canvasData']) => set((state) => ({ ...state, canvasData: data })),

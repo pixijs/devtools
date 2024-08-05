@@ -1,4 +1,4 @@
-import type { GlRenderTarget, WebGLRenderer } from 'pixi.js';
+import type { GlRenderTarget, WebGLRenderer, WebGPURenderer } from 'pixi.js';
 
 export function readGlPixels(
   gl: WebGLRenderingContext,
@@ -42,4 +42,28 @@ export function readGlPixels(
   // Convert the canvas to a data URL and set it as the src of an image element
   const dataUrl = canvas2d.toDataURL('image/webp', 0.5);
   canvasTextures.push(dataUrl);
+}
+
+export function readGPUPixels(renderer: WebGPURenderer, canvasTextures: string[]) {
+  const webGPUCanvas = renderer.view.canvas as HTMLCanvasElement;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = webGPUCanvas.width;
+  canvas.height = webGPUCanvas.height;
+
+  const context = canvas.getContext('2d')!;
+
+  context.drawImage(webGPUCanvas, 0, 0);
+
+  // const { width, height } = webGPUCanvas;
+
+  // context.getImageData(0, 0, width, height);
+
+  // Convert the canvas to a data URL and set it as the src of an image element
+  const dataUrl = canvas.toDataURL('image/webp', 0.5);
+  canvasTextures.push(dataUrl);
+
+  // const pixels = new Uint8ClampedArray(imageData.data.buffer);
+
+  // return { pixels, width, height };
 }

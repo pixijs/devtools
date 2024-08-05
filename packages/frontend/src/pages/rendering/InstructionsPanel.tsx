@@ -1,12 +1,13 @@
+import { useState } from 'react';
 import { FaCircleDot as CaptureIcon } from 'react-icons/fa6';
+import { useDevtoolStore } from '../../App';
 import { CollapsibleSection } from '../../components/collapsible/collapsible-section';
 import { Button } from '../../components/ui/button';
 import { Checkbox } from '../../components/ui/checkbox';
 import { Separator } from '../../components/ui/separator';
+import { useInterval } from '../../lib/interval';
 import { Instructions } from './instructions/Instructions';
 import type { RenderingState } from './rendering';
-import { useState } from 'react';
-import { useDevtoolStore } from '../../App';
 
 export const InstructionsPanel = () => {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,19 @@ export const InstructionsPanel = () => {
   const setCaptureWithScreenshot = useDevtoolStore.use.setCaptureWithScreenshot();
   const setFrameCaptureData = useDevtoolStore.use.setFrameCaptureData();
   const setSelectedInstruction = useDevtoolStore.use.setSelectedInstruction();
+  const disableCaptureWithScreenshot = useDevtoolStore.use.disableCaptureWithScreenshot();
+  const setDisableCaptureWithScreenshot = useDevtoolStore.use.setDisableCaptureWithScreenshot();
+
+  useInterval(() => {
+    const fetch = async () => {
+      const res = await bridge!(`window.__PIXI_DEVTOOLS_WRAPPER__.rendererType`);
+      if (res === null) return;
+      setDisableCaptureWithScreenshot(res === 'webgpu');
+      if (res === 'webgpu') setCaptureWithScreenshot(false);
+    };
+
+    fetch();
+  }, 1000);
 
   const onCapture = async () => {
     setLoading(true);
@@ -51,10 +65,12 @@ export const InstructionsPanel = () => {
               <Checkbox
                 id="screenshot"
                 defaultChecked={captureWithScreenshot}
+                checked={captureWithScreenshot}
+                disabled={disableCaptureWithScreenshot}
                 onCheckedChange={onCaptureWithScreenshot}
               />
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Capture Draw Call Screenshot
+                Capture Draw Call Screenshot {disableCaptureWithScreenshot && '(WebGPU not supported)'}
               </label>
             </div>
           </div>

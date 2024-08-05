@@ -1,6 +1,6 @@
 import type { TextureDataState } from '@devtool/frontend/pages/assets/assets';
 import type { PixiDevtools } from '../../pixi';
-import type { TextureSource, GlTexture, CanvasSource } from 'pixi.js';
+import type { TextureSource, GlTexture, CanvasSource, WebGLRenderer, WebGPURenderer } from 'pixi.js';
 
 const gpuTextureFormatSize: Record<string, number> = {
   r8unorm: 1,
@@ -84,8 +84,7 @@ export class Textures {
 
   public get() {
     const currentTextures = this._devtool.renderer.texture.managedTextures;
-    // @ts-expect-error - private property
-    const glTextures = this._devtool.renderer.texture['_glTextures'] as Record<number, GlTexture | GPUTexture>;
+    const glTextures = this.getWebTextures();
 
     const data: TextureDataState[] = [];
     currentTextures.forEach((texture) => {
@@ -127,6 +126,16 @@ export class Textures {
     });
 
     return data;
+  }
+
+  public getWebTextures() {
+    const glRenderer = this._devtool.renderer as WebGLRenderer;
+    const gpuRenderer = this._devtool.renderer as WebGPURenderer;
+
+    const glTextures: Record<number, GlTexture | GPUTexture> =
+      glRenderer.texture['_glTextures'] || gpuRenderer.texture['_gpuSources'];
+
+    return glTextures;
   }
 
   public getTextureSource(texture: TextureSource) {

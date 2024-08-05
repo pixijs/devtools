@@ -14,8 +14,7 @@ export function getTextureData(
   const devtool = PixiDevtools;
   if (!textureCache.has(texture)) {
     const tex = devtool.textures.getTextureSource(texture);
-    // @ts-expect-error - private property
-    const glTextures = devtool.renderer.texture['_glTextures'] as Record<number, GlTexture | GPUTexture>;
+    const glTextures = devtool.textures.getWebTextures();
     const size = devtool.textures.getMemorySize(texture, glTextures[texture.uid]);
     if (tex) {
       textureCache.set(texture, {

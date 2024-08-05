@@ -12,20 +12,22 @@ import type {
 import type { FrameCaptureData, RenderingState } from '@devtool/frontend/pages/rendering/rendering';
 import type {
   Batch,
+  CanvasSource,
+  Container,
   GlGeometrySystem,
   Graphics,
   InstructionPipe,
   Mesh,
   NineSliceSprite,
   FilterInstruction as PixiFilterInstruction,
+  RenderContainer,
+  Renderer,
+  RenderGroup,
   StencilMaskInstruction,
   TextureSource,
   TilingSprite,
   WebGLRenderer,
-  RenderGroup,
-  Container,
-  CanvasSource,
-  RenderContainer,
+  WebGPURenderer,
 } from 'pixi.js';
 import type { PixiDevtools } from '../pixi';
 import { getPixiType } from '../utils/getPixiType';
@@ -78,10 +80,68 @@ export class Rendering {
     this._canvasTextures = [];
 
     // override the draw function to keep track of draw calls
-    const renderer = this._devtool.renderer as WebGLRenderer;
-    this._glDrawFn = renderer.geometry.draw;
-    const gl = renderer.gl;
-    renderer.geometry.draw = (...args) => {
+    const renderer = this._devtool.renderer;
+
+    // override the batcher buildStart function to keep track of rebuild frequency
+    const batcherBuildStartFn = renderer.renderPipes.batch.buildStart;
+    renderer.renderPipes.batch.buildStart = (...args) => {
+      const res = batcherBuildStartFn.apply(renderer.renderPipes.batch, args);
+      this._rebuilt = true;
+
+      return res;
+    };
+
+    if (renderer.type === 0b10) {
+      const gpuRenderer = renderer as WebGPURenderer;
+      const drawOverride = (id: 'draw' | 'drawIndexed') => {
+        const originalDraw = encoder.renderPassEncoder[id];
+        encoder.renderPassEncoder[id] = (...args) => {
+          if (this._capturing) {
+            if (this._currentPipe) {
+              const pipe = this._drawOrder.at(-1);
+              if (pipe) {
+                pipe.drawCalls++;
+              }
+            }
+          }
+
+          const res = originalDraw.apply(encoder.renderPassEncoder, args as any);
+          this.stats.drawCalls++;
+
+          if (!this._capturing) return res;
+          if (!this._withScreenshot) return res;
+
+          // readGPUPixels(gpuRenderer, this._canvasTextures);
+          return res;
+        };
+      };
+      const encoder = gpuRenderer.encoder;
+      const originalBeginRenderPass = encoder.beginRenderPass;
+      encoder.beginRenderPass = (...args) => {
+        const res = originalBeginRenderPass.apply(encoder, args);
+
+        drawOverride('draw');
+        drawOverride('drawIndexed');
+
+        return res;
+      };
+      const originalRestoreRenderPass = encoder.restoreRenderPass;
+      encoder.restoreRenderPass = (...args) => {
+        const res = originalRestoreRenderPass.apply(encoder, args);
+
+        drawOverride('draw');
+        drawOverride('drawIndexed');
+
+        return res;
+      };
+      return;
+    }
+
+    const glRenderer = renderer as WebGLRenderer;
+
+    this._glDrawFn = glRenderer.geometry.draw;
+    const gl = glRenderer.gl;
+    glRenderer.geometry.draw = (...args) => {
       if (this._capturing) {
         if (this._currentPipe) {
           const pipe = this._drawOrder.at(-1);
@@ -91,7 +151,7 @@ export class Rendering {
         }
       }
 
-      const res = this._glDrawFn.apply(renderer.geometry, args);
+      const res = this._glDrawFn.apply(glRenderer.geometry, args);
       this.stats.drawCalls++;
 
       if (!this._capturing) return res;
@@ -99,15 +159,7 @@ export class Rendering {
 
       const width = gl.drawingBufferWidth;
       const height = gl.drawingBufferHeight;
-      readGlPixels(gl, renderer, this._canvasTextures, width, height);
-      return res;
-    };
-
-    const batcherBuildStartFn = renderer.renderPipes.batch.buildStart;
-    renderer.renderPipes.batch.buildStart = (...args) => {
-      const res = batcherBuildStartFn.apply(renderer.renderPipes.batch, args);
-      this._rebuilt = true;
-
+      readGlPixels(gl, glRenderer, this._canvasTextures, width, height);
       return res;
     };
   }
@@ -118,15 +170,25 @@ export class Rendering {
   public complete() {}
 
   public captureCanvasData(): RenderingState['canvasData'] {
-    const renderer = this._devtool.renderer as WebGLRenderer;
+    const renderer = this._devtool.renderer;
+    // const webgpuRenderer = renderer as WebGPURenderer;
+    const webglRenderer = renderer as WebGLRenderer;
     const canvas = renderer.view.canvas as HTMLCanvasElement;
-    const options = renderer['_initOptions'];
-    const contextAttributes = renderer.gl.getContextAttributes()!;
 
-    const type = renderer.type === 0b10 ? 'webgpu' : renderer.context.webGLVersion === 1 ? 'webgl' : 'webgl2';
+    let powerPreference: 'default' | 'high-performance' | 'low-power' = 'default';
+    let failIfMajorPerformanceCaveat: string | undefined = undefined;
+    let preserveDrawingBuffer: string = '';
+    let premultipliedAlpha: string = '';
+    if (renderer.type !== 0b10) {
+      const contextAttributes = webglRenderer.gl.getContextAttributes()!;
+      powerPreference = contextAttributes.powerPreference as 'default' | 'high-performance' | 'low-power';
+      failIfMajorPerformanceCaveat = contextAttributes.failIfMajorPerformanceCaveat?.toString();
+      preserveDrawingBuffer = contextAttributes.preserveDrawingBuffer?.toString() ?? '';
+      premultipliedAlpha = contextAttributes.premultipliedAlpha?.toString() ?? '';
+    }
 
     return {
-      type,
+      type: this._devtool.rendererType!,
       width: canvas.width,
       height: canvas.height,
       clientWidth: canvas.clientWidth,
@@ -139,12 +201,12 @@ export class Rendering {
       autoDensity: (renderer.view.texture.source as CanvasSource).autoDensity.toString(),
       clearBeforeRender: renderer.background.clearBeforeRender.toString(),
       depth: renderer.view.renderTarget.depth.toString(),
-      powerPreference: contextAttributes.powerPreference as 'default' | 'high-performance' | 'low-power',
-      preserveDrawingBuffer: options.preserveDrawingBuffer.toString(),
-      premultipliedAlpha: options.premultipliedAlpha.toString(),
+      powerPreference,
+      preserveDrawingBuffer,
+      premultipliedAlpha,
       resolution: renderer.resolution.toString(),
       roundPixels: renderer.roundPixels.toString(),
-      failIfMajorPerformanceCaveat: contextAttributes.failIfMajorPerformanceCaveat?.toString(),
+      failIfMajorPerformanceCaveat,
 
       // @ts-expect-error - private properties
       renderableGCActive: renderer.renderableGC?.enabled.toString(),
@@ -187,10 +249,10 @@ export class Rendering {
         filters: 0,
         masks: 0,
       },
-      renderTime: this._getRenderTime(renderer as WebGLRenderer),
+      renderTime: this._getRenderTime(renderer),
     };
 
-    const canvasTextures = this._capture(renderer as WebGLRenderer, withScreenshot);
+    const canvasTextures = this._capture(renderer, withScreenshot);
     const sceneData = this._getSceneData(lastObjectRendered);
     const instructionData = this._getInstructionsData(instructionSet, canvasTextures, this._drawOrder);
     frameCaptureData.drawCalls = canvasTextures.length;
@@ -204,7 +266,7 @@ export class Rendering {
     return frameCaptureData;
   }
 
-  private _capture(renderer: WebGLRenderer, withScreenshot: boolean) {
+  private _capture(renderer: Renderer, withScreenshot: boolean) {
     this._drawOrder = [];
     this._pipeExecuteFn.clear();
 
@@ -237,7 +299,7 @@ export class Rendering {
     return this._canvasTextures;
   }
 
-  private _postCapture(renderer: WebGLRenderer) {
+  private _postCapture(renderer: Renderer) {
     const renderPipes = renderer.lastObjectRendered.renderGroup.instructionSet.renderPipes as Record<
       string,
       InstructionPipe<any>
@@ -251,7 +313,7 @@ export class Rendering {
     this._capturing = false;
   }
 
-  private _getRenderTime(renderer: WebGLRenderer) {
+  private _getRenderTime(renderer: Renderer) {
     const now = performance.now();
     renderer.render(renderer.lastObjectRendered);
     return performance.now() - now;

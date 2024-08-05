@@ -1,7 +1,7 @@
 import type { DevtoolState } from '@devtool/frontend/types';
 import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
-import type { Application, Container, Renderer } from 'pixi.js';
+import type { Application, Container, Renderer, WebGLRenderer } from 'pixi.js';
 import { extensions } from './extensions/Extensions';
 import { Overlay } from './scene/overlay/overlay';
 import { overlayExtension } from './scene/overlay/overlayExtension';
@@ -260,6 +260,15 @@ class PixiWrapper {
    */
   public get isPixiActive() {
     return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
+  }
+
+  public get rendererType(): 'webgl' | 'webgl2' | 'webgpu' | null {
+    if (!this.renderer) return null;
+    return this.renderer.type === 0b10
+      ? 'webgpu'
+      : (this.renderer as WebGLRenderer).context.webGLVersion === 1
+        ? 'webgl'
+        : 'webgl2';
   }
 
   public inject() {
