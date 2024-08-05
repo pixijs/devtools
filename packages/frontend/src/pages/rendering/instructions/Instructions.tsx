@@ -14,6 +14,7 @@ import { NineSliceSpriteView } from './NineSliceSprite';
 import { InstructionPill } from './shared/InstructionBubble';
 import type { InstructionPillProps } from './shared/InstructionBubble';
 import { TilingSpriteView } from './TilingSprite';
+import { CustomRenderView } from './CustomRender';
 
 export type RenderingTextureDataState = Pick<
   TextureDataState,
@@ -152,10 +153,6 @@ export interface CustomRenderableInstruction extends BaseInstruction {
   action: 'draw';
   renderable: {
     texture: RenderingTextureDataState | null;
-    width: number;
-    height: number;
-    x: number;
-    y: number;
   } & RenderableData;
 }
 
@@ -206,7 +203,7 @@ const instructionViews = {
   mesh: MeshView,
   graphics: GraphicsView,
   nineSliceSprite: NineSliceSpriteView,
-  customRender: () => <div>Custom Renderable</div>,
+  customRender: CustomRenderView,
 };
 
 export const Instructions: React.FC = memo(() => {
@@ -239,6 +236,10 @@ export const Instructions: React.FC = memo(() => {
     { label: 'Meshes', value: totals.meshes },
     { label: 'Texts', value: totals.texts },
   ];
+
+  let renderGroupDepth = 0;
+  const renderGroupColorMap: Map<string, string> = new Map();
+
   return (
     <div className="flex h-full flex-1 overflow-hidden">
       <div className="relative bottom-0 right-0 w-full">
@@ -260,17 +261,38 @@ export const Instructions: React.FC = memo(() => {
             <div className="flex w-full flex-col overflow-hidden">
               <div className="flex flex-1 flex-col gap-2 overflow-auto p-2">
                 {instructions!.map((instruction, i) => {
+                  const paddingAmount = 10;
+                  let paddingLeft = renderGroupDepth * paddingAmount;
+
+                  if (instruction.type === 'Render Group' && instruction.action === 'start') {
+                    renderGroupDepth++;
+                    renderGroupColorMap.set(
+                      'RenderGroup: ' + renderGroupDepth,
+                      _colors[renderGroupDepth % _colors.length],
+                    );
+                  }
+
                   const commonProps: InstructionPillProps = {
                     onClick: () => setSelectedInstruction(i),
                     selected: selectedInstruction === i,
                     drawTextures: instruction.drawTextures.length > 0 ? instruction.drawTextures : undefined,
                     type: instruction.type,
                     action: instruction.action,
-                    renderGroupColor: 'fill-insBlue',
+                    renderGroupColor: renderGroupColorMap.get('RenderGroup: ' + renderGroupDepth)!,
                     isDrawCall: instruction.drawCalls > 0,
                   };
 
-                  return <InstructionPill key={i} {...commonProps} />;
+                  if (instruction.type === 'Render Group' && instruction.action === 'end') {
+                    renderGroupDepth = Math.max(0, renderGroupDepth - 1);
+                    paddingLeft = renderGroupDepth * paddingAmount;
+                  }
+
+                  // add padding to the left based on the depth of the render group
+                  return (
+                    <div key={i} style={{ paddingLeft }}>
+                      <InstructionPill key={i} {...commonProps} />
+                    </div>
+                  );
                 })}
               </div>
             </div>

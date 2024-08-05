@@ -20,6 +20,7 @@ import type {
   Sprite,
   StencilMaskInstruction,
   TilingSprite,
+  RenderContainer,
 } from 'pixi.js';
 import { getRenderableData, getStateData, getTextureData } from './renderableData';
 import { PixiDevtools } from '../pixi';
@@ -47,6 +48,18 @@ export function getBatchInstruction(instruction: Batch, textureCache: TextureCac
     drawCalls: 0,
     drawTextures: [],
     textures,
+  };
+}
+
+export function getCustomRenderableInstruction(instruction: RenderContainer, _textureCache: TextureCache) {
+  return {
+    type: 'customRender',
+    action: 'custom',
+    renderable: {
+      ...getRenderableData(instruction),
+    },
+    drawCalls: 0,
+    drawTextures: [],
   };
 }
 

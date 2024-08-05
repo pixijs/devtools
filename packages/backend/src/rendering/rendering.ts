@@ -25,12 +25,14 @@ import type {
   RenderGroup,
   Container,
   CanvasSource,
+  RenderContainer,
 } from 'pixi.js';
 import type { PixiDevtools } from '../pixi';
 import { getPixiType } from '../utils/getPixiType';
 import { loop } from '../utils/loop';
 import {
   getBatchInstruction,
+  getCustomRenderableInstruction,
   getFilterInstruction,
   getGraphicsInstruction,
   getMaskInstruction,
@@ -197,6 +199,7 @@ export class Rendering {
 
     console.log(instructionSet.instructions.slice(0, instructionSet.instructionSize));
     console.log(frameCaptureData.instructions);
+    console.log(canvasTextures);
 
     return frameCaptureData;
   }
@@ -315,9 +318,18 @@ export class Rendering {
     instructionSet: RenderGroup['instructionSet'],
     canvasTextures: string[],
     drawOrder: { pipe: string; drawCalls: number }[],
+    drawTotal = 0,
+    instructionCount = 0,
   ) {
     const instructionData: FrameCaptureData['instructions'] = [];
-    let drawTotal = 0;
+
+    instructionData.push({
+      type: 'Render Group',
+      action: 'start',
+      drawCalls: 0,
+      drawTextures: [],
+    });
+
     for (let i = 0; i < instructionSet.instructionSize; i++) {
       const instruction = instructionSet.instructions[i];
       let data:
@@ -328,7 +340,7 @@ export class Rendering {
         | MaskInstruction
         | MeshInstruction
         | TilingSpriteInstruction
-        | NineSliceInstruction = {} as any;
+        | NineSliceInstruction = null as any;
 
       switch (instruction.renderPipeId) {
         case 'batch':
@@ -355,6 +367,19 @@ export class Rendering {
           data = getNineSliceInstruction(instruction as unknown as NineSliceSprite, this._textureCache);
           break;
         case 'customRender':
+          data = getCustomRenderableInstruction(instruction as RenderContainer, this._textureCache);
+          break;
+        case 'renderGroup':
+          {
+            const res = this._getInstructionsData(
+              (instruction as RenderGroup).instructionSet,
+              canvasTextures,
+              drawOrder,
+              drawTotal,
+              instructionCount + 1,
+            );
+            instructionData.push(...res);
+          }
           break;
         default:
           data = {
@@ -364,12 +389,24 @@ export class Rendering {
           break;
       }
 
-      data.drawCalls = drawOrder[i].drawCalls;
+      if (!data) continue;
+
+      const drawOrderData = drawOrder[instructionCount];
+      data.drawCalls = drawOrderData.drawCalls;
       drawTotal += data.drawCalls;
       data.drawTextures = canvasTextures.slice(drawTotal - data.drawCalls, drawTotal);
 
+      instructionCount++;
+
       instructionData.push(data);
     }
+
+    instructionData.push({
+      type: 'Render Group',
+      action: 'end',
+      drawCalls: 0,
+      drawTextures: [],
+    });
 
     return instructionData;
   }

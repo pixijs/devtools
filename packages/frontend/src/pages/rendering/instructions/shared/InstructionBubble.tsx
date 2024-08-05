@@ -29,6 +29,7 @@ export const InstructionPill: React.FC<InstructionPillProps> = memo(
         className={cn(
           fill,
           `hover:bg-secondary bg-border [&_svg]:hover:fill-secondary flex cursor-pointer flex-row items-center justify-center gap-1 rounded-sm border p-1`,
+          'min-w-52',
           border,
         )}
         onClick={onClick}
