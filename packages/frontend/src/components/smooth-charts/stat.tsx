@@ -4,6 +4,7 @@ class Panel {
   protected fg: CanvasFillStrokeStyles['fillStyle'];
   protected bg: CanvasFillStrokeStyles['fillStyle'];
   protected lineColor: CanvasFillStrokeStyles['fillStyle'];
+  protected textColor: CanvasFillStrokeStyles['fillStyle'];
   protected min: number;
   protected max: number;
   protected context: CanvasRenderingContext2D;
@@ -25,11 +26,13 @@ class Panel {
     fg: CanvasFillStrokeStyles['fillStyle'],
     bg: CanvasFillStrokeStyles['fillStyle'],
     lineColor: CanvasFillStrokeStyles['fillStyle'],
+    textColor: CanvasFillStrokeStyles['fillStyle'] = 'white',
   ) {
     this.name = name;
     this.fg = fg;
     this.bg = bg;
     this.lineColor = lineColor;
+    this.textColor = textColor;
 
     this.min = Infinity;
     this.max = 0;
@@ -53,7 +56,7 @@ class Panel {
 
     this.context.fillStyle = this.bg;
     this.context.fillRect(0, 0, this.WIDTH, this.GRAPH_Y);
-    this.context.fillStyle = 'white';
+    this.context.fillStyle = this.textColor;
     this.context.font = `0.75rem cascadia code,Menlo,Monaco,'Courier New',monospace`;
     this.context.fillText(`${this.name} (${Math.round(value)})`, this.TEXT_X, this.TEXT_Y);
     const width1 = this.context.measureText(`max: ${Math.round(this.max)}`).width;
@@ -102,28 +105,34 @@ interface CanvasProps {
   bgColor: string;
   fgColor: string;
   lineColor: string;
+  textColor: string;
   value: number;
 }
-export const CanvasComponent: React.FC<CanvasProps> = memo(({ title, bgColor, fgColor, lineColor, value }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const panelRef = useRef<Panel | null>(null);
+export const CanvasStatComponent: React.FC<CanvasProps> = memo(
+  ({ title, bgColor, fgColor, lineColor, textColor, value }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const panelRef = useRef<Panel | null>(null);
 
-  useEffect(() => {
-    if (canvasRef.current && !panelRef.current) {
-      // Initialize the Panel class with the canvas element
-      panelRef.current = new Panel(canvasRef.current, title, fgColor, bgColor, lineColor);
-    }
-  }, [bgColor, fgColor, lineColor, title]);
+    useEffect(() => {
+      if (canvasRef.current && !panelRef.current) {
+        // Initialize the Panel class with the canvas element
+        panelRef.current = new Panel(canvasRef.current, title, fgColor, bgColor, lineColor, textColor);
+      }
+    }, []);
+    useEffect(() => {
+      panelRef.current = new Panel(canvasRef.current!, title, fgColor, bgColor, lineColor, textColor);
+    }, [bgColor, fgColor, lineColor, title, textColor]);
 
-  useInterval(() => {
-    if (panelRef.current) {
-      panelRef.current.update(value);
-    }
-  }, 100);
+    useInterval(() => {
+      if (panelRef.current) {
+        panelRef.current.update(value);
+      }
+    }, 100);
 
-  return (
-    <div>
-      <canvas ref={canvasRef} />
-    </div>
-  );
-});
+    return (
+      <div>
+        <canvas ref={canvasRef} />
+      </div>
+    );
+  },
+);

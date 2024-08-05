@@ -7,7 +7,6 @@ import type { FilterInstruction } from './Instructions';
 import { InstructionSection } from './shared/InstructionSection';
 import { PropertyEntries } from './shared/PropertyDisplay';
 import { Shader } from './shared/Shader';
-import { State } from './shared/State';
 
 export const FilterView: React.FC<FilterInstruction> = memo(({ renderables, filter, drawTextures, type, action }) => {
   return (
@@ -19,7 +18,7 @@ export const FilterView: React.FC<FilterInstruction> = memo(({ renderables, filt
             <div className="flex flex-col px-2 py-1 [&>*:first-child]:pt-0">
               <PropertyEntries renderable={filter} propertyMap={propertyMap} ignore={['program', 'state']} />
               <Shader vertex={filter.program.vertex} fragment={filter.program.fragment} />
-              <State {...filter.state} />
+              <PropertyEntries renderable={filter.state} propertyMap={propertyMap} />
             </div>
           </CollapsibleSection>
         ))}

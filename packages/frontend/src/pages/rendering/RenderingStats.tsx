@@ -1,11 +1,13 @@
 import { useDevtoolStore } from '../../App';
 import { SaveCollapsibleSection } from '../../components/collapsible/collapsible-section';
-import { CanvasComponent } from '../../components/smooth-charts/stat';
+import { CanvasStatComponent } from '../../components/smooth-charts/stat';
 import { useInterval } from '../../lib/interval';
 import { formatCamelCase, isDifferent } from '../../lib/utils';
 import type { RenderingState } from './rendering';
+import { useTheme } from '../../components/theme-provider';
 
 export const RenderingStats: React.FC = () => {
+  const { theme } = useTheme();
   const bridge = useDevtoolStore.use.bridge();
   const renderingData = useDevtoolStore.use.renderingData();
   const setRenderingData = useDevtoolStore.use.setRenderingData();
@@ -27,11 +29,12 @@ export const RenderingStats: React.FC = () => {
               const item = renderingData![key as keyof typeof renderingData];
               return (
                 <div className="h-fit px-2 pt-2" key={key}>
-                  <CanvasComponent
+                  <CanvasStatComponent
                     title={formatCamelCase(key)}
-                    bgColor={'#1D1E20'}
-                    fgColor={'#E72264'}
-                    lineColor="#441E2B"
+                    bgColor={theme === 'dark' ? '#1D1E20' : '#fff'}
+                    fgColor={theme === 'dark' ? '#E72264' : '#E72264'}
+                    lineColor={theme === 'dark' ? '#441E2B' : '#EC5685'}
+                    textColor={theme === 'dark' ? '#fff' : '#000'}
                     value={item}
                   />
                 </div>

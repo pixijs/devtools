@@ -9,21 +9,26 @@ interface ShaderProps {
 }
 export const Shader: React.FC<ShaderProps> = memo(({ vertex, fragment }) => {
   return (
-    <div className={`flex flex-col items-center justify-between`}>
-      <ShaderView value={fragment} />
-      <ShaderView value={vertex} />
-    </div>
+    <>
+      <ShaderView value={fragment} title="Fragment" />
+      <ShaderView value={vertex} title="Vertex" />
+    </>
   );
 });
 
-export const ShaderView: React.FC<{ value: string }> = memo(({ value }) => {
+export const ShaderView: React.FC<{ value: string; title: string }> = memo(({ value, title }) => {
   const valueFix = formatShader(value);
   const { theme } = useTheme();
   const style = theme === 'dark' ? dracula : prism;
   return (
-    <SyntaxHighlighter language="javascript" style={style} customStyle={{ width: '100%' }}>
-      {valueFix}
-    </SyntaxHighlighter>
+    <div className="flex h-full items-center pt-1">
+      <div className="w-1/4 overflow-hidden break-keep pr-2 text-xs">{title}</div>
+      <div className="flex w-full max-w-[80%] items-center pl-2">
+        <SyntaxHighlighter language="javascript" style={style} customStyle={{ width: '100%' }}>
+          {valueFix}
+        </SyntaxHighlighter>
+      </div>
+    </div>
   );
 });
 

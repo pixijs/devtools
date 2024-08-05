@@ -13,6 +13,7 @@ export const MeshView: React.FC<MeshInstruction> = memo(({ renderable, drawTextu
   const formatFloat32Array = (array: number[]) => {
     return `[${array.join(', ')}]`;
   };
+
   return (
     <div className="flex flex-col">
       <div className="items-left flex w-full flex-col justify-between">
@@ -39,37 +40,24 @@ export const MeshView: React.FC<MeshInstruction> = memo(({ renderable, drawTextu
               ignore={['texture', 'program', 'geometry', 'state']}
             />
             <Shader vertex={renderable.program.vertex ?? ''} fragment={renderable.program.fragment ?? ''} />
-            <div className="ml-2 text-sm text-white">
-              <div className="text-lg">Geometry</div>
-              <div
-                className="flex flex-row flex-wrap gap-2 pt-4"
-                style={{
-                  overflow: 'auto',
-                  maxHeight: '200px',
-                }}
-              >
-                Indices: {formatFloat32Array(renderable.geometry.indices)}
-              </div>
-              <div
-                className="flex flex-row flex-wrap gap-2 pt-4"
-                style={{
-                  overflow: 'auto',
-                  maxHeight: '200px',
-                }}
-              >
-                UVs: {formatFloat32Array(renderable.geometry.uvs)}
-              </div>
-              <div
-                className="flex flex-row flex-wrap gap-2 pt-4"
-                style={{
-                  overflow: 'auto',
-                  maxHeight: '200px',
-                }}
-              >
-                Positions: {formatFloat32Array(renderable.geometry.positions)}
+            <div className="flex h-full items-center pt-4">
+              <div className="w-1/4 overflow-hidden break-keep pr-2 text-xs dark:text-white">Indices</div>
+              <div className="border-border max-h-48 w-full overflow-auto rounded-sm border p-2">
+                {formatFloat32Array(renderable.geometry.indices)}
               </div>
             </div>
-            <div className="text-lg">State</div>
+            <div className="flex h-full items-center pt-4">
+              <div className="w-1/4 overflow-hidden break-keep pr-2 text-xs dark:text-white">UVs</div>
+              <div className="border-border max-h-48 w-full overflow-auto rounded-sm border p-2">
+                {formatFloat32Array(renderable.geometry.uvs)}
+              </div>
+            </div>
+            <div className="flex h-full items-center pt-2">
+              <div className="w-1/4 overflow-hidden break-keep pr-2 text-xs dark:text-white">Positions</div>
+              <div className="border-border max-h-48 w-full overflow-auto rounded-sm border p-2">
+                {formatFloat32Array(renderable.geometry.positions)}
+              </div>
+            </div>
             <PropertyEntries renderable={renderable.state} propertyMap={propertyMap} />
           </div>
         </CollapsibleSection>
