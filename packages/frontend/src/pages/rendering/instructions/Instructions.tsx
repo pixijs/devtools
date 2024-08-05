@@ -15,6 +15,7 @@ import { InstructionPill } from './shared/InstructionBubble';
 import type { InstructionPillProps } from './shared/InstructionBubble';
 import { TilingSpriteView } from './TilingSprite';
 import { CustomRenderView } from './CustomRender';
+import { RenderGroupView } from './RenderGroup';
 
 export type RenderingTextureDataState = Pick<
   TextureDataState,
@@ -204,6 +205,7 @@ const instructionViews = {
   graphics: GraphicsView,
   nineSliceSprite: NineSliceSpriteView,
   customRender: CustomRenderView,
+  'Render Group': RenderGroupView,
 };
 
 export const Instructions: React.FC = memo(() => {

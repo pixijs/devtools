@@ -22,13 +22,11 @@ export interface InstructionPillProps {
 export const InstructionPill: React.FC<InstructionPillProps> = memo(
   ({ onClick, selected, renderGroupColor, drawTextures, type, action, isDrawCall }) => {
     const border = selected ? 'bg-primary' : isDrawCall ? 'border-primary' : '';
-    const fill = selected ? '[&_svg]:fill-primary' : '';
     const text = selected ? 'text-white' : '';
     return (
       <div
         className={cn(
-          fill,
-          `hover:bg-secondary bg-border [&_svg]:hover:fill-secondary flex cursor-pointer flex-row items-center justify-center gap-1 rounded-sm border p-1`,
+          `hover:bg-secondary bg-border flex cursor-pointer flex-row items-center justify-center gap-1 rounded-sm border p-1`,
           'min-w-52',
           border,
         )}
