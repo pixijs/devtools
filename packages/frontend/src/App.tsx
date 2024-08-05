@@ -102,8 +102,8 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
         }
         case 'pixi-inactive':
           {
-            // setActive(false);
-            // console.log('PixiJS not detected');
+            setActive(false);
+            console.log('PixiJS not detected');
           }
           break;
         case 'pixi-state-update':
