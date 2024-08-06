@@ -28,7 +28,7 @@ export default defineConfig((config) => {
     ],
     build: {
       lib: {
-        entry: 'inject/index.ts',
+        entry: ['inject/index.ts', 'inject/close.ts'],
         fileName: 'index',
         formats: ['es'],
       },

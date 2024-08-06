@@ -69,6 +69,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
                   size="icon"
                   className="hover:border-primary h-8 rounded-none hover:border-b-2"
                   defaultPressed={overlayHighlightEnabled}
+                  pressed={overlayHighlightEnabled}
                   onPressedChange={onHighlightToggle}
                 >
                   <div className="h-3 w-3">

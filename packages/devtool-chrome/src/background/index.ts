@@ -4,6 +4,7 @@ import { convertPostMessage, convertPostMessageData } from '../messageUtils';
 interface Message {
   method: DevtoolMessage;
   data: string;
+  tabId?: number;
 }
 
 interface IconPath {
@@ -48,6 +49,8 @@ chrome.runtime.onConnect.addListener(function (port) {
     const tabs = Object.keys(devtoolConnections);
     for (let i = 0, len = tabs.length; i < len; i++) {
       if (devtoolConnections[tabs[i]] === port) {
+        const tabId = parseInt(tabs[i], 10);
+        chrome.tabs.sendMessage(tabId, { id: 'pixi-devtools', method: 'panelClosed' }, function () {});
         delete devtoolConnections[tabs[i]];
         break;
       }
@@ -64,23 +67,21 @@ chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.M
   }
 
   // Messages from content scripts should have sender.tab set
-  if (sender.tab) {
-    const tabId = sender.tab.id!;
+  if (sender.tab || request.tabId) {
+    const tabId = sender.tab?.id ?? request.tabId!;
     if (tabId in devtoolConnections) {
       const message = convertPostMessage(converted.method, converted.data);
       devtoolConnections[tabId].postMessage({
         id: 'pixi-devtools',
-        tabId: sender.tab?.id,
+        tabId: sender.tab?.id ?? request.tabId,
         ...message,
       });
       // Send a response back to the sender
       sendResponse({ status: 'success' });
     } else {
-      console.log('Tab not found in connection list.');
       sendResponse({ status: 'error', message: 'Tab not found in connection list.' });
     }
   } else {
-    console.log('sender.tab not defined.');
     sendResponse({ status: 'error', message: 'sender.tab not defined.' });
   }
   return true;
@@ -100,8 +101,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
   }
   if (tab.active && changeInfo.status === 'complete') {
-    // TODO: we can send a message to the devtools to reload the page
-    console.log(`Tab ${tabId} has reloaded.`);
+    // send a message to the devtools to reload the page
+    if (tabId in devtoolConnections) {
+      const message = convertPostMessage(DevtoolMessage.pageReload, {});
+      devtoolConnections[tabId].postMessage({
+        id: 'pixi-devtools',
+        tabId,
+        ...message,
+      });
+    }
     // You can perform additional actions here
   }
 });

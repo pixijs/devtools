@@ -39,6 +39,10 @@ export class Tree {
     this._onSwapExtensions = getExtensionsProp(Tree.extensions, 'onSwap');
     this._onSelectedExtensions = getExtensionsProp(Tree.extensions, 'onSelected');
     this._treePanelButtons = getExtensionsProp(Tree.extensions, 'panelButtons');
+
+    this.selectedNode = null;
+    this._idMap.clear();
+    this._sceneGraph.clear();
   }
 
   public nodeButtonPress(nodeId: string, buttonAction: string, value?: boolean) {
