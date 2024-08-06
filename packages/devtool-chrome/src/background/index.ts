@@ -99,4 +99,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
     }
   }
+  if (tab.active && changeInfo.status === 'complete') {
+    // TODO: we can send a message to the devtools to reload the page
+    console.log(`Tab ${tabId} has reloaded.`);
+    // You can perform additional actions here
+  }
 });

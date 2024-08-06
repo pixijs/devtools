@@ -1,5 +1,6 @@
 import type { BridgeFn } from './lib/utils';
 import type { TextureState } from './pages/assets/assets';
+import type { RenderingState } from './pages/rendering/rendering';
 import type { SceneState } from './pages/scene/state';
 import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
@@ -17,7 +18,7 @@ export type SceneGraphEntry = {
   children: SceneGraphEntry[];
 };
 
-export interface DevtoolState extends SceneState, TextureState {
+export interface DevtoolState extends SceneState, TextureState, RenderingState {
   active: boolean;
   setActive: (active: DevtoolState['active']) => void;
 

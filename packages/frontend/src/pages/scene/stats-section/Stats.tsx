@@ -1,8 +1,8 @@
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { useDevtoolStore } from '../../../App';
-import { CollapsibleSection } from '../../../components/collapsible/collapsible-section';
 import SmoothieComponent, { TimeSeries } from '../../../components/smooth-charts/Smoothie';
 import { useTheme } from '../../../components/theme-provider';
-import { memo, useEffect, useMemo, useRef } from 'react';
+import { SaveCollapsibleSection } from '../../../components/collapsible/collapsible-section';
 
 const SmoothieStat: React.FC<{
   item: StatData;
@@ -106,7 +106,7 @@ export const Stats: React.FC = () => {
   }, [stats]);
 
   return (
-    <CollapsibleSection title="Stats">
+    <SaveCollapsibleSection title="Stats" storageKey="scene:stats" defaultCollapsed={false}>
       <div className="flex h-full max-h-[15%] flex-1 overflow-hidden">
         <div className="flex h-full w-full flex-wrap justify-start overflow-auto">
           {currentStats.map((item) => {
@@ -122,6 +122,6 @@ export const Stats: React.FC = () => {
           })}
         </div>
       </div>
-    </CollapsibleSection>
+    </SaveCollapsibleSection>
   );
 };

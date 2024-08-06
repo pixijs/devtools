@@ -1,6 +1,6 @@
 import type { TextureDataState } from '@devtool/frontend/pages/assets/assets';
 import type { PixiDevtools } from '../../pixi';
-import type { TextureSource, GlTexture, CanvasSource } from 'pixi.js';
+import type { TextureSource, GlTexture, CanvasSource, WebGLRenderer, WebGPURenderer } from 'pixi.js';
 
 const gpuTextureFormatSize: Record<string, number> = {
   r8unorm: 1,
@@ -84,22 +84,21 @@ export class Textures {
 
   public get() {
     const currentTextures = this._devtool.renderer.texture.managedTextures;
-    // @ts-expect-error - private property
-    const glTextures = this._devtool.renderer.texture['_glTextures'] as Record<number, GlTexture | GPUTexture>;
+    const glTextures = this.getWebTextures();
 
     const data: TextureDataState[] = [];
     currentTextures.forEach((texture) => {
       if (!texture.resource) return;
 
       if (!this._textures.get(texture.uid)) {
-        const res = this._getTextureSource(texture);
+        const res = this.getTextureSource(texture);
         if (res) {
           this._textures.set(texture.uid, res);
         }
       }
 
       if (!this._gpuTextureSize.has(texture.uid)) {
-        const size = this._getMemorySize(texture, glTextures[texture.uid]);
+        const size = this.getMemorySize(texture, glTextures[texture.uid]);
         if (size) {
           this._gpuTextureSize.set(texture.uid, size);
         }
@@ -129,7 +128,17 @@ export class Textures {
     return data;
   }
 
-  private _getTextureSource(texture: TextureSource) {
+  public getWebTextures() {
+    const glRenderer = this._devtool.renderer as WebGLRenderer;
+    const gpuRenderer = this._devtool.renderer as WebGPURenderer;
+
+    const glTextures: Record<number, GlTexture | GPUTexture> =
+      glRenderer.texture['_glTextures'] || gpuRenderer.texture['_gpuSources'];
+
+    return glTextures;
+  }
+
+  public getTextureSource(texture: TextureSource) {
     if (
       texture.resource instanceof ImageBitmap ||
       texture.resource instanceof HTMLImageElement ||
@@ -175,7 +184,7 @@ export class Textures {
     return canvas.toDataURL('image/png');
   }
 
-  private _getMemorySize(texture: TextureSource, webTexture: GlTexture | GPUTexture): number | null {
+  public getMemorySize(texture: TextureSource, webTexture: GlTexture | GPUTexture): number | null {
     if (!webTexture) return null;
     if (Array.isArray(texture.resource) && texture.resource[0] instanceof Uint8Array) {
       return texture.resource.reduce((acc, res) => acc + res.byteLength, 0);

@@ -19,6 +19,18 @@ export default {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        insRed: 'hsl(var(--instruction-red))',
+        insOrange: 'hsl(var(--instruction-orange))',
+        insYellow: 'hsl(var(--instruction-yellow))',
+        insDarkBlue: 'hsl(var(--instruction-dark-blue))',
+        insCyan: 'hsl(var(--instruction-cyan))',
+
+        insPink: 'hsl(var(--instruction-pink))',
+        insPurple: 'hsl(var(--instruction-purple))',
+        insBlue: 'hsl(var(--instruction-blue))',
+        insLime: 'hsl(var(--instruction-lime))',
+        insTan: 'hsl(var(--instruction-tan))',
+
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

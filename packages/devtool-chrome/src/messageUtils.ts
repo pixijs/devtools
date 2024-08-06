@@ -1,16 +1,5 @@
 import type { DevtoolMessage } from '@devtool/frontend/types';
 
-export enum MessageType {
-  Inactive = 'inactive',
-  Active = 'active',
-  PopupOpened = 'popup-opened',
-  PixiDetected = 'pixi-detected',
-
-  InjectSettingsChanged = 'inject-settings-changed',
-
-  StateUpdate = 'pixi-state-update',
-}
-
 /**
  * Standard message format
  * @param method - The message type

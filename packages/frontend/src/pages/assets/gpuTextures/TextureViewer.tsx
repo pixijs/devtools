@@ -2,10 +2,11 @@ import React, { memo, useEffect, useState } from 'react';
 import transparentLight from '../../../assets/transparent-light.svg';
 import transparent from '../../../assets/transparent.svg';
 import { useTheme } from '../../../components/theme-provider';
-import { formatNumber } from '../../../lib/utils';
+import { cn, formatNumber } from '../../../lib/utils';
 import type { TextureDataState } from '../assets';
 
-interface TextureViewerProps extends TextureDataState {
+interface TextureViewerProps
+  extends Pick<TextureDataState, 'blob' | 'pixelWidth' | 'pixelHeight' | 'name' | 'isLoaded' | 'gpuSize'> {
   onClick?: () => void;
   selected?: boolean;
 }
@@ -36,7 +37,10 @@ export const TextureViewer: React.FC<TextureViewerProps> = memo(
     const border = selected ? 'border-secondary' : 'border-border';
     return (
       <div
-        className={`max-h-42 h-42 group-hover:bg-secondary hover:border-secondary ${border} flex w-40 cursor-pointer flex-col items-center justify-between rounded-sm border`}
+        className={cn(
+          border,
+          `max-h-42 h-42 group-hover:bg-secondary hover:border-secondary flex w-40 cursor-pointer flex-col items-center justify-between rounded-sm border`,
+        )}
         style={{ backgroundImage: `url(${theme === 'dark' ? transparent : transparentLight})` }}
         onClick={onClick}
       >
@@ -44,7 +48,7 @@ export const TextureViewer: React.FC<TextureViewerProps> = memo(
           <div className="flex h-32 w-40 items-center justify-center overflow-hidden p-1">
             <img src={blob} alt="content" className="max-h-full max-w-full" />
           </div>
-          <div className={`${bg} group-hover:bg-secondary rounded-b-sm`}>
+          <div className={cn(bg, `group-hover:bg-secondary rounded-b-sm`)}>
             <div className={`w-full truncate px-1 py-0.5 pb-2 text-center text-xs text-white`}>{sanitizedName}</div>
             <div className={`h-auto w-full truncate px-1 py-0.5 text-left text-xs text-white`}>
               Size: {formatNumber(pixelWidth, 1)} x {formatNumber(pixelHeight, 1)}

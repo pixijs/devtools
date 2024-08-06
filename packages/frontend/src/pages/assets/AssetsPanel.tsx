@@ -24,7 +24,7 @@ export const AssetsPanel = () => {
   if (Number(version) < 8) {
     return (
       <div className="flex flex-grow flex-col overflow-hidden">
-        <div className="flex flex-grow items-center justify-center text-2xl text-white">
+        <div className="flex flex-grow items-center justify-center text-2xl dark:text-white">
           This panel is only available for PixiJS 8 and above
         </div>
       </div>
