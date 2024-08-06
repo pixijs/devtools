@@ -45,6 +45,7 @@ export default defineConfig((config) => {
             const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
             const resource = manifest.web_accessible_resources[0];
             resource.resources.push('inject/index.js');
+            resource.resources.push('inject/index2.js');
             fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
           }
         },

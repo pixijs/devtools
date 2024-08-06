@@ -14,9 +14,9 @@ interface IconPath {
 function setIconAndPopup(type: DevtoolMessage, tabId: number) {
   const state = type === DevtoolMessage.active ? 'active' : 'inactive';
   const iconPath: IconPath = {
-    16: `./icon-${state}-16.png`,
-    48: `./icon-${state}-48.png`,
-    128: `./icon-${state}-128.png`,
+    16: `./pixi-icon-${state}-16.png`,
+    48: `./pixi-icon-${state}-48.png`,
+    128: `./pixi-icon-${state}-128.png`,
   };
 
   const title = type === DevtoolMessage.inactive ? 'PixiJS not active on this page' : 'PixiJS active on this page';

@@ -3,7 +3,7 @@ import { convertPostMessage } from '../messageUtils';
 
 chrome.devtools.panels.create(
   import.meta.env.DEV ? 'Dev: PixiJS DevTools' : 'PixiJS DevTools',
-  'icon-active-128.png',
+  'pixi-icon-active-128.png',
   'devtools/panel/panel.html',
   (panel) => {
     const tabId = chrome.devtools.inspectedWindow.tabId;
