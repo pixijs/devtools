@@ -118,7 +118,7 @@ export const CanvasStatComponent: React.FC<CanvasProps> = memo(
         // Initialize the Panel class with the canvas element
         panelRef.current = new Panel(canvasRef.current, title, fgColor, bgColor, lineColor, textColor);
       }
-    }, []);
+    });
     useEffect(() => {
       panelRef.current = new Panel(canvasRef.current!, title, fgColor, bgColor, lineColor, textColor);
     }, [bgColor, fgColor, lineColor, title, textColor]);

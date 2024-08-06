@@ -50,7 +50,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     for (let i = 0, len = tabs.length; i < len; i++) {
       if (devtoolConnections[tabs[i]] === port) {
         const tabId = parseInt(tabs[i], 10);
-        chrome.tabs.sendMessage(tabId, { id: 'pixi-devtools', method: 'panelClosed' }, function () {});
+        chrome.tabs.sendMessage(tabId, { id: 'pixi-devtools', method: 'panelClosed' });
         delete devtoolConnections[tabs[i]];
         break;
       }
