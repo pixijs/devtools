@@ -9,7 +9,6 @@ import { PropertyEntries } from './shared/PropertyDisplay';
 import { Shader } from './shared/Shader';
 
 export const MeshView: React.FC<MeshInstruction> = memo(({ renderable, drawTextures, type, action }) => {
-  console.log('renderable', renderable);
   const formatFloat32Array = (array: number[]) => {
     return `[${array.join(', ')}]`;
   };

@@ -259,10 +259,6 @@ export class Rendering {
     frameCaptureData.instructions = instructionData;
     frameCaptureData.totals = sceneData;
 
-    console.log(instructionSet.instructions.slice(0, instructionSet.instructionSize));
-    console.log(frameCaptureData.instructions);
-    console.log(canvasTextures);
-
     return frameCaptureData;
   }
 
