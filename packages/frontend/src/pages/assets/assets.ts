@@ -1,5 +1,6 @@
 import type { ZustSet } from '../../lib/utils';
 import type { ALPHA_MODES, TEXTURE_DIMENSIONS, TEXTURE_FORMATS } from 'pixi.js';
+import type { RemoveSetters } from '../../types';
 
 export interface TextureDataState {
   gpuSize: number;
@@ -30,9 +31,11 @@ export interface TextureState {
 }
 
 export const textureStateSlice = (set: ZustSet<TextureState>) => ({
-  selectedTexture: null,
   setSelectedTexture: (texture: TextureDataState | null) => set((state) => ({ ...state, selectedTexture: texture })),
-
-  textures: [],
   setTextures: (textures: TextureDataState[]) => set((state) => ({ ...state, textures })),
 });
+
+export const textureStateSelectors: RemoveSetters<TextureState> = {
+  selectedTexture: null,
+  textures: [],
+};

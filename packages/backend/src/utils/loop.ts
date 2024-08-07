@@ -15,6 +15,10 @@ export function loop(options: LoopOptions) {
 function loopRecursive(container: Container, opts: Omit<LoopOptions, 'container'>) {
   const { loop, test } = opts;
 
+  if (!container) {
+    return;
+  }
+
   const testResult = test?.(container, container.parent) ?? true;
 
   if (testResult === false) {

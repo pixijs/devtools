@@ -1,5 +1,6 @@
 import type { ZustSet } from '../../lib/utils';
 import type { PropertyPanelData } from '../../components/properties/propertyTypes';
+import type { RemoveSetters } from '../../types';
 
 export interface SceneState {
   stats: Record<string, number> | null;
@@ -19,19 +20,18 @@ export interface SceneState {
 }
 
 export const sceneStateSlice = (set: ZustSet<SceneState>) => ({
-  stats: null,
   setStats: (stats: SceneState['stats']) => set({ stats: stats }),
-
-  selectedNode: null,
   setSelectedNode: (nodeId: SceneState['selectedNode']) => set({ selectedNode: nodeId }),
-
-  activeProps: [],
   setActiveProps: (props: SceneState['activeProps']) => set({ activeProps: props }),
-
-  overlayPickerEnabled: false,
   setOverlayPickerEnabled: (enabled: SceneState['overlayPickerEnabled']) => set({ overlayPickerEnabled: enabled }),
-
-  overlayHighlightEnabled: true,
   setOverlayHighlightEnabled: (enabled: SceneState['overlayHighlightEnabled']) =>
     set({ overlayHighlightEnabled: enabled }),
 });
+
+export const sceneStateSelectors: RemoveSetters<SceneState> = {
+  stats: null,
+  selectedNode: null,
+  activeProps: [],
+  overlayPickerEnabled: false,
+  overlayHighlightEnabled: true,
+};

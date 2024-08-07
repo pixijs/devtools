@@ -2,9 +2,9 @@
   "name": "DEV: PixiJS DevTools",
   "action": {
     "default_icon": {
-      "16": "icon-inactive-16.png",
-      "48": "icon-inactive-48.png",
-      "128": "icon-inactive-128.png"
+      "16": "pixi-icon-inactive-16.png",
+      "48": "pixi-icon-inactive-48.png",
+      "128": "pixi-icon-inactive-128.png"
     }
   },
   "content_scripts": [
@@ -20,15 +20,15 @@
     "type": "module"
   },
   "icons": {
-    "16": "icon-active-16.png",
-    "48": "icon-active-48.png",
-    "128": "icon-active-128.png"
+    "16": "pixi-icon-active-16.png",
+    "48": "pixi-icon-active-48.png",
+    "128": "pixi-icon-active-128.png"
   },
   "permissions": ["activeTab"],
-  "devtools_page": "devtools/index.html",
+  "devtools_page": "devtools/pixi-index.html",
   "web_accessible_resources": [
     {
-      "resources": ["contentStyle.css", "icon-active-128.png", "icon-inactive-48.png"],
+      "resources": ["contentStyle.css", "pixi-icon-active-128.png", "pixi-icon-inactive-48.png"],
       "matches": ["<all_urls>"]
     }
   ]

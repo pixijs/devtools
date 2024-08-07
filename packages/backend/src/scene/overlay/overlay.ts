@@ -46,12 +46,12 @@ export class Overlay {
 
     const newCanvas = this._devtool.canvas!;
 
+    this._highlightEnabled = this._devtool.state.overlayHighlightEnabled;
+    this._pickerEnabled = this._devtool.state.overlayPickerEnabled;
+
     if (newCanvas === this._canvas) {
       return;
     }
-
-    this._highlightEnabled = this._devtool.state.overlayHighlightEnabled;
-    this._pickerEnabled = this._devtool.state.overlayPickerEnabled;
 
     this._canvas = newCanvas;
     this._buildOverlay();

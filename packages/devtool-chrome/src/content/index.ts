@@ -41,3 +41,9 @@ window.addEventListener(
   },
   false,
 );
+
+chrome.runtime.onMessage.addListener(function (message) {
+  if (message.method === 'panelClosed') {
+    injectScript(chrome.runtime.getURL('inject/index2.js'), 'body');
+  }
+});

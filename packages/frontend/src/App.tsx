@@ -12,10 +12,10 @@ import { createSelectors, isDifferent } from './lib/utils';
 import { AssetsPanel } from './pages/assets/AssetsPanel';
 import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
-import { sceneStateSlice } from './pages/scene/state';
-import type { DevtoolState } from './types';
-import { textureStateSlice } from './pages/assets/assets';
-import { renderingStateSlice } from './pages/rendering/rendering';
+import { sceneStateSelectors, sceneStateSlice } from './pages/scene/state';
+import type { DevtoolMessage, DevtoolState, DevtoolStateSelectors } from './types';
+import { textureStateSelectors, textureStateSlice } from './pages/assets/assets';
+import { renderingStateSelectors, renderingStateSlice } from './pages/rendering/rendering';
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -23,38 +23,44 @@ const tabComponents = {
   Rendering: <RenderingPanel />,
 } as const;
 
+const initialState: DevtoolStateSelectors = {
+  active: false,
+  version: null,
+  sceneGraph: {
+    id: 'root',
+    name: 'root',
+    children: [],
+    metadata: {
+      type: 'Container',
+    },
+  },
+  sceneTreeData: {
+    buttons: [],
+  },
+  ...sceneStateSelectors,
+  ...textureStateSelectors,
+  ...renderingStateSelectors,
+};
+
 export const useDevtoolStore = createSelectors(
   create<DevtoolState>((set) => ({
-    active: false,
+    ...initialState,
     setActive: (active: boolean) => set({ active }),
-
     chromeProxy: null,
     setChromeProxy: (chromeProxy: DevtoolState['chromeProxy']) => set({ chromeProxy }),
-
-    version: null,
     setVersion: (version: DevtoolState['version']) => set({ version }),
-
-    sceneGraph: {
-      id: 'root',
-      name: 'root',
-      children: [],
-      metadata: {
-        type: 'Container',
-      },
-    },
     setSceneGraph: (sceneGraph: DevtoolState['sceneGraph']) => set({ sceneGraph }),
-
     bridge: null,
     setBridge: (bridge: DevtoolState['bridge']) => set({ bridge }),
-
-    sceneTreeData: {
-      buttons: [],
-    },
     setSceneTreeData: (data: DevtoolState['sceneTreeData']) => set({ sceneTreeData: data }),
 
     ...sceneStateSlice(set),
     ...textureStateSlice(set),
     ...renderingStateSlice(set),
+
+    reset: () => {
+      set(initialState);
+    },
   })),
 );
 
@@ -74,12 +80,12 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   const setActiveProps = useDevtoolStore.use.setActiveProps();
   const setOverlayPickerEnabled = useDevtoolStore.use.setOverlayPickerEnabled();
   const setSceneTreeData = useDevtoolStore.use.setSceneTreeData();
+  const reset = useDevtoolStore.use.reset();
+  const setOverlayHighlightEnabled = useDevtoolStore.use.setOverlayHighlightEnabled();
 
   useEffect(() => {
     setBridge(bridge);
     setChromeProxy(chromeProxy);
-
-    bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
 
     const devToolsConnection = chromeProxy.runtime.connect({ name: 'devtools-connection' });
     devToolsConnection.postMessage({
@@ -87,8 +93,30 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
       tabId: chromeProxy.devtools.inspectedWindow.tabId,
     });
 
+    bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(true)`);
+
     devToolsConnection.onMessage.addListener((message) => {
-      switch (message.method) {
+      switch (message.method as DevtoolMessage) {
+        case 'devtool:panelShown':
+          {
+            // TODO: consider re-enabling the overlay picker when the panel is shown
+          }
+          break;
+        case 'devtool:panelHidden':
+          {
+            // disable the overlay picker when the panel is hidden
+            // set previous highlight state
+            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enablePicker(false)`);
+            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(false)`);
+          }
+          break;
+        case 'devtool:pageReload':
+          {
+            reset();
+            bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
+          }
+          break;
         case 'pixi-active':
           {
             setActive(true);
@@ -120,6 +148,8 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
             isDifferent(currentState.activeProps, data.activeProps) && setActiveProps(data.activeProps);
             isDifferent(currentState.overlayPickerEnabled, data.overlayPickerEnabled) &&
               setOverlayPickerEnabled(data.overlayPickerEnabled);
+            isDifferent(currentState.overlayHighlightEnabled, data.overlayHighlightEnabled) &&
+              setOverlayHighlightEnabled(data.overlayHighlightEnabled);
             isDifferent(currentState.sceneTreeData, data.sceneTreeData) && setSceneTreeData(data.sceneTreeData);
           }
           break;
@@ -138,6 +168,8 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     setVersion,
     setOverlayPickerEnabled,
     setSceneTreeData,
+    reset,
+    setOverlayHighlightEnabled,
   ]);
 
   const windowString = `window.__PIXI_DEVTOOLS__ = {

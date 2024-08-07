@@ -35,7 +35,7 @@ export function getBatchInstruction(instruction: Batch, textureCache: TextureCac
     if (tex) {
       textures.push(tex);
     } else {
-      console.log('Texture not found', texture);
+      // console.log('Texture not found', texture);
     }
   });
 

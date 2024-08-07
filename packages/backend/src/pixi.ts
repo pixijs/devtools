@@ -39,6 +39,7 @@ class PixiWrapper {
     | 'setBridge'
     | 'chromeProxy'
     | 'setChromeProxy'
+    | 'reset'
     | keyof TextureState
     | keyof RenderingState
   > = {
@@ -110,6 +111,7 @@ class PixiWrapper {
   private _updateThrottle = new Throttle();
 
   private _initialized = false;
+  private _originalRenderFn: Renderer['render'] | undefined;
 
   /**
    * Searches for a property in the window and its frames.
@@ -276,6 +278,8 @@ class PixiWrapper {
     const that = this;
     if (this.renderer && !this.renderer.__devtoolInjected) {
       this.renderer.__devtoolInjected = true;
+      // store the original render method
+      this._originalRenderFn = this.renderer.render;
       this.renderer.render = new Proxy(this.renderer.render, {
         apply(target, thisArg, ...args) {
           that.update();
@@ -288,6 +292,10 @@ class PixiWrapper {
   }
 
   public reset() {
+    this.renderer && this._originalRenderFn && (this.renderer.render = this._originalRenderFn);
+    this.renderer && (this.renderer.__devtoolInjected = false);
+    this.rendering.reset();
+    this._resetState();
     this._devtools = undefined;
     this._app = undefined;
     this._stage = undefined;

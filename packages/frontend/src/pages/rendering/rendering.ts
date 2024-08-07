@@ -1,4 +1,5 @@
 import type { ZustSet } from '../../lib/utils';
+import type { RemoveSetters } from '../../types';
 import type {
   BaseInstruction,
   BatchInstruction,
@@ -87,24 +88,23 @@ export interface RenderingState {
 }
 
 export const renderingStateSlice = (set: ZustSet<RenderingState>) => ({
-  selectedInstruction: null,
   setSelectedInstruction: (instruction: RenderingState['selectedInstruction']) =>
     set((state) => ({ ...state, selectedInstruction: instruction })),
-
-  renderingData: null,
   setRenderingData: (data: RenderingState['renderingData']) => set((state) => ({ ...state, renderingData: data })),
-
-  frameCaptureData: null,
   setFrameCaptureData: (data: RenderingState['frameCaptureData']) =>
     set((state) => ({ ...state, frameCaptureData: data })),
-
   captureWithScreenshot: true,
   setCaptureWithScreenshot: (value: boolean) => set((state) => ({ ...state, captureWithScreenshot: value })),
-
-  disableCaptureWithScreenshot: false,
   setDisableCaptureWithScreenshot: (value: boolean) =>
     set((state) => ({ ...state, disableCaptureWithScreenshot: value })),
-
-  canvasData: null,
   setCanvasData: (data: RenderingState['canvasData']) => set((state) => ({ ...state, canvasData: data })),
 });
+
+export type PermanentRenderingStateKeys = 'captureWithScreenshot';
+export const renderingStateSelectors: Omit<RemoveSetters<RenderingState>, PermanentRenderingStateKeys> = {
+  selectedInstruction: null,
+  renderingData: null,
+  frameCaptureData: null,
+  disableCaptureWithScreenshot: false,
+  canvasData: null,
+};
