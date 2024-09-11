@@ -1,19 +1,16 @@
 import type { StatsExtension } from '@pixi/devtools';
-import type { PixiDevtools } from '../../pixi';
 import type { Container } from 'pixi.js';
-import { getExtensionsProp } from '../../extensions/getExtension';
 import { extensions } from '../../extensions/Extensions';
+import { getExtensionsProp } from '../../extensions/getExtension';
+import { PixiHandler } from '../../handler';
 
-export class Stats {
+export class Stats extends PixiHandler {
   public static extensions: StatsExtension[] = [];
   private _extensions: Required<StatsExtension>[] = [];
-  private _devtool: typeof PixiDevtools;
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
-  }
+  public stats: Record<string, number> = {};
 
-  public init() {
+  public override init() {
     this._extensions = getExtensionsProp(Stats.extensions, 'track');
     const allKeys: string[] = [];
     for (const plugin of this._extensions) {
@@ -28,28 +25,26 @@ export class Stats {
     }
   }
 
-  public preupdate() {}
+  public override reset() {
+    this.stats = {};
+  }
 
-  public update(container: Container) {
-    const state = this._devtool.state.stats!;
+  public override throttledUpdate(): void {
+    this.stats = {};
+  }
+
+  public override loop(container: Container) {
     for (const plugin of this._extensions) {
-      plugin.track(container, state);
+      plugin.track(container, this.stats);
     }
   }
 
-  public complete() {
-    // remove any nodes that are at 0
-    const state = this._devtool.state.stats!;
-
-    for (const key in state) {
-      if (state[key] === 0) {
-        delete state[key];
-      }
-
+  public override postupdate() {
+    for (const key in this.stats) {
       // also format the keys to be more readable
       const formattedKey = this.formatCamelCase(key);
-      state[formattedKey] = state[key];
-      delete state[key];
+      this.stats[formattedKey] = this.stats[key];
+      delete this.stats[key];
     }
   }
 

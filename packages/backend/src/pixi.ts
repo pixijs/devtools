@@ -1,11 +1,12 @@
-import type { DevtoolState } from '@devtool/frontend/types';
+import type { GlobalDevtoolState } from '@devtool/frontend/types';
 import { DevtoolMessage } from '@devtool/frontend/types';
 import type { Devtools } from '@pixi/devtools';
 import type { Application, Container, Renderer, WebGLRenderer } from 'pixi.js';
+import { Textures } from './assets/gpuTextures/textures';
 import { extensions } from './extensions/Extensions';
-import { Overlay } from './scene/overlay/overlay';
+import { Rendering } from './rendering/rendering';
 import { overlayExtension } from './scene/overlay/overlayExtension';
-import { Stats } from './scene/stats/stats';
+import { Scene } from './scene/scene';
 import { pixiStatsExtension, totalStatsExtension } from './scene/stats/statsExtension';
 import { animatedSpritePropertyExtension } from './scene/tree/extensions/animatedSprite/animatedSpritePropertyExtension';
 import { containerPropertyExtension } from './scene/tree/extensions/container/containerPropertyExtension';
@@ -13,14 +14,8 @@ import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSpr
 import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
 import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
 import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
-import { Properties } from './scene/tree/properties';
-import { Tree } from './scene/tree/tree';
 import { loop } from './utils/loop';
 import { Throttle } from './utils/throttle';
-import { Textures } from './assets/gpuTextures/textures';
-import type { TextureState } from '@devtool/frontend/pages/assets/assets';
-import { Rendering } from './rendering/rendering';
-import type { RenderingState } from '@devtool/frontend/pages/rendering/rendering';
 
 /**
  * PixiWrapper is a class that wraps around the PixiJS library.
@@ -31,74 +26,16 @@ class PixiWrapper {
   public settings = {
     throttle: 100,
   };
-  public state: Omit<
-    DevtoolState,
-    | 'active'
-    | 'setActive'
-    | 'bridge'
-    | 'setBridge'
-    | 'chromeProxy'
-    | 'setChromeProxy'
-    | 'reset'
-    | keyof TextureState
-    | keyof RenderingState
-  > = {
+  public state: Omit<GlobalDevtoolState, 'active' | 'setActive'> = {
     version: null,
-    setVersion: function (version: DevtoolState['version']) {
+    setVersion: function (version: GlobalDevtoolState['version']) {
       this.version = version;
-    },
-
-    sceneGraph: null,
-    setSceneGraph: function (sceneGraph: DevtoolState['sceneGraph']) {
-      this.sceneGraph = sceneGraph ?? {
-        id: 'root',
-        name: 'root',
-        children: [],
-        metadata: {
-          type: 'Container',
-        },
-      };
-    },
-
-    sceneTreeData: {
-      buttons: [],
-    },
-    setSceneTreeData: function (data: DevtoolState['sceneTreeData']) {
-      this.sceneTreeData = data;
-    },
-
-    stats: null,
-    setStats: function (stats: DevtoolState['stats']) {
-      this.stats = stats;
-    },
-
-    selectedNode: null,
-    setSelectedNode: function (selectedNode: DevtoolState['selectedNode']) {
-      this.selectedNode = selectedNode;
-    },
-
-    activeProps: [],
-    setActiveProps: function (activeProps: DevtoolState['activeProps']) {
-      this.activeProps = activeProps;
-    },
-
-    overlayPickerEnabled: false,
-    setOverlayPickerEnabled: function (enabled: DevtoolState['overlayPickerEnabled']) {
-      this.overlayPickerEnabled = enabled;
-    },
-
-    overlayHighlightEnabled: true,
-    setOverlayHighlightEnabled: function (enabled: DevtoolState['overlayHighlightEnabled']) {
-      this.overlayHighlightEnabled = enabled;
     },
   };
 
-  public stats = new Stats(this);
-  public tree = new Tree(this);
-  public properties = new Properties(this);
-  public overlay = new Overlay(this);
   public textures = new Textures(this);
   public rendering = new Rendering(this);
+  public scene = new Scene(this);
   // Private properties
   private _devtools: Devtools | undefined;
   private _app: Application | undefined;
@@ -240,6 +177,9 @@ class PixiWrapper {
     return this._version;
   }
 
+  /**
+   * Gets the major version of PixiJS.
+   */
   public get majorVersion() {
     if (this.version === '') {
       if (!this.stage) {
@@ -264,6 +204,9 @@ class PixiWrapper {
     return this.app || (this.stage && this.renderer) ? DevtoolMessage.active : DevtoolMessage.inactive;
   }
 
+  /**
+   * Gets the type of renderer being used.
+   */
   public get rendererType(): 'webgl' | 'webgl2' | 'webgpu' | null {
     if (!this.renderer) return null;
     return this.renderer.type === 0b10
@@ -273,6 +216,9 @@ class PixiWrapper {
         : 'webgl2';
   }
 
+  /**
+   * Inject into the renderers render method.
+   */
   public inject() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
@@ -295,6 +241,8 @@ class PixiWrapper {
     this.renderer && this._originalRenderFn && (this.renderer.render = this._originalRenderFn);
     this.renderer && (this.renderer.__devtoolInjected = false);
     this.rendering.reset();
+    this.scene.reset();
+    this.textures.reset();
     this._resetState();
     this._devtools = undefined;
     this._app = undefined;
@@ -312,21 +260,17 @@ class PixiWrapper {
       this.init();
     }
 
-    // TODO: tree: 300ms, stats: 300ms, properties: 300ms, overlay: 50ms
-
-    this.overlay.update();
-    this.rendering.update();
+    this.preupdate();
+    this._update();
     if (this._updateThrottle.shouldExecute(this.settings.throttle)) {
-      this.preupdate();
-
+      this.updatedThrottled();
       // check if we are accessing the correct stage
       if (this.renderer!.lastObjectRendered === this.stage) {
         // loop the scene graph
         loop({
           container: this.stage!,
           loop: (container) => {
-            this.stats.update(container);
-            this.tree.update(container);
+            this.updateLoop(container);
           },
           test: (container) => {
             if (container.__devtoolIgnore) return false;
@@ -341,36 +285,46 @@ class PixiWrapper {
   }
 
   private init() {
-    this.overlay.init();
-    this.properties.init();
-    this.stats.init();
-    this.tree.init();
+    this.scene.init();
     this.textures.init();
     this.rendering.init();
     this._initialized = true;
   }
 
   private _resetState() {
-    this.state.setSceneGraph(null);
-    this.state.setStats({});
-    this.state.setSelectedNode(null);
-    this.state.setActiveProps([]);
+    // TODO: this will cuase us to look through all the iframes each frame if version is not present, we need to add a flag
     this.state.setVersion(this.version === '' ? `>${this.majorVersion}.0.0` : this.version);
-    this.state.setSceneTreeData({ buttons: [] });
   }
 
   private preupdate() {
     this._resetState();
-    this.stats.preupdate();
-    this.tree.preupdate();
+    this.scene.preupdate();
+    this.textures.preupdate();
+    this.rendering.preupdate();
+  }
+
+  private _update() {
+    this.scene.update();
+    this.textures.update();
+    this.rendering.update();
+  }
+
+  private updatedThrottled() {
+    this.scene.throttledUpdate();
+    this.textures.throttledUpdate();
+    this.rendering.throttledUpdate();
+  }
+
+  private updateLoop(container: Container) {
+    this.scene.loop(container);
+    this.textures.loop(container);
+    this.rendering.loop(container);
   }
 
   private postupdate() {
-    this.stats.complete();
-    this.tree.complete();
-    this.properties.update();
-    this.properties.complete();
-    this.overlay.complete();
+    this.scene.postupdate();
+    this.textures.postupdate();
+    this.rendering.postupdate();
 
     try {
       // post the state to the devtools

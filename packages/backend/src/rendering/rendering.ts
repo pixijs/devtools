@@ -12,6 +12,7 @@ import type {
 import type { FrameCaptureData, RenderingState } from '@devtool/frontend/pages/rendering/rendering';
 import type {
   Batch,
+  BatcherPipe,
   CanvasSource,
   Container,
   GlGeometrySystem,
@@ -27,10 +28,9 @@ import type {
   TextureSource,
   TilingSprite,
   WebGLRenderer,
-  BatcherPipe,
   WebGPURenderer,
 } from 'pixi.js';
-import type { PixiDevtools } from '../pixi';
+import { PixiHandler } from '../handler';
 import { getPixiType } from '../utils/getPixiType';
 import { loop } from '../utils/loop';
 import {
@@ -51,8 +51,7 @@ interface PixiMeshObjectInstruction {
   mesh: Mesh;
 }
 
-export class Rendering {
-  private _devtool: typeof PixiDevtools;
+export class Rendering extends PixiHandler {
   private _textureCache: Map<TextureSource, RenderingTextureDataState> = new Map();
 
   private _glDrawFn!: GlGeometrySystem['draw'];
@@ -72,11 +71,7 @@ export class Rendering {
 
   private stats = new Stats();
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
-  }
-
-  public reset() {
+  public override reset() {
     // restore all overriden functions
     const renderer = this._devtool.renderer;
 
@@ -95,7 +90,7 @@ export class Rendering {
     }
   }
 
-  public init() {
+  public override init() {
     this._textureCache.clear();
     this.stats.reset();
 
@@ -187,11 +182,11 @@ export class Rendering {
       return res;
     };
   }
-  public update() {
+
+  public override update() {
     this.stats.drawCalls = 0;
     this.stats.update();
   }
-  public complete() {}
 
   public captureCanvasData(): RenderingState['canvasData'] {
     const renderer = this._devtool.renderer;

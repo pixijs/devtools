@@ -27,7 +27,7 @@ export const CustomNodeContextMenuItem: React.FC<{
 }> = ({ node, item, bridge, isLast }) => {
   const handleClick = useCallback(() => {
     bridge(
-      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.nodeContextMenu(${JSON.stringify(node.id)}, ${JSON.stringify(item.name)})`,
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.nodeContextMenu(${JSON.stringify(node.id)}, ${JSON.stringify(item.name)})`,
     );
   }, [node, item, bridge]);
 

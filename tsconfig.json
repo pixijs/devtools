@@ -18,6 +18,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    "noImplicitOverride": true,
+
     "baseUrl": "./",
     "paths": {
       "@devtool/frontend/*": ["packages/frontend/src/*"],

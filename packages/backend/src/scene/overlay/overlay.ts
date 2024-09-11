@@ -4,8 +4,10 @@ import { loop } from '../../utils/loop';
 import type { OverlayExtension } from '@pixi/devtools';
 import { getExtensionProp } from '../../extensions/getExtension';
 import { extensions } from '../../extensions/Extensions';
+import { PixiHandler } from '../../handler';
+import { DevtoolMessage } from '@devtool/frontend/types';
 
-export class Overlay {
+export class Overlay extends PixiHandler {
   static extensions: OverlayExtension[] = [];
   private _canvas!: HTMLCanvasElement;
   private _overlay!: HTMLDivElement;
@@ -14,7 +16,6 @@ export class Overlay {
   private _pickerEnabled = false;
   private _highlightEnabled = false;
   private _hoveredNode: Container | null = null;
-  private _devtool: typeof PixiDevtools;
 
   // cache the extension for bounds as this happens on every frame
   private _boundsExt!: Required<OverlayExtension>;
@@ -22,18 +23,19 @@ export class Overlay {
   private _selectedStylesExt!: Required<OverlayExtension>;
   private _hoverStylesExt!: Required<OverlayExtension>;
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
+  private _keydown = false;
 
+  constructor(devtool: typeof PixiDevtools) {
+    super(devtool);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey) {
-        this.enablePicker(true);
+        window.postMessage({ method: DevtoolMessage.overlayStateUpdate, data: { overlayPickerEnabled: true } }, '*');
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (!e.altKey) {
-        this.enablePicker(false);
+        window.postMessage({ method: DevtoolMessage.overlayStateUpdate, data: { overlayPickerEnabled: false } }, '*');
       }
     };
 
@@ -41,13 +43,13 @@ export class Overlay {
     window.addEventListener('keyup', handleKeyUp);
   }
 
-  public init() {
+  public override init() {
     this._boundsExt = getExtensionProp(Overlay.extensions, 'getGlobalBounds');
 
     const newCanvas = this._devtool.canvas!;
 
-    this._highlightEnabled = this._devtool.state.overlayHighlightEnabled;
-    this._pickerEnabled = this._devtool.state.overlayPickerEnabled;
+    this._highlightEnabled = false;
+    this._pickerEnabled = false;
 
     if (newCanvas === this._canvas) {
       return;
@@ -61,18 +63,13 @@ export class Overlay {
     this._buildHighlight('_hoverHighlight', {});
   }
 
-  public update() {
+  public override update() {
     this._updateOverlay();
     this.enableHighlight(this._highlightEnabled);
   }
 
-  public complete() {
-    this._devtool.state.overlayHighlightEnabled = this._highlightEnabled;
-    this._devtool.state.overlayPickerEnabled = this._pickerEnabled;
-  }
-
   public enablePicker(value: boolean) {
-    this._pickerEnabled = value;
+    this._pickerEnabled = this._keydown ? true : value;
 
     if (this._pickerEnabled) {
       this.activatePick();
@@ -94,7 +91,7 @@ export class Overlay {
   public enableHighlight(value: boolean) {
     this._highlightEnabled = value;
 
-    const selectedNode = this._devtool.tree.selectedNode;
+    const selectedNode = this._devtool.scene.tree.selectedNode;
 
     if (!selectedNode || !this._highlightEnabled) {
       this.disableHighlight('_selectedHighlight');
@@ -102,7 +99,7 @@ export class Overlay {
       this.activateHighlight('_selectedHighlight', selectedNode);
       this._updateHighlight(
         '_selectedHighlight',
-        this._selectedStylesExt.getSelectedStyle(this._devtool.tree.selectedNode),
+        this._selectedStylesExt.getSelectedStyle(this._devtool.scene.tree.selectedNode),
       );
     }
 
@@ -114,7 +111,7 @@ export class Overlay {
     }
   }
 
-  public activateHighlight(type: '_selectedHighlight' | '_hoverHighlight', node: Container) {
+  private activateHighlight(type: '_selectedHighlight' | '_hoverHighlight', node: Container) {
     const bounds = this._boundsExt.getGlobalBounds(node);
     Object.assign(this[type].style, {
       transform: `translate(${bounds.x}px, ${bounds.y}px)`,
@@ -123,14 +120,14 @@ export class Overlay {
     });
   }
 
-  public disableHighlight(type: '_selectedHighlight' | '_hoverHighlight') {
+  private disableHighlight(type: '_selectedHighlight' | '_hoverHighlight') {
     this[type].style.transform = 'scale(0)';
   }
 
   public highlight(id: string) {
-    const node = this._devtool.tree['_idMap'].get(id);
+    const node = this._devtool.scene.tree['_idMap'].get(id);
 
-    if (node === this._devtool.tree.selectedNode) {
+    if (node === this._devtool.scene.tree.selectedNode) {
       this._hoveredNode = null;
       this.disableHighlight('_hoverHighlight');
       return;
@@ -246,7 +243,7 @@ export class Overlay {
     });
 
     if (hit) {
-      this._devtool.tree.setSelectedFromNode(hit);
+      this._devtool.scene.tree.setSelectedFromNode(hit);
       this.enablePicker(false);
     }
   }

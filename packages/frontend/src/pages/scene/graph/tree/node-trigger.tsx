@@ -49,10 +49,10 @@ export const NodeTrigger: React.FC<{
       className={cn('mb-1 flex h-full min-w-max items-center gap-2 leading-5', node.state)}
       onDoubleClick={onToggle}
       onMouseEnter={() => {
-        bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight(${JSON.stringify(node.id)})`);
+        bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.highlight(${JSON.stringify(node.id)})`);
       }}
       onMouseLeave={() => {
-        bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.highlight()`);
+        bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.highlight()`);
       }}
     >
       <span onClick={onToggle}>

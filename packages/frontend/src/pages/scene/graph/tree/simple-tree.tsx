@@ -32,7 +32,7 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
 
     tree.move({ id: args.dragIds[0], parentId: args.parentId, index: args.index });
     bridge(
-      `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.moveNode(${JSON.stringify(node.id)}, ${JSON.stringify(parent.id)}, ${JSON.stringify(args.index)})`,
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.moveNode(${JSON.stringify(node.id)}, ${JSON.stringify(parent.id)}, ${JSON.stringify(args.index)})`,
     );
     setData(tree.data);
   };
@@ -41,7 +41,9 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
     tree.update({ id, changes: { name } as any });
     setData(tree.data);
     const node = tree.find(id);
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.renameNode(${JSON.stringify(node?.id)}, ${JSON.stringify(name)})`);
+    bridge(
+      `window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.renameNode(${JSON.stringify(node?.id)}, ${JSON.stringify(name)})`,
+    );
   };
 
   // TODO: allow for creating new nodes
@@ -60,15 +62,15 @@ export function useSimpleTree<T extends SceneGraphEntry>(bridge: BridgeFn, initi
 
     args.ids.forEach((id) => tree.drop({ id }));
     setData(tree.data);
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.deleteNode(${JSON.stringify(node?.id)})`);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.deleteNode(${JSON.stringify(node?.id)})`);
     if (!node || !node.parent) return;
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${JSON.stringify(node.parent.id)})`);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.setSelected(${JSON.stringify(node.parent.id)})`);
   };
 
   const onSelect = (nodes: NodeApi[]) => {
     const node = nodes[0];
     if (!node) return;
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.setSelected(${node ? JSON.stringify(node.id) : null})`);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.setSelected(${node ? JSON.stringify(node.id) : null})`);
   };
 
   const controller = { onMove, onRename, onDelete, onSelect };
