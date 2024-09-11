@@ -247,6 +247,7 @@ export class Overlay {
 
     if (hit) {
       this._devtool.tree.setSelectedFromNode(hit);
+      this.enablePicker(false);
     }
   }
 }
