@@ -52,7 +52,7 @@ export const ScenePanel = () => {
   const overlayHighlightEnabled = useDevtoolStore.use.overlayHighlightEnabled();
   const overlayPickerEnabled = useDevtoolStore.use.overlayPickerEnabled();
   useInterval(async () => {
-    const res = await bridge<string>(`window.__PIXI_DEVTOOLS_WRAPPER?__.scene.tree.getSelectedNode()`);
+    const res = await bridge<string>(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.getSelectedNode()`);
 
     if (isDifferent(res, savedSelectedNode)) {
       setSelectedNode(res);

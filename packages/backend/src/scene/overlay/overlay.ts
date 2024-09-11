@@ -121,6 +121,9 @@ export class Overlay extends PixiHandler {
   }
 
   private disableHighlight(type: '_selectedHighlight' | '_hoverHighlight') {
+    if (!this[type]) {
+      return;
+    }
     this[type].style.transform = 'scale(0)';
   }
 
