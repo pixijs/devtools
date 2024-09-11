@@ -21,14 +21,16 @@ interface PanelProps {
 const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const overlayPickerEnabled = useDevtoolStore.use.overlayPickerEnabled();
+  const setOverlayPickerEnabled = useDevtoolStore.use.setOverlayPickerEnabled();
   const overlayHighlightEnabled = useDevtoolStore.use.overlayHighlightEnabled();
+  const setOverlayHighlightEnabled = useDevtoolStore.use.setOverlayHighlightEnabled();
   const bridge = useDevtoolStore.use.bridge()!;
 
   const onPickerToggle = (enabled: boolean) => {
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enablePicker(${enabled})`);
+    setOverlayPickerEnabled(enabled);
   };
   const onHighlightToggle = (enabled: boolean) => {
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(${enabled})`);
+    setOverlayHighlightEnabled(enabled);
   };
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -87,7 +89,7 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
                 button={button}
                 className="text-overflow-ellipsis overflow-hidden whitespace-nowrap"
                 onClick={() =>
-                  bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.tree.treePanelButtonPress(${JSON.stringify(button)})`)
+                  bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?scene.tree.treePanelButtonPress(${JSON.stringify(button)})`)
                 }
               />
             ))}
@@ -115,10 +117,10 @@ const Panel: React.FC<PanelProps> = ({ children, onSearch, panelButtons }) => {
 
 export const SceneTree: React.FC = () => {
   const bridge = useDevtoolStore.use.bridge()!;
-  const panelButtons = useDevtoolStore.use.sceneTreeData()!.buttons;
-  const sceneGraph = useDevtoolStore.use.sceneGraph()!;
+  const panelButtons = useDevtoolStore.use.sceneTreeData()?.buttons || [];
+  const sceneGraph = useDevtoolStore.use.sceneGraph();
   const selectedNode = useDevtoolStore.use.selectedNode();
-  const sceneGraphClone = JSON.parse(JSON.stringify(sceneGraph));
+  const sceneGraphClone = JSON.parse(JSON.stringify(sceneGraph || {}));
   const [data, controller] = useSimpleTree(bridge, sceneGraphClone);
   const [currentSearch, setCurrentSearch] = useState('');
 

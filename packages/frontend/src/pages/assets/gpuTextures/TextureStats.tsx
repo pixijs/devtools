@@ -45,28 +45,6 @@ export const TextureStats: React.FC = () => {
                 </div>
               );
             })}
-          {/* {currentStats.map((item) => {
-            return (
-              <div className="min-h-10 px-2 pt-2" key={item.name}>
-                <span className="text-xs">
-                  {item.name} ({stats![item.name as keyof typeof stats]})
-                </span>
-                <SmoothieComponent
-                  key={item.name}
-                  {...defaultSmoothieOptions}
-                  minValue={0}
-                  series={[
-                    {
-                      data: item.timeSeries,
-                      strokeStyle: item.color,
-                      fillStyle: seriesFillStyle,
-                      lineWidth: 1,
-                    },
-                  ]}
-                />
-              </div>
-            );
-          })} */}
         </div>
       </div>
     </CollapsibleSection>

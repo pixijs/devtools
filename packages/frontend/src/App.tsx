@@ -9,13 +9,13 @@ import { CopyToClipboardButton } from './components/ui/clipboard';
 import './globals.css';
 import type { BridgeFn, NonNullableFields } from './lib/utils';
 import { createSelectors, isDifferent } from './lib/utils';
+import { textureStateSelectors, textureStateSlice } from './pages/assets/assets';
 import { AssetsPanel } from './pages/assets/AssetsPanel';
+import { renderingStateSelectors, renderingStateSlice } from './pages/rendering/rendering';
 import { RenderingPanel } from './pages/rendering/RenderingPanel';
 import { ScenePanel } from './pages/scene/ScenePanel';
-import { sceneStateSelectors, sceneStateSlice } from './pages/scene/state';
+import { sceneStateSelectors, sceneStateSlice } from './pages/scene/scene';
 import type { DevtoolMessage, DevtoolState, DevtoolStateSelectors } from './types';
-import { textureStateSelectors, textureStateSlice } from './pages/assets/assets';
-import { renderingStateSelectors, renderingStateSlice } from './pages/rendering/rendering';
 
 const tabComponents = {
   Scene: <ScenePanel />,
@@ -72,14 +72,10 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
   const setActive = useDevtoolStore.use.setActive();
   const setChromeProxy = useDevtoolStore.use.setChromeProxy();
   const setVersion = useDevtoolStore.use.setVersion();
-  const setSceneGraph = useDevtoolStore.use.setSceneGraph();
   const setStats = useDevtoolStore.use.setStats();
   const setBridge = useDevtoolStore.use.setBridge();
   const active = useDevtoolStore.use.active();
-  const setSelectedNode = useDevtoolStore.use.setSelectedNode();
-  const setActiveProps = useDevtoolStore.use.setActiveProps();
   const setOverlayPickerEnabled = useDevtoolStore.use.setOverlayPickerEnabled();
-  const setSceneTreeData = useDevtoolStore.use.setSceneTreeData();
   const reset = useDevtoolStore.use.reset();
   const setOverlayHighlightEnabled = useDevtoolStore.use.setOverlayHighlightEnabled();
 
@@ -94,7 +90,7 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     });
 
     bridge('window.__PIXI_DEVTOOLS_WRAPPER__.inject()');
-    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(true)`);
+    bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.enableHighlight(true)`);
 
     devToolsConnection.onMessage.addListener((message) => {
       switch (message.method as DevtoolMessage) {
@@ -107,8 +103,8 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
           {
             // disable the overlay picker when the panel is hidden
             // set previous highlight state
-            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enablePicker(false)`);
-            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.overlay.enableHighlight(false)`);
+            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.enablePicker(false)`);
+            bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.enableHighlight(false)`);
           }
           break;
         case 'devtool:pageReload':
@@ -143,16 +139,15 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
 
             isDifferent(currentState.version, data.version) && setVersion(data.version);
             isDifferent(currentState.stats, data.stats) && setStats(data.stats);
-            isDifferent(currentState.sceneGraph, data.sceneGraph) && setSceneGraph(data.sceneGraph);
-            isDifferent(currentState.selectedNode, data.selectedNode) && setSelectedNode(data.selectedNode);
-            isDifferent(currentState.activeProps, data.activeProps) && setActiveProps(data.activeProps);
-            isDifferent(currentState.overlayPickerEnabled, data.overlayPickerEnabled) &&
-              setOverlayPickerEnabled(data.overlayPickerEnabled);
-            isDifferent(currentState.overlayHighlightEnabled, data.overlayHighlightEnabled) &&
-              setOverlayHighlightEnabled(data.overlayHighlightEnabled);
-            isDifferent(currentState.sceneTreeData, data.sceneTreeData) && setSceneTreeData(data.sceneTreeData);
           }
           break;
+        case 'pixi-overlay-state-update': {
+          const data = JSON.parse(message.data) as NonNullableFields<DevtoolState>;
+          const currentState = useDevtoolStore.getState();
+
+          isDifferent(currentState.overlayPickerEnabled, data.overlayPickerEnabled) &&
+            setOverlayPickerEnabled(data.overlayPickerEnabled);
+        }
       }
     });
   }, [
@@ -160,14 +155,10 @@ const App: React.FC<AppProps> = ({ bridge, chromeProxy }) => {
     chromeProxy,
     setChromeProxy,
     setActive,
-    setActiveProps,
     setBridge,
-    setSceneGraph,
-    setSelectedNode,
     setStats,
     setVersion,
     setOverlayPickerEnabled,
-    setSceneTreeData,
     reset,
     setOverlayHighlightEnabled,
   ]);

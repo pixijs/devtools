@@ -14,7 +14,7 @@ const bridge: BridgeFn = (code: string) =>
         if (err instanceof Error) {
           reject(err);
         }
-        reject(new Error(err.value || err.description || err.code));
+        reject(new Error(err.value || err.description || err.code) + `\n${code}`);
       }
       resolve(result as any);
     });

@@ -61,8 +61,8 @@ export const CustomNodeButton: React.FC<
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | boolean) => {
       const action =
         typeof e === 'boolean'
-          ? `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.nodeButtonPress(${JSON.stringify(node.id)}, ${JSON.stringify(button.name)}, ${JSON.stringify(e)})`
-          : `window.__PIXI_DEVTOOLS_WRAPPER__?.tree.nodeButtonPress(${JSON.stringify(node.id)}, ${JSON.stringify(button.name)})`;
+          ? `window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.nodeButtonPress(${JSON.stringify(node.id)}, ${JSON.stringify(button.name)}, ${JSON.stringify(e)})`
+          : `window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.nodeButtonPress(${JSON.stringify(node.id)}, ${JSON.stringify(button.name)})`;
 
       bridge(action);
       if (e instanceof MouseEvent) {

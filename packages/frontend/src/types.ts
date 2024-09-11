@@ -1,7 +1,7 @@
 import type { BridgeFn } from './lib/utils';
 import type { TextureState } from './pages/assets/assets';
 import type { PermanentRenderingStateKeys, RenderingState } from './pages/rendering/rendering';
-import type { SceneState } from './pages/scene/state';
+import type { SceneState } from './pages/scene/scene';
 import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
 export enum DevtoolMessage {
@@ -14,6 +14,8 @@ export enum DevtoolMessage {
   panelHidden = 'devtool:panelHidden',
 
   pageReload = 'devtool:pageReload',
+
+  overlayStateUpdate = 'pixi-overlay-state-update',
 }
 
 export type SceneGraphEntry = {
@@ -23,10 +25,14 @@ export type SceneGraphEntry = {
   children: SceneGraphEntry[];
 };
 
-export interface DevtoolState extends SceneState, TextureState, RenderingState {
+export interface GlobalDevtoolState {
   active: boolean;
   setActive: (active: DevtoolState['active']) => void;
+  version: string | null;
+  setVersion: (version: DevtoolState['version']) => void;
+}
 
+export interface DevtoolState extends GlobalDevtoolState, SceneState, TextureState, RenderingState {
   chromeProxy: typeof chrome | null;
   setChromeProxy: (chromeProxy: DevtoolState['chromeProxy']) => void;
 
