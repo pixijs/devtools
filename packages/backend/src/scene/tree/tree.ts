@@ -155,7 +155,6 @@ export class Tree extends PixiHandler {
       this.selectedNode = null;
       return;
     }
-    console.log('setSelected', nodeId);
     this.selectedNode = this._idMap.get(nodeId) ?? null;
     window.$pixi = this.selectedNode;
     this._onSelectedExtensions.forEach((ext) => {
