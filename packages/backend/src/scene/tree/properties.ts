@@ -1,24 +1,18 @@
-import type { PropertyPanelData } from '@devtool/frontend/components/properties/propertyTypes';
 import type { PropertiesExtension } from '@pixi/devtools';
 import { extensions } from '../../extensions/Extensions';
-import type { PixiDevtools } from '../../pixi';
+import { PixiHandler } from '../../handler';
 
-export class Properties {
+export class Properties extends PixiHandler {
   public static extensions: PropertiesExtension[] = [];
 
   private _extensions!: PropertiesExtension[];
-  private _devtool: typeof PixiDevtools;
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
-  }
-
-  public init() {
+  public override init() {
     this._extensions = Properties.extensions;
   }
 
   public setValue(prop: string, value: any) {
-    const selectedNode = this._devtool.tree.selectedNode;
+    const selectedNode = this._devtool.scene.tree.selectedNode;
 
     if (!selectedNode) return;
 
@@ -29,13 +23,8 @@ export class Properties {
     });
   }
 
-  public update() {
-    const selectedNode = this._devtool.tree.selectedNode;
-    if (!selectedNode) return;
-  }
-
-  public complete() {
-    const selectedNode = this._devtool.tree.selectedNode;
+  public getActiveProps() {
+    const selectedNode = this._devtool.scene.tree.selectedNode;
     if (!selectedNode) return;
 
     if (selectedNode.__devtoolLocked) return;
@@ -49,7 +38,8 @@ export class Properties {
       },
       [] as ReturnType<PropertiesExtension['getProperties']>,
     );
-    this._devtool.state.activeProps = activeProps as PropertyPanelData[];
+
+    return activeProps || [];
   }
 }
 

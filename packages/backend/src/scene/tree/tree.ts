@@ -1,20 +1,21 @@
-import type { Container } from 'pixi.js';
-import type { PixiDevtools } from '../../pixi';
 import type { SceneGraphEntry } from '@devtool/frontend/types';
 import type { PixiNodeType, TreeExtension } from '@pixi/devtools';
-import { getPixiType } from '../../utils/getPixiType';
+import type { Container } from 'pixi.js';
 import { extensions } from '../../extensions/Extensions';
 import { getExtensionsProp } from '../../extensions/getExtension';
+import { PixiHandler } from '../../handler';
+import { getPixiType } from '../../utils/getPixiType';
+import { loop } from '../../utils/loop';
 
 let uidMap = new WeakMap<Container, string>();
 let uid = 0;
-export class Tree {
+export class Tree extends PixiHandler {
   public static extensions: TreeExtension[] = [];
   private _sceneGraph: Map<Container, SceneGraphEntry> = new Map();
+  private _stageNode: SceneGraphEntry | null = null;
   private _idMap: Map<string, Container> = new Map();
   public selectedNode: Container | null = null;
 
-  private _devtool: typeof PixiDevtools;
   private _metadataExtensions: Required<TreeExtension>[] = [];
   private _onButtonPressExtensions: Required<TreeExtension>[] = [];
   private _onContextMenuExtensions: Required<TreeExtension>[] = [];
@@ -24,11 +25,7 @@ export class Tree {
   private _onSelectedExtensions: Required<TreeExtension>[] = [];
   private _treePanelButtons: Required<TreeExtension>[] = [];
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
-  }
-
-  public init() {
+  public override init() {
     uidMap = new WeakMap();
     uid = 0;
     this._metadataExtensions = getExtensionsProp(Tree.extensions, 'updateNodeMetadata');
@@ -43,6 +40,84 @@ export class Tree {
     this.selectedNode = null;
     this._idMap.clear();
     this._sceneGraph.clear();
+    this._stageNode = null;
+  }
+
+  public getSceneGraph() {
+    if (!this._devtool.stage) return null;
+    if (this._devtool.renderer!.lastObjectRendered !== this._devtool.stage) return null;
+
+    this.clear();
+    loop({
+      container: this._devtool.stage,
+      loop: (container) => {
+        this.updateLoop(container);
+      },
+      test: (container) => {
+        if (container.__devtoolIgnore) return false;
+        if (container.__devtoolIgnoreChildren) return 'children';
+        return true;
+      },
+    });
+
+    // check if node has been removed, if so, clear selectedNode
+    if (this.selectedNode && !this._sceneGraph.has(this.selectedNode)) {
+      this.selectedNode = null;
+      window.$pixi = null;
+    }
+
+    return {
+      sceneGraph: this._stageNode,
+      selectedNode: this.selectedNode ? (this._sceneGraph.get(this.selectedNode)!.id as string) : null,
+      sceneTreeData: { buttons: this._treePanelButtons.map((ext) => ext.panelButtons).flat() },
+    };
+  }
+
+  public getSelectedNode() {
+    return this.selectedNode ? (this._sceneGraph.get(this.selectedNode)!.id as string) : null;
+  }
+
+  private clear() {
+    this._sceneGraph.clear();
+    this._idMap.clear();
+    this._stageNode = null;
+  }
+
+  private updateLoop(container: Container, updateSceneGraph = true) {
+    const stage = this._devtool.stage;
+    const type = getPixiType(container);
+    const { suffix, name } = this._getName(container);
+    const node = {
+      id: this._getId(container),
+      name: name,
+      children: [],
+      metadata: {
+        type,
+        locked: container.__devtoolLocked,
+        uid: this._getId(container),
+        suffix,
+        buttons: [],
+        contextMenu: [],
+      },
+    } as SceneGraphEntry;
+
+    this._metadataExtensions.forEach((ext) => {
+      ext.updateNodeMetadata(container, node.metadata);
+    });
+
+    this._idMap.set(node.id, container);
+
+    if (container === stage) {
+      this._stageNode = node;
+      this._sceneGraph.set(container, node);
+      return;
+    }
+
+    if (updateSceneGraph) {
+      const parent = this._sceneGraph.get(container.parent);
+      parent?.children.push(node);
+      this._sceneGraph.set(container, node);
+    }
   }
 
   public nodeButtonPress(nodeId: string, buttonAction: string, value?: boolean) {
@@ -80,6 +155,7 @@ export class Tree {
       this.selectedNode = null;
       return;
     }
+    console.log('setSelected', nodeId);
     this.selectedNode = this._idMap.get(nodeId) ?? null;
     window.$pixi = this.selectedNode;
     this._onSelectedExtensions.forEach((ext) => {
@@ -138,61 +214,6 @@ export class Tree {
     this._onDeletedExtensions.forEach((ext) => {
       ext.onDeleted(sceneNode);
     });
-  }
-
-  public preupdate() {
-    this._sceneGraph.clear();
-    this._idMap.clear();
-  }
-
-  public complete() {
-    // check if node has been removed, if so, clear selectedNode
-    if (this.selectedNode && !this._sceneGraph.has(this.selectedNode)) {
-      this.selectedNode = null;
-      window.$pixi = null;
-    }
-    this._devtool.state.selectedNode = this.selectedNode
-      ? (this._sceneGraph.get(this.selectedNode)!.id as string)
-      : null;
-
-    this._treePanelButtons.forEach((ext) => {
-      this._devtool.state.sceneTreeData!.buttons.push(...ext.panelButtons);
-    });
-  }
-
-  public update(container: Container) {
-    const stage = this._devtool.stage;
-    const type = getPixiType(container);
-    const { suffix, name } = this._getName(container);
-    const node = {
-      id: this._getId(container),
-      name: name,
-      children: [],
-      metadata: {
-        type,
-        locked: container.__devtoolLocked,
-        uid: this._getId(container),
-        suffix,
-        buttons: [],
-        contextMenu: [],
-      },
-    } as SceneGraphEntry;
-
-    this._metadataExtensions.forEach((ext) => {
-      ext.updateNodeMetadata(container, node.metadata);
-    });
-
-    this._idMap.set(node.id, container);
-
-    if (container === stage) {
-      this._devtool.state.setSceneGraph(node);
-      this._sceneGraph.set(container, node);
-      return;
-    }
-
-    const parent = this._sceneGraph.get(container.parent);
-    parent?.children.push(node);
-    this._sceneGraph.set(container, node);
   }
 
   private _getName(container: Container) {

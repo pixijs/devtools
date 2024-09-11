@@ -1,6 +1,6 @@
 import type { TextureDataState } from '@devtool/frontend/pages/assets/assets';
-import type { PixiDevtools } from '../../pixi';
-import type { TextureSource, GlTexture, CanvasSource, WebGLRenderer, WebGPURenderer } from 'pixi.js';
+import type { CanvasSource, GlTexture, TextureSource, WebGLRenderer, WebGPURenderer } from 'pixi.js';
+import { PixiHandler } from '../../handler';
 
 const gpuTextureFormatSize: Record<string, number> = {
   r8unorm: 1,
@@ -63,24 +63,22 @@ const glTextureFormatSize: Record<number, number> = {
   34041: 2,
 };
 
-export class Textures {
-  private _devtool: typeof PixiDevtools;
+export class Textures extends PixiHandler {
   private _textures: Map<number, string> = new Map();
   private _gpuTextureSize: Map<number, number> = new Map();
   private _canvas = document.createElement('canvas');
 
-  constructor(devtool: typeof PixiDevtools) {
-    this._devtool = devtool;
-  }
-
-  public init() {
+  public override init() {
     this._textures.clear();
     this._gpuTextureSize.clear();
   }
 
-  public update() {}
+  public override reset() {
+    this._textures.clear();
+    this._gpuTextureSize.clear();
+  }
 
-  public complete() {}
+  public override update() {}
 
   public get() {
     const currentTextures = this._devtool.renderer.texture.managedTextures;

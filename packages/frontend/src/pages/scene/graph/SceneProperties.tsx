@@ -87,7 +87,7 @@ function createFuse(activeProps: PropertyPanelData[]) {
   });
 }
 
-export const Properties: React.FC = () => {
+export const SceneProperties: React.FC = () => {
   const activeProps = useDevtoolStore((state) => state.activeProps);
   const bridge = useDevtoolStore.use.bridge()!;
   const [currentSearch, setCurrentSearch] = useState('');
@@ -107,7 +107,7 @@ export const Properties: React.FC = () => {
   const handlePropertyChange = useCallback(
     (property: string, newValue: any) => {
       bridge(`
-        window.__PIXI_DEVTOOLS_WRAPPER__.properties.setValue('${property}', ${newValue})
+        window.__PIXI_DEVTOOLS_WRAPPER__.scene.properties.setValue('${property}', ${newValue})
       `);
     },
     [bridge],
