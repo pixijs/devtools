@@ -27,6 +27,7 @@ import type {
   TextureSource,
   TilingSprite,
   WebGLRenderer,
+  BatcherPipe,
   WebGPURenderer,
 } from 'pixi.js';
 import type { PixiDevtools } from '../pixi';
@@ -55,6 +56,10 @@ export class Rendering {
   private _textureCache: Map<TextureSource, RenderingTextureDataState> = new Map();
 
   private _glDrawFn!: GlGeometrySystem['draw'];
+  private _batcherBuildStartFn!: BatcherPipe['buildStart'];
+  private _originalBeginRenderPass!: WebGPURenderer['encoder']['beginRenderPass'];
+  private _originalRestoreRenderPass!: WebGPURenderer['encoder']['restoreRenderPass'];
+
   private _drawOrder: { pipe: string; drawCalls: number }[] = [];
   private _pipeExecuteFn: Map<string, InstructionPipe<any>['execute']> = new Map();
 
@@ -71,6 +76,25 @@ export class Rendering {
     this._devtool = devtool;
   }
 
+  public reset() {
+    // restore all overriden functions
+    const renderer = this._devtool.renderer;
+
+    if (!this._batcherBuildStartFn) return;
+
+    renderer.renderPipes.batch.buildStart = this._batcherBuildStartFn;
+
+    if (renderer.type === 0b10) {
+      const gpuRenderer = renderer as WebGPURenderer;
+      const encoder = gpuRenderer.encoder;
+      encoder.beginRenderPass = this._originalBeginRenderPass;
+      encoder.restoreRenderPass = this._originalRestoreRenderPass;
+    } else {
+      const glRenderer = renderer as WebGLRenderer;
+      glRenderer.geometry.draw = this._glDrawFn;
+    }
+  }
+
   public init() {
     this._textureCache.clear();
     this.stats.reset();
@@ -83,9 +107,9 @@ export class Rendering {
     const renderer = this._devtool.renderer;
 
     // override the batcher buildStart function to keep track of rebuild frequency
-    const batcherBuildStartFn = renderer.renderPipes.batch.buildStart;
+    this._batcherBuildStartFn = renderer.renderPipes.batch.buildStart;
     renderer.renderPipes.batch.buildStart = (...args) => {
-      const res = batcherBuildStartFn.apply(renderer.renderPipes.batch, args);
+      const res = this._batcherBuildStartFn.apply(renderer.renderPipes.batch, args);
       this._rebuilt = true;
 
       return res;
@@ -116,18 +140,18 @@ export class Rendering {
         };
       };
       const encoder = gpuRenderer.encoder;
-      const originalBeginRenderPass = encoder.beginRenderPass;
+      this._originalBeginRenderPass = encoder.beginRenderPass;
       encoder.beginRenderPass = (...args) => {
-        const res = originalBeginRenderPass.apply(encoder, args);
+        const res = this._originalBeginRenderPass.apply(encoder, args);
 
         drawOverride('draw');
         drawOverride('drawIndexed');
 
         return res;
       };
-      const originalRestoreRenderPass = encoder.restoreRenderPass;
+      this._originalRestoreRenderPass = encoder.restoreRenderPass;
       encoder.restoreRenderPass = (...args) => {
-        const res = originalRestoreRenderPass.apply(encoder, args);
+        const res = this._originalRestoreRenderPass.apply(encoder, args);
 
         drawOverride('draw');
         drawOverride('drawIndexed');

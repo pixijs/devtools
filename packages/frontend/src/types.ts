@@ -1,6 +1,6 @@
 import type { BridgeFn } from './lib/utils';
 import type { TextureState } from './pages/assets/assets';
-import type { RenderingState } from './pages/rendering/rendering';
+import type { PermanentRenderingStateKeys, RenderingState } from './pages/rendering/rendering';
 import type { SceneState } from './pages/scene/state';
 import type { ButtonMetadata, PixiMetadata } from '@pixi/devtools';
 
@@ -9,6 +9,11 @@ export enum DevtoolMessage {
   inactive = 'pixi-inactive',
   stateUpdate = 'pixi-state-update',
   pulse = 'pixi-pulse',
+
+  panelShown = 'devtool:panelShown',
+  panelHidden = 'devtool:panelHidden',
+
+  pageReload = 'devtool:pageReload',
 }
 
 export type SceneGraphEntry = {
@@ -38,4 +43,16 @@ export interface DevtoolState extends SceneState, TextureState, RenderingState {
     buttons: ButtonMetadata[];
   } | null;
   setSceneTreeData: (data: DevtoolState['sceneTreeData']) => void;
+
+  reset: () => void;
 }
+
+// Utility type to remove properties starting with 'set'
+export type RemoveSetters<T> = {
+  [K in keyof T as K extends `set${string}` ? never : K]: T[K];
+};
+
+export type DevtoolStateSelectors = Omit<
+  RemoveSetters<DevtoolState>,
+  'reset' | 'chromeProxy' | 'bridge' | PermanentRenderingStateKeys
+>;
