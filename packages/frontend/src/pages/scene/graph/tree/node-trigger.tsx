@@ -42,12 +42,19 @@ export const NodeTrigger: React.FC<{
   onToggle: () => void;
   bridge: BridgeFn;
 }> = ({ dragHandle, style, node, onToggle, bridge }) => {
+  const doubleClick = () => {
+    if (!node.isLeaf) {
+      onToggle();
+    } else {
+      bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.tree.logSelected()`);
+    }
+  };
   return (
     <div
       ref={dragHandle}
       style={style}
       className={cn('mb-1 flex h-full min-w-max items-center gap-2 leading-5', node.state)}
-      onDoubleClick={onToggle}
+      onDoubleClick={doubleClick}
       onMouseEnter={() => {
         bridge(`window.__PIXI_DEVTOOLS_WRAPPER__?.scene.overlay.highlight(${JSON.stringify(node.id)})`);
       }}

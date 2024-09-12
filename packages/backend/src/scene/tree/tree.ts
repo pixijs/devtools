@@ -215,6 +215,14 @@ export class Tree extends PixiHandler {
     });
   }
 
+  public logSelected() {
+    if (!window.$pixi) {
+      return;
+    }
+
+    console.log(window.$pixi);
+  }
+
   private _getName(container: Container) {
     let type = container.constructor.name as PixiNodeType;
 
