@@ -36,6 +36,7 @@ jobs:
         with:
           name: upload
           path: .upload/
+          include-hidden-files: true
 
       # Automatically attach files to release
       - name: Upload to Release

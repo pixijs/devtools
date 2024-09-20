@@ -72,6 +72,10 @@ export class Rendering extends PixiHandler {
   private stats = new Stats();
 
   public override reset() {
+    if (this._devtool.majorVersion !== '8') {
+      return;
+    }
+
     // restore all overriden functions
     const renderer = this._devtool.renderer;
 
@@ -91,6 +95,10 @@ export class Rendering extends PixiHandler {
   }
 
   public override init() {
+    if (this._devtool.majorVersion !== '8') {
+      return;
+    }
+
     this._textureCache.clear();
     this.stats.reset();
 
@@ -184,6 +192,10 @@ export class Rendering extends PixiHandler {
   }
 
   public override update() {
+    if (this._devtool.majorVersion !== '8') {
+      return;
+    }
+
     this.stats.drawCalls = 0;
     this.stats.update();
   }
