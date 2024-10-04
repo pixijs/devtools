@@ -29,6 +29,7 @@ export async function initDevtools(opts: Devtools) {
     app: options.app,
     stage: options.stage,
     renderer: options.renderer,
+    version: options.version,
     extensions: [...(window.__PIXI_DEVTOOLS__?.extensions || []), ...(options.extensions || [])],
     plugins: {},
   };

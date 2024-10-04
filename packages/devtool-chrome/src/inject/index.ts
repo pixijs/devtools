@@ -25,13 +25,14 @@ function injectIFrames() {
 
   return null;
 }
-function init(arg: Application | Renderer) {
+function init(arg: Application | Renderer, version?: string) {
   const stage = (arg as Application).stage;
   const renderer = stage ? (arg as Application).renderer : (arg as Renderer);
   window.__PIXI_DEVTOOLS__ = {
     ...window.__PIXI_DEVTOOLS__,
     renderer,
     stage,
+    version,
   };
   window.__PIXI_DEVTOOLS_WRAPPER__?.reset();
 }

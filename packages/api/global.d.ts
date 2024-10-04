@@ -8,8 +8,8 @@ import type { NodeExtension } from './dist/extensions/node';
 import type { PixiDevtools } from './dist/pixi';
 
 declare global {
-  var __PIXI_APP_INIT__: (arg: Application | Renderer) => void;
-  var __PIXI_RENDERER_INIT__: (arg: Application | Renderer) => void;
+  var __PIXI_APP_INIT__: (arg: Application | Renderer, version?: string) => void;
+  var __PIXI_RENDERER_INIT__: (arg: Application | Renderer, version?: string) => void;
 
   interface Window {
     __PIXI_APP__: Application | undefined;
@@ -19,6 +19,7 @@ declare global {
     PIXI: typeof import('pixi.js');
     __PIXI_DEVTOOLS_WRAPPER__: PixiDevtools;
     __PIXI_DEVTOOLS__: {
+      version?: string;
       pixi?: typeof import('pixi.js');
       app?: Application | undefined;
       stage?: Container | undefined;

@@ -104,6 +104,14 @@ export function isContainer(container: Container, pixi?: (typeof PixiDevtools)['
   );
 }
 
+export function isParticleContainer(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
+  if (pixi) {
+    // @ts-expect-error - particle container is a unreleased 8.5 feature
+    return pixi.ParticleContainer && container instanceof pixi.ParticleContainer;
+  }
+  return ('renderPipeId' in container && container['renderPipeId'] === 'particle') || 'particleChildren' in container;
+}
+
 export function getPixiType(container: Container): PixiNodeType {
   const pixi = PixiDevtools.pixi;
 
@@ -125,6 +133,8 @@ export function getPixiType(container: Container): PixiNodeType {
     return 'TilingSprite';
   } else if (isSprite(container, pixi)) {
     return 'Sprite';
+  } else if (isParticleContainer(container, pixi)) {
+    return 'ParticleContainer';
   } else if (isContainer(container, pixi)) {
     return 'Container';
   } else {

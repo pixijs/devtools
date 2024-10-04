@@ -29,6 +29,7 @@ const typeMap = {
   AnimatedSprite: 'animatedSprite',
   NineSliceSprite: 'nineSliceSprite',
   TilingSprite: 'tilingSprite',
+  ParticleContainer: 'particleContainer',
 };
 
 export const pixiStatsExtension = {
