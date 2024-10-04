@@ -173,7 +173,7 @@ class PixiWrapper {
    */
   public get version() {
     if (this._version) return this._version;
-    this._version = this.pixi?.VERSION ?? '';
+    this._version = this._devtools?.version ?? this.pixi?.VERSION ?? '';
     return this._version;
   }
 

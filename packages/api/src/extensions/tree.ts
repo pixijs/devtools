@@ -9,6 +9,7 @@ export type PixiNodeType =
   | 'Graphics'
   | 'Sprite'
   | 'Container'
+  | 'ParticleContainer'
   | 'AnimatedSprite'
   | 'NineSliceSprite'
   | 'TilingSprite'
