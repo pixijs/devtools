@@ -30,4 +30,5 @@ export interface Devtools extends DevtoolPixi {
   app?: Application;
   renderer?: Renderer;
   stage?: Container;
+  version?: string;
 }
