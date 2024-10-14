@@ -1,5 +1,6 @@
 import type { OverlayExtension } from '@pixi/devtools';
 import type { Container } from 'pixi.js';
+import { isParticleContainer } from '../../utils/getPixiType';
 
 export const overlayExtension: OverlayExtension = {
   extension: {
@@ -23,6 +24,11 @@ export const overlayExtension: OverlayExtension = {
   },
 
   getGlobalBounds(node: Container) {
+    if (isParticleContainer(node)) {
+      if (node.boundsArea) return node.boundsArea;
+      // unknown bounds
+      return { x: 0, y: 0, width: 0, height: 0 };
+    }
     return node.getBounds();
   },
 };

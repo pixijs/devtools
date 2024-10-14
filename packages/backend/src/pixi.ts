@@ -14,6 +14,7 @@ import { nineSlicePropertyExtension } from './scene/tree/extensions/ninesliceSpr
 import { textPropertyExtension } from './scene/tree/extensions/text/textPropertyExtension';
 import { tilingSpritePropertyExtension } from './scene/tree/extensions/tilingSprite/tilingSpritePropertyExtension';
 import { viewPropertyExtension } from './scene/tree/extensions/view/viewPropertyExtension';
+import { isParticleContainer } from './utils/getPixiType';
 import { loop } from './utils/loop';
 import { Throttle } from './utils/throttle';
 
@@ -173,7 +174,7 @@ class PixiWrapper {
    */
   public get version() {
     if (this._version) return this._version;
-    this._version = this.pixi?.VERSION ?? '';
+    this._version = this._devtools?.version ?? this.pixi?.VERSION ?? '';
     return this._version;
   }
 
@@ -275,6 +276,7 @@ class PixiWrapper {
           test: (container) => {
             if (container.__devtoolIgnore) return false;
             if (container.__devtoolIgnoreChildren) return 'children';
+            if (isParticleContainer(container)) return 'children';
             return true;
           },
         });
