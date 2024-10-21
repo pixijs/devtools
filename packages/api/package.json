@@ -10,7 +10,7 @@
     "url": "https://github.com/pixijs/devtools.git"
   },
   "license": "MIT",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",

@@ -1,7 +1,7 @@
 {
   "name": "@devtool/chrome",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.2.1",
   "type": "module",
   "scripts": {
     "build": "run-s build:*",
