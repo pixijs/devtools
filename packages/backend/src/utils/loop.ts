@@ -19,13 +19,13 @@ function loopRecursive(container: Container, opts: Omit<LoopOptions, 'container'
     return;
   }
 
-  const testResult = test?.(container, container.parent) ?? true;
+  const testResult = test?.(container, container.parent!) ?? true;
 
   if (testResult === false) {
     return;
   }
 
-  loop(container, container.parent);
+  loop(container, container.parent!);
 
   if (container.children.length === 0 || testResult === 'children') {
     return;

@@ -152,7 +152,7 @@ export function getFilterInstruction(
       return {
         type: filter.constructor.name,
         padding: filter.padding,
-        resolution: filter.resolution,
+        resolution: typeof filter.resolution === 'number' ? filter.resolution : 1,
         antialias: filter.antialias,
         blendMode: filter.blendMode,
         program: {
@@ -193,8 +193,8 @@ export function getMeshInstruction(
 
   if (!shader) {
     shader = PixiDevtools.renderer.renderPipes.mesh['_adaptor']._shader;
-    program.fragment = getProgramSource(shader, 'fragment', rendererType);
-    program.vertex = getProgramSource(shader, 'vertex', rendererType);
+    program.fragment = getProgramSource(shader!, 'fragment', rendererType);
+    program.vertex = getProgramSource(shader!, 'vertex', rendererType);
   } else {
     program.fragment = getProgramSource(shader, 'fragment', rendererType);
     program.vertex = getProgramSource(shader, 'vertex', rendererType);

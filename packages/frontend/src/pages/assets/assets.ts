@@ -3,6 +3,7 @@ import type { ALPHA_MODES, TEXTURE_DIMENSIONS, TEXTURE_FORMATS } from 'pixi.js';
 import type { RemoveSetters } from '../../types';
 
 export interface TextureDataState {
+  uid: number;
   gpuSize: number;
   pixelWidth: number;
   pixelHeight: number;

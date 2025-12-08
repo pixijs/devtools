@@ -218,7 +218,7 @@ export class Rendering extends PixiHandler {
       premultipliedAlpha = contextAttributes.premultipliedAlpha?.toString() ?? '';
     }
 
-    return {
+    const defaults = {
       type: this._devtool.rendererType!,
       width: canvas.width,
       height: canvas.height,
@@ -238,12 +238,25 @@ export class Rendering extends PixiHandler {
       resolution: renderer.resolution.toString(),
       roundPixels: renderer.roundPixels.toString(),
       failIfMajorPerformanceCaveat,
+    };
 
-      // @ts-expect-error - private properties
+    if (!('glTextures' in renderer.texture)) {
+      return {
+        ...defaults,
+        // @ts-expect-error - newer pixi version
+        gcActive: renderer.gc.enabled.toString(),
+        // @ts-expect-error - newer pixi version
+        gcMaxUnusedTime: renderer.gc.maxUnusedTime.toString(),
+        // @ts-expect-error - newer pixi version
+        gcFrequency: renderer.gc._frequency.toString(),
+      };
+    }
+
+    return {
+      ...defaults,
       renderableGCActive: renderer.renderableGC?.enabled.toString(),
       // @ts-expect-error - private properties
       renderableGCFrequency: renderer.renderableGC?._frequency.toString(),
-      // @ts-expect-error - private properties
       renderableGCMaxUnusedTime: renderer.renderableGC?.maxUnusedTime.toString(),
       textureGCAMaxIdle: renderer.textureGC.maxIdle.toString(),
       textureGCActive: renderer.textureGC.active.toString(),

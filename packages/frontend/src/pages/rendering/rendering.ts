@@ -41,7 +41,7 @@ export interface FrameCaptureData {
   };
 }
 
-export interface CanvasData {
+interface BaseCanvasData {
   width: number;
   height: number;
   clientWidth: number;
@@ -60,6 +60,9 @@ export interface CanvasData {
   background: string;
   clearBeforeRender: string;
   failIfMajorPerformanceCaveat: string | undefined;
+}
+
+interface CanvasData8_14 extends BaseCanvasData {
   renderableGCFrequency: string;
   renderableGCActive: string;
   renderableGCMaxUnusedTime: string;
@@ -67,6 +70,15 @@ export interface CanvasData {
   textureGCActive: string;
   textureGCCheckCountMax: string;
 }
+
+interface CanvasData8_15 extends BaseCanvasData {
+  gcActive: string;
+  gcMaxUnusedTime: string;
+  gcFrequency: string;
+}
+
+export type CanvasData = CanvasData8_14 | CanvasData8_15;
+
 export interface RenderingState {
   selectedInstruction: number | null;
   setSelectedInstruction: (instruction: RenderingState['selectedInstruction']) => void;

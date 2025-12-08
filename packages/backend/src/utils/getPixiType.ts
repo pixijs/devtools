@@ -106,7 +106,6 @@ export function isContainer(container: Container, pixi?: (typeof PixiDevtools)['
 
 export function isParticleContainer(container: Container, pixi?: (typeof PixiDevtools)['pixi']): boolean {
   if (pixi) {
-    // @ts-expect-error - particle container is a unreleased 8.5 feature
     return pixi.ParticleContainer && container instanceof pixi.ParticleContainer;
   }
   return ('renderPipeId' in container && container['renderPipeId'] === 'particle') || 'particleChildren' in container;

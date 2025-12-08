@@ -1,5 +1,5 @@
 import type { TextureDataState } from '@devtool/frontend/pages/assets/assets';
-import type { CanvasSource, GlTexture, TextureSource, WebGLRenderer, WebGPURenderer } from 'pixi.js';
+import type { CanvasSource, GlTexture, TextureSource, WebGLRenderer } from 'pixi.js';
 import { PixiHandler } from '../../handler';
 
 const gpuTextureFormatSize: Record<string, number> = {
@@ -67,6 +67,7 @@ export class Textures extends PixiHandler {
   private _textures: Map<number, string> = new Map();
   private _gpuTextureSize: Map<number, number> = new Map();
   private _canvas = document.createElement('canvas');
+  private _previousData: TextureDataState[] = [];
 
   public override init() {
     this._textures.clear();
@@ -76,6 +77,7 @@ export class Textures extends PixiHandler {
   public override reset() {
     this._textures.clear();
     this._gpuTextureSize.clear();
+    this._previousData = [];
   }
 
   public override update() {}
@@ -86,6 +88,7 @@ export class Textures extends PixiHandler {
 
     const data: TextureDataState[] = [];
     currentTextures.forEach((texture) => {
+      if (!texture) return;
       if (!texture.resource) return;
 
       if (!this._textures.get(texture.uid)) {
@@ -103,6 +106,7 @@ export class Textures extends PixiHandler {
       }
 
       data.push({
+        uid: texture.uid,
         name: texture.label,
         gpuSize: this._gpuTextureSize.get(texture.uid) || 0,
         pixelWidth: texture.pixelWidth,
@@ -123,15 +127,49 @@ export class Textures extends PixiHandler {
       });
     });
 
+    if (!('_glTextures' in this._devtool.renderer.texture)) {
+      // currentTextures can now contain null values, these null values are the textures that have been garbage collected
+      // we need to map these null values to the previous data so we can add them back to the data array
+      // loop through the previous data and any texture that is not in the current data array, add it back to the data array
+      const currentUids = new Set(data.map((t) => t.uid));
+      this._previousData.forEach((previousTexture) => {
+        if (!currentUids.has(previousTexture.uid)) {
+          data.push({ ...previousTexture, isLoaded: false });
+        }
+      });
+      this._previousData = data.slice();
+    }
+
     return data;
   }
 
   public getWebTextures() {
-    const glRenderer = this._devtool.renderer as WebGLRenderer;
-    const gpuRenderer = this._devtool.renderer as WebGPURenderer;
+    const renderer = this._devtool.renderer as WebGLRenderer;
 
-    const glTextures: Record<number, GlTexture | GPUTexture> =
-      glRenderer.texture['_glTextures'] || gpuRenderer.texture['_gpuSources'];
+    let glTextures: Record<number, GlTexture | GPUTexture> = {};
+    const textureSystem = renderer.texture as unknown as
+      | { _glTextures: Record<number, GlTexture> }
+      | { _gpuSources: Record<number, GPUTexture> }
+      | { managedTextures: Readonly<TextureSource[]> };
+
+    if ('_glTextures' in textureSystem || '_gpuSources' in textureSystem) {
+      glTextures = '_glTextures' in textureSystem ? textureSystem['_glTextures'] : textureSystem['_gpuSources'];
+    } else {
+      // we are now using pixi 8.15
+      const managedTextures = textureSystem.managedTextures;
+      glTextures = managedTextures.reduce(
+        (acc, texture) => {
+          if (!texture) return acc;
+          // @ts-expect-error - pixi 8.15 introduced a new property _gpuData
+          const gpuData = texture._gpuData[this._devtool.renderer.uid];
+          if (!gpuData) return acc;
+
+          acc[texture.uid] = 'gpuTexture' in gpuData ? gpuData.gpuTexture : gpuData;
+          return acc;
+        },
+        {} as Record<number, GlTexture | GPUTexture>,
+      );
+    }
 
     return glTextures;
   }

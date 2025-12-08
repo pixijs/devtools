@@ -114,7 +114,7 @@ export class Tree extends PixiHandler {
     }
 
     if (updateSceneGraph) {
-      const parent = this._sceneGraph.get(container.parent);
+      const parent = this._sceneGraph.get(container.parent!);
       parent?.children.push(node);
       this._sceneGraph.set(container, node);
     }
