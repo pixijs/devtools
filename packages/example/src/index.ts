@@ -8,10 +8,12 @@ import { Application, Assets, Container, Sprite } from 'pixi.js';
   // Initialize the application
   await app.init({ background: '#1099bb', resizeTo: window });
 
-  window.__PIXI_DEVTOOLS__ = {
-    app: app,
-    pixi: PIXI,
-  };
+  // window.__PIXI_DEVTOOLS__ = {
+  //   app: app,
+  //   pixi: PIXI,
+  // };
+
+  globalThis.__PIXI_APP__ = app;
 
   // Append the application canvas to the document body
   document.body.appendChild(app.canvas);
