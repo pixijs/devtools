@@ -62,8 +62,8 @@ const mockChrome = {
 } as unknown as typeof chrome;
 
 const mockBridge: BridgeFn = (code): Promise<any> => {
-  eval(code);
-  return Promise.resolve();
+  const res = eval(code);
+  return Promise.resolve(res);
 };
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
