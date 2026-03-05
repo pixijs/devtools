@@ -84,7 +84,6 @@ chrome.runtime.onMessage.addListener((request: Message, sender: chrome.runtime.M
   } else {
     sendResponse({ status: 'error', message: 'sender.tab not defined.' });
   }
-  return true;
 });
 
 // update icon and popup when the active tab changes
