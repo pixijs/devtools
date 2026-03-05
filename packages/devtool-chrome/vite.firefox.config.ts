@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 
 import manifest from './manifest.firefox.json';
 import pkg from './package.json';
+import { resolveAliases } from './vite.shared';
 
 export default defineConfig((config) => {
   const isDev = config.mode === 'development';
@@ -14,10 +15,7 @@ export default defineConfig((config) => {
   return {
     root: resolve(__dirname, 'src/'),
     resolve: {
-      alias: {
-        '@devtool/frontend': path.resolve(process.cwd(), '../../packages/frontend/src/'),
-        '@devtool/backend': path.resolve(process.cwd(), '../../packages/backend/src/'),
-      },
+      alias: resolveAliases,
     },
     plugins: [
       react(),

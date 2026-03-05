@@ -8,6 +8,7 @@ import path, { resolve } from 'node:path';
 import pkg from './package.json';
 import devManifest from './manifest.dev.json';
 import manifest from './manifest.json';
+import { resolveAliases } from './vite.shared';
 
 export default defineConfig((config) => {
   const isDev = config.mode === 'development';
@@ -23,10 +24,7 @@ export default defineConfig((config) => {
   return {
     root: resolve(__dirname, 'src/'),
     resolve: {
-      alias: {
-        '@devtool/frontend': path.resolve(process.cwd(), '../../packages/frontend/src/'),
-        '@devtool/backend': path.resolve(process.cwd(), '../../packages/backend/src/'),
-      },
+      alias: resolveAliases,
     },
     plugins: [
       react(),

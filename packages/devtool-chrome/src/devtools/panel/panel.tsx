@@ -4,7 +4,7 @@ import type { BridgeFn } from '@devtool/frontend/lib/utils';
 import { createRoot } from 'react-dom/client';
 
 // Firefox exposes devtools APIs on `browser`, not `chrome`
-const devtools = (typeof browser !== 'undefined' && browser.devtools) ? browser.devtools : chrome.devtools;
+const devtools = typeof browser !== 'undefined' && browser.devtools ? browser.devtools : chrome.devtools;
 
 /**
  * Thanks pixi-inspector for this snippet
