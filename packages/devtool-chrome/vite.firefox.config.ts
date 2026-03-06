@@ -20,17 +20,6 @@ export default defineConfig((config) => {
     plugins: [
       react(),
       {
-        // Strip crossorigin attributes — unnecessary in extension contexts
-        // and can cause silent loading failures
-        name: 'strip-module-attrs',
-        transformIndexHtml: {
-          order: 'post',
-          handler(html: string) {
-            return html.replace(/ crossorigin/g, '');
-          },
-        },
-      },
-      {
         name: 'firefox-manifest-and-devtools',
         writeBundle() {
           // Write Firefox manifest
@@ -50,13 +39,10 @@ export default defineConfig((config) => {
       },
     ],
     publicDir,
-    // Extension pages don't need crossorigin or modulepreload
     base: './',
     build: {
       outDir,
       sourcemap: isDev,
-      modulePreload: false,
-      crossOriginLoading: false,
       rollupOptions: {
         input: {
           panel: resolve(__dirname, 'src/devtools/panel/panel.html'),
