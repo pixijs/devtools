@@ -1,7 +1,9 @@
 import { DevtoolMessage } from '@devtool/frontend/types';
 import { convertPostMessage } from '../messageUtils';
 
-function onPanelCreated(panel: chrome.devtools.panels.ExtensionPanel) {
+const title = import.meta.env.DEV ? 'Dev: PixiJS DevTools' : 'PixiJS DevTools';
+
+chrome.devtools.panels.create(title, 'pixi-icon-active-128.png', 'devtools/panel/panel.html', (panel) => {
   const tabId = chrome.devtools.inspectedWindow.tabId;
 
   panel.onShown.addListener(() => {
@@ -13,14 +15,4 @@ function onPanelCreated(panel: chrome.devtools.panels.ExtensionPanel) {
     const message = convertPostMessage(DevtoolMessage.panelHidden, {});
     chrome.runtime.sendMessage({ ...message, tabId });
   });
-}
-
-const title = import.meta.env.DEV ? 'Dev: PixiJS DevTools' : 'PixiJS DevTools';
-
-// Firefox: browser.devtools.panels.create() returns a Promise
-// Chrome: chrome.devtools.panels.create() uses a callback
-if (typeof browser !== 'undefined' && browser.devtools) {
-  browser.devtools.panels.create(title, 'pixi-icon-active-128.png', 'devtools/panel/panel.html').then(onPanelCreated);
-} else {
-  chrome.devtools.panels.create(title, 'pixi-icon-active-128.png', 'devtools/panel/panel.html', onPanelCreated);
-}
+});
