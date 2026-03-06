@@ -29,8 +29,7 @@ export default defineConfig((config) => {
           };
           fs.writeFileSync(path.resolve(outDir, 'manifest.json'), JSON.stringify(firefoxManifest, null, 2));
 
-          // Write static devtools page at root (Firefox requires root-level devtools_page)
-          // Must use classic script, not module
+          // Write devtools page with a classic script tag (not type="module")
           fs.writeFileSync(
             path.resolve(outDir, 'devtools.html'),
             '<!DOCTYPE html>\n<html>\n<head><script src="devtools.js"></script></head>\n</html>\n',
