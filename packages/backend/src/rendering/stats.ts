@@ -18,8 +18,10 @@ export class Stats {
 
       // @ts-expect-error it does exist in chrome
       const memory = performance.memory;
-      this.memory = memory.usedJSHeapSize / 1048576;
-      this.maxMemory = memory.jsHeapSizeLimit / 1048576;
+      if (memory) {
+        this.memory = memory.usedJSHeapSize / 1048576;
+        this.maxMemory = memory.jsHeapSizeLimit / 1048576;
+      }
     }
   }
 

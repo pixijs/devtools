@@ -25,7 +25,7 @@
     "start:docs": "npm run start --workspace @devtool/docs",
     "prebuild": "npm run clean",
     "build": "npm run --ws build --if-present",
-    "postbuild": "mkdir -p .upload && cd ./packages/devtool-chrome && zip -r chrome.zip ./dist/chrome/* && mv chrome.zip ../../.upload/",
+    "postbuild": "mkdir -p .upload && cd ./packages/devtool-chrome && zip -r chrome.zip ./dist/chrome/* && mv chrome.zip ../../.upload/ && zip -r firefox.zip ./dist/firefox/* && mv firefox.zip ../../.upload/",
     "watch": "npm run --ws watch --if-present",
     "types": "tsc --noEmit",
     "release": "tsx ./scripts/release.mts",
