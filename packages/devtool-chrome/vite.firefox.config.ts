@@ -47,12 +47,6 @@ export default defineConfig((config) => {
         input: {
           panel: resolve(__dirname, 'src/devtools/panel/panel.html'),
         },
-        output: {
-          // Keep assets alongside HTML for simpler relative paths
-          assetFileNames: 'assets/[name]-[hash].[ext]',
-          chunkFileNames: 'assets/[name]-[hash].js',
-          entryFileNames: 'assets/[name]-[hash].js',
-        },
       },
     },
   };
