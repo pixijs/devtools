@@ -82,7 +82,7 @@ export const NodeTrigger: React.FC<{
             <CustomNodeButton
               asChild={true}
               button={{ name: 'visible', type: 'toggle', value: node.data.metadata.visible ?? true }}
-              icon={(node.data.metadata.visible ?? true) ? <VisibleIcon /> : <HiddenIcon />}
+              icon={node.data.metadata.visible ?? true ? <VisibleIcon /> : <HiddenIcon />}
               node={node}
               className="mt-[-2px] w-[20px] px-1 py-0.5"
               bridge={bridge}
