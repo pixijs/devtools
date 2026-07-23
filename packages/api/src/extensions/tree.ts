@@ -28,6 +28,7 @@ export type ContextMenuButtonMetadata = Omit<ButtonMetadata, 'type' | 'value'>;
 export interface PixiMetadata {
   type: PixiNodeType;
   locked?: boolean;
+  visible?: boolean;
   suffix?: string;
   buttons?: ButtonMetadata[];
   contextMenu?: ContextMenuButtonMetadata[];

@@ -94,6 +94,7 @@ export class Tree extends PixiHandler {
       metadata: {
         type,
         locked: container.__devtoolLocked,
+        visible: container.visible,
         uid: this._getId(container),
         suffix,
         buttons: [],
@@ -127,6 +128,10 @@ export class Tree extends PixiHandler {
 
     if (buttonAction === 'locked') {
       node.__devtoolLocked = value;
+    }
+
+    if (buttonAction === 'visible') {
+      node.visible = value ?? true;
     }
 
     this._onButtonPressExtensions.forEach((ext) => {
