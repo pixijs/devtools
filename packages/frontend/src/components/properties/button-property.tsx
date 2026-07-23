@@ -8,7 +8,7 @@ export const ButtonProperty: React.FC<PropertyPanelData> = ({ entry }) => {
     <Button
       variant="outline"
       size="sm"
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
+      className="border-border hover:border-primary focus:border-primary h-6 w-full rounded outline-none"
       onClick={() => entry.onChange(true)}
       {...(entry.options as ButtonFnProps)}
     >

@@ -8,7 +8,7 @@ export const RangeProperty: React.FC<PropertyPanelData> = ({ value, entry }) => 
       {...(entry.options as SliderProps)}
       value={[value]}
       onValueChange={(value) => entry.onChange(JSON.stringify(value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
+      className="border-border hover:border-primary focus:border-primary h-6 w-full rounded outline-none"
     />
   );
 };

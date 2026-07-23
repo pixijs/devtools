@@ -7,7 +7,7 @@ import { Texture } from './Texture';
 // - instruction pill rules
 //   - circle dot color that matches the render group its a part of
 //   - red outline if its a draw call - show blue if renderBatch
-//   - secondary outline if hovered
+//   - gray highlight if hovered
 //   - primary outline if selected
 //   - show type, action, draw texture (if exists)
 export interface InstructionPillProps {
@@ -26,7 +26,7 @@ export const InstructionPill: React.FC<InstructionPillProps> = memo(
     return (
       <div
         className={cn(
-          `hover:bg-secondary bg-border flex cursor-pointer flex-row items-center justify-center gap-1 rounded-sm border p-1`,
+          `hover:bg-muted-foreground bg-border flex cursor-pointer flex-row items-center justify-center gap-1 rounded-sm border p-1`,
           'min-w-52',
           border,
         )}

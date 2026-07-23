@@ -31,7 +31,7 @@ export const ColorInput: React.FC<ColorProps> = ({ value, onChange, ...rest }) =
           <Button
             variant="outline"
             size="sm"
-            className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
+            className="border-border hover:border-primary focus:border-primary h-6 w-full rounded outline-none"
             onClick={handleClose}
           >
             {hex}
@@ -49,7 +49,7 @@ export const ColorInput: React.FC<ColorProps> = ({ value, onChange, ...rest }) =
         <Button
           variant="outline"
           size="sm"
-          className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded outline-none"
+          className="border-border hover:border-primary focus:border-primary h-6 w-full rounded outline-none"
           onClick={handleClick}
         >
           {hex}
