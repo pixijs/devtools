@@ -4,6 +4,8 @@ import {
   FaMinus as LayerIconOpen,
   FaLock as LockIcon,
   FaLockOpen as LockOpenIcon,
+  FaEye as VisibleIcon,
+  FaEyeSlash as HiddenIcon,
   // FaRegObjectGroup as SceneNodeIcon,
 } from 'react-icons/fa6';
 import { Input } from '../../../../components/ui/input';
@@ -73,6 +75,21 @@ export const NodeTrigger: React.FC<{
         {node.data.metadata.buttons?.map((button, i) => (
           <CustomNodeButton key={node.id + button.name + i} node={node} button={button} bridge={bridge} />
         ))}
+        <TooltipWrapper
+          contentProps={{ side: 'left' }}
+          providerProps={{ delayDuration: 2500 }}
+          trigger={
+            <CustomNodeButton
+              asChild={true}
+              button={{ name: 'visible', type: 'toggle', value: node.data.metadata.visible ?? true }}
+              icon={node.data.metadata.visible ?? true ? <VisibleIcon /> : <HiddenIcon />}
+              node={node}
+              className="mt-[-2px] w-[20px] px-1 py-0.5"
+              bridge={bridge}
+            />
+          }
+          tip={'Toggle the visibility of the node.'}
+        />
         <TooltipWrapper
           contentProps={{ side: 'left' }}
           providerProps={{ delayDuration: 2500 }}
