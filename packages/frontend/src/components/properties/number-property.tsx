@@ -9,7 +9,7 @@ export const NumberProperty: React.FC<PropertyPanelData> = ({ value, entry }) =>
       type="number"
       value={value ?? undefined}
       onChange={(e) => entry.onChange(Number(e.target.value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
+      className="border-border hover:border-primary focus:border-primary h-6 w-full rounded text-xs outline-none"
     />
   );
 };

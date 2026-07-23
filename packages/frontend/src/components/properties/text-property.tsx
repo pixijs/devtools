@@ -9,7 +9,7 @@ export const TextProperty: React.FC<PropertyPanelData> = ({ value, entry }) => {
       type="text"
       value={value ?? ''}
       onChange={(e) => entry.onChange(JSON.stringify(e.target.value))}
-      className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
+      className="border-border hover:border-primary focus:border-primary h-6 w-full rounded text-xs outline-none"
     />
   );
 };

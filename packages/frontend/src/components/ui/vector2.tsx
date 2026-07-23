@@ -30,7 +30,7 @@ export const Vector2: React.FC<Vector2Props> = ({ x, y, className, onChange, val
         <Input
           {...x}
           type="number"
-          className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
+          className="border-border hover:border-primary focus:border-primary h-6 w-full rounded text-xs outline-none"
         />
       </div>
       <div className="flex items-center gap-2">
@@ -38,7 +38,7 @@ export const Vector2: React.FC<Vector2Props> = ({ x, y, className, onChange, val
         <Input
           {...y}
           type="number"
-          className="border-border hover:border-secondary focus:border-secondary h-6 w-full rounded text-xs outline-none"
+          className="border-border hover:border-primary focus:border-primary h-6 w-full rounded text-xs outline-none"
         />
       </div>
     </div>
@@ -71,7 +71,7 @@ export const VectorX: React.FC<VectorXProps> = ({ inputs, onChange, value }) => 
           <Input
             {...input}
             type="number"
-            className="border-border hover:border-secondary focus:border-secondary h-6 w-full max-w-24 rounded text-xs outline-none"
+            className="border-border hover:border-primary focus:border-primary h-6 w-full max-w-24 rounded text-xs outline-none"
           />
         </div>
       ))}
